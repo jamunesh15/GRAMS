@@ -1,0 +1,11 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grams_mark" x1="10" y1="10" x2="38" y2="38" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#138808"/>
+      <stop offset="1" stop-color="#0f6e06"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="40" height="40" rx="12" fill="url(#grams_mark)"/>
+  <path d="M30.5 18.5c-1.4-2.1-3.9-3.5-6.7-3.5-4.3 0-7.8 3.6-7.8 8.1s3.5 8.1 7.8 8.1c3.5 0 6.4-2.4 7.4-5.8h-7.4v-3.2h11.2c.2.8.3 1.6.3 2.5 0 6.6-4.6 11.5-11.5 11.5-6.4 0-11.5-5.2-11.5-11.6S17.9 11 24.3 11c4.3 0 8 2.1 10 5.3l-3.8 2.2z" fill="#ffffff" fill-opacity="0.96"/>
+  <path d="M13 10.5c4-3.2 9.7-3.9 14.4-1.9" stroke="#ffffff" stroke-opacity="0.25" stroke-width="2" stroke-linecap="round"/>
+</svg>
