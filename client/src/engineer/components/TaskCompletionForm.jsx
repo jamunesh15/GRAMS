@@ -22,6 +22,10 @@ export default function TaskCompletionForm({ grievance, isOpen, onClose, onCompl
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadingBills, setUploadingBills] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [showCamera, setShowCamera] = useState(false);
+  const [stream, setStream] = useState(null);
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
   const token = localStorage.getItem('token');
   const previousIsOpenRef = useRef(false);
 
@@ -256,6 +260,83 @@ export default function TaskCompletionForm({ grievance, isOpen, onClose, onCompl
     // Clear input immediately
     e.target.value = '';
   };
+
+  // Camera functions
+  const startCamera = async () => {
+    try {
+      const mediaStream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: 'environment' }, // Use back camera on mobile
+        audio: false 
+      });
+      setStream(mediaStream);
+      setShowCamera(true);
+      
+      // Wait for video element to be ready
+      setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = mediaStream;
+        }
+      }, 100);
+    } catch (error) {
+      console.error('Error accessing camera:', error);
+      toast.error('Unable to access camera. Please check permissions.');
+    }
+  };
+
+  const stopCamera = () => {
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+      setStream(null);
+    }
+    setShowCamera(false);
+  };
+
+  const capturePhoto = () => {
+    if (!videoRef.current || !canvasRef.current) return;
+
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    
+    // Set canvas dimensions to match video
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    
+    // Draw video frame to canvas
+    const context = canvas.getContext('2d');
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    // Convert canvas to blob
+    canvas.toBlob((blob) => {
+      if (!blob) {
+        toast.error('Failed to capture photo');
+        return;
+      }
+
+      // Create file from blob
+      const file = new File([blob], `capture-${Date.now()}.jpg`, { type: 'image/jpeg' });
+      
+      // Revoke previous object URL if exists
+      if (imagePreview && imagePreview.startsWith('blob:')) {
+        URL.revokeObjectURL(imagePreview);
+      }
+
+      setCompletionImage(file);
+      setCompletionImageUrl(''); // Reset URL when new image captured
+      setImagePreview(URL.createObjectURL(file));
+      
+      toast.success('Photo captured! Click "Upload Image" to upload.');
+      stopCamera();
+    }, 'image/jpeg', 0.95);
+  };
+
+  // Cleanup camera on unmount
+  useEffect(() => {
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, [stream]);
 
   // Upload completion image to Cloudinary
   const handleUploadImage = async () => {
@@ -794,14 +875,49 @@ export default function TaskCompletionForm({ grievance, isOpen, onClose, onCompl
                       )}
                     </div>
                   ) : (
-                    <label className="cursor-pointer">
-                      {loadingImage ? (
+                    <div>
+                      {showCamera ? (
+                        <div className="space-y-4">
+                          <div className="relative bg-black rounded-lg overflow-hidden">
+                            <video
+                              ref={videoRef}
+                              autoPlay
+                              playsInline
+                              className="w-full max-h-96 mx-auto"
+                            />
+                            <canvas ref={canvasRef} className="hidden" />
+                          </div>
+                          <div className="flex gap-3 justify-center">
+                            <button
+                              type="button"
+                              onClick={capturePhoto}
+                              className="px-6 py-3 bg-gradient-to-r from-green-500 to-teal-600 text-white font-bold rounded-lg hover:from-green-600 hover:to-teal-700 transition flex items-center gap-2 shadow-md"
+                            >
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                              </svg>
+                              Capture Photo
+                            </button>
+                            <button
+                              type="button"
+                              onClick={stopCamera}
+                              className="px-6 py-3 bg-red-500 text-white font-bold rounded-lg hover:bg-red-600 transition flex items-center gap-2"
+                            >
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      ) : loadingImage ? (
                         <div className="py-8 space-y-3">
                           <div className="animate-spin w-12 h-12 mx-auto border-3 border-indigo-500 border-t-transparent rounded-full"></div>
                           <p className="text-gray-600 font-medium">Processing image...</p>
                         </div>
                       ) : (
-                        <div className="space-y-3">
+                        <div className="space-y-4">
                           <svg
                             className="w-16 h-16 mx-auto text-gray-400"
                             fill="none"
@@ -817,23 +933,47 @@ export default function TaskCompletionForm({ grievance, isOpen, onClose, onCompl
                           </svg>
                           <div>
                             <p className="text-gray-700 font-semibold text-lg">
-                              Click to upload completed work image
+                              Upload completed work image
                             </p>
                             <p className="text-sm text-gray-500 mt-1">
                               PNG, JPG up to 5MB
                             </p>
                           </div>
+                          
+                          {/* Camera and Gallery buttons */}
+                          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mt-4">
+                            {/* Capture from Camera */}
+                            <button
+                              type="button"
+                              onClick={startCamera}
+                              className="px-6 py-3 bg-gradient-to-r from-green-500 to-teal-600 text-white font-bold rounded-lg hover:from-green-600 hover:to-teal-700 transition flex items-center gap-2 shadow-md"
+                            >
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                              </svg>
+                              <span>Take Photo</span>
+                            </button>
+                            
+                            {/* Choose from Gallery */}
+                            <label className="cursor-pointer px-6 py-3 bg-gradient-to-r from-indigo-500 to-blue-600 text-white font-bold rounded-lg hover:from-indigo-600 hover:to-blue-700 transition flex items-center gap-2 shadow-md">
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              </svg>
+                              <span>Choose from Gallery</span>
+                              <input
+                                type="file"
+                                accept="image/png,image/jpeg,image/jpg"
+                                onChange={handleImageChange}
+                                className="hidden"
+                                disabled={loadingImage}
+                                onClick={(e) => e.currentTarget.value = ''}
+                              />
+                            </label>
+                          </div>
                         </div>
                       )}
-                      <input
-                        type="file"
-                        accept="image/png,image/jpeg,image/jpg"
-                        onChange={handleImageChange}
-                        className="hidden"
-                        disabled={loadingImage}
-                        onClick={(e) => e.currentTarget.value = ''}
-                      />
-                    </label>
+                    </div>
                   )}
                 </div>
               </div>
