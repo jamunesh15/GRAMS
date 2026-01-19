@@ -28,17 +28,12 @@ export default function PerformancePage() {
 
   useEffect(() => {
     fetchAnalyticsData();
-  }, [token]);
+  }, []);
 
   const fetchAnalyticsData = async () => {
-    if (!token) {
-      setLoading(false);
-      return;
-    }
-    
     setLoading(true);
     try {
-      // Use Promise.all to fetch all data at once
+      // Use Promise.all to fetch all data at once (works with or without token)
       const [statusResponse, resolutionResponse, areaResponse] = await Promise.all([
         getStatusAnalysis(token, 30),
         getResolutionTimeAnalytics(token),
