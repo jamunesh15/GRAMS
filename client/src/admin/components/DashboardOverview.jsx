@@ -42,58 +42,58 @@ export default function DashboardOverview({ stats, loading, onTabChange }) {
     <div className="space-y-4 sm:space-y-5">
       {/* Stats Cards */}
       <Reveal delay={0.1}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-5">
           {/* Total Users */}
-          <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-4 sm:p-6 text-white shadow-lg hover:shadow-xl transition-all">
-            <div className="flex items-start justify-between mb-3 sm:mb-4">
+          <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 text-white shadow-lg hover:shadow-xl transition-all">
+            <div className="flex items-start justify-between mb-2 sm:mb-3 lg:mb-4">
               <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 rounded-lg flex items-center justify-center">
-                    <span className="text-xl sm:text-2xl">👥</span>
+                <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                    <span className="text-base sm:text-xl lg:text-2xl">👥</span>
                   </div>
-                  <span className="bg-white/20 px-2 py-1 rounded-md text-xs font-medium">↑ 8.3%</span>
+                  <span className="bg-white/20 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md text-[10px] sm:text-xs font-medium">↑ 8.3%</span>
                 </div>
-                <p className="text-white/80 text-xs sm:text-sm font-medium mb-1">Total Users</p>
-                <p className="text-2xl sm:text-4xl font-bold">{stats?.totalUsers || 0}</p>
+                <p className="text-white/80 text-[10px] sm:text-xs lg:text-sm font-medium mb-0.5 sm:mb-1">Total Users</p>
+                <p className="text-xl sm:text-2xl lg:text-4xl font-bold">{stats?.totalUsers || 0}</p>
               </div>
             </div>
-            <p className="text-white/70 text-xs">Registered platform users</p>
+            <p className="text-white/70 text-[10px] sm:text-xs">Registered platform users</p>
           </div>
 
           {/* Total Grievances */}
-          <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-4 sm:p-6 text-white shadow-lg hover:shadow-xl transition-all">
-            <div className="flex items-start justify-between mb-3 sm:mb-4">
+          <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 text-white shadow-lg hover:shadow-xl transition-all">
+            <div className="flex items-start justify-between mb-2 sm:mb-3 lg:mb-4">
               <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 rounded-lg flex items-center justify-center">
-                    <span className="text-xl sm:text-2xl">📋</span>
+                <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                    <span className="text-base sm:text-xl lg:text-2xl">📋</span>
                   </div>
-                  <span className="bg-white/20 px-2 py-1 rounded-md text-xs font-medium">↑ 12.5%</span>
+                  <span className="bg-white/20 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md text-[10px] sm:text-xs font-medium">↑ 12.5%</span>
                 </div>
-                <p className="text-white/80 text-xs sm:text-sm font-medium mb-1">Total Grievances</p>
-                <p className="text-2xl sm:text-4xl font-bold">{stats?.totalGrievances || 0}</p>
+                <p className="text-white/80 text-[10px] sm:text-xs lg:text-sm font-medium mb-0.5 sm:mb-1">Total Grievances</p>
+                <p className="text-xl sm:text-2xl lg:text-4xl font-bold">{stats?.totalGrievances || 0}</p>
               </div>
             </div>
-            <p className="text-white/70 text-xs">All submissions</p>
+            <p className="text-white/70 text-[10px] sm:text-xs">All submissions</p>
           </div>
 
           {/* Resolved */}
-          <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-4 sm:p-6 text-white shadow-lg hover:shadow-xl transition-all">
-            <div className="flex items-start justify-between mb-3 sm:mb-4">
+          <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 text-white shadow-lg hover:shadow-xl transition-all">
+            <div className="flex items-start justify-between mb-2 sm:mb-3 lg:mb-4">
               <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 rounded-lg flex items-center justify-center">
-                    <span className="text-xl sm:text-2xl">✅</span>
+                <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                    <span className="text-base sm:text-xl lg:text-2xl">✅</span>
                   </div>
-                  <span className="bg-white/20 px-2 py-1 rounded-md text-xs font-medium">↑ 15.7%</span>
+                  <span className="bg-white/20 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md text-[10px] sm:text-xs font-medium">↑ 15.7%</span>
                 </div>
-                <p className="text-white/80 text-xs sm:text-sm font-medium mb-1">Resolved</p>
-                <p className="text-2xl sm:text-4xl font-bold">{stats?.resolvedGrievances || 0}</p>
+                <p className="text-white/80 text-[10px] sm:text-xs lg:text-sm font-medium mb-0.5 sm:mb-1">Resolved</p>
+                <p className="text-xl sm:text-2xl lg:text-4xl font-bold">{stats?.resolvedGrievances || 0}</p>
               </div>
             </div>
-            <div className="w-full bg-white/20 rounded-full h-2 mt-2">
+            <div className="w-full bg-white/20 rounded-full h-1.5 sm:h-2 mt-1.5 sm:mt-2">
               <div
-                className="bg-white h-2 rounded-full transition-all duration-500"
+                className="bg-white h-1.5 sm:h-2 rounded-full transition-all duration-500"
                 style={{
                   width: `${stats?.totalGrievances ? (stats.resolvedGrievances / stats.totalGrievances) * 100 : 0}%`,
                 }}
@@ -102,77 +102,77 @@ export default function DashboardOverview({ stats, loading, onTabChange }) {
           </div>
 
           {/* Open Issues */}
-          <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl p-4 sm:p-6 text-white shadow-lg hover:shadow-xl transition-all">
-            <div className="flex items-start justify-between mb-3 sm:mb-4">
+          <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 text-white shadow-lg hover:shadow-xl transition-all">
+            <div className="flex items-start justify-between mb-2 sm:mb-3 lg:mb-4">
               <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 rounded-lg flex items-center justify-center">
-                    <span className="text-xl sm:text-2xl">⏳</span>
+                <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                    <span className="text-base sm:text-xl lg:text-2xl">⏳</span>
                   </div>
-                  <span className="bg-white/20 px-2 py-1 rounded-md text-xs font-medium">↑ 6.2%</span>
+                  <span className="bg-white/20 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md text-[10px] sm:text-xs font-medium">↑ 6.2%</span>
                 </div>
-                <p className="text-white/80 text-xs sm:text-sm font-medium mb-1">Open Issues</p>
-                <p className="text-2xl sm:text-4xl font-bold">{stats?.openGrievances || 0}</p>
+                <p className="text-white/80 text-[10px] sm:text-xs lg:text-sm font-medium mb-0.5 sm:mb-1">Open Issues</p>
+                <p className="text-xl sm:text-2xl lg:text-4xl font-bold">{stats?.openGrievances || 0}</p>
               </div>
             </div>
-            <p className="text-white/70 text-xs">Pending action</p>
+            <p className="text-white/70 text-[10px] sm:text-xs">Pending action</p>
           </div>
         </div>
       </Reveal>
 
       {/* Key Metrics */}
       <Reveal delay={0.15}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
-          <div className="bg-white rounded-xl p-4 sm:p-5 shadow-sm">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-100 rounded-xl flex items-center justify-center">
-                <span className="text-xl sm:text-2xl">🔴</span>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-5">
+          <div className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-5 shadow-sm">
+            <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-red-100 rounded-xl flex items-center justify-center">
+                <span className="text-base sm:text-xl lg:text-2xl">🔴</span>
               </div>
               <div className="flex-1">
-                <p className="text-gray-500 text-xs">Critical Issues</p>
-                <p className="text-xl sm:text-2xl font-bold text-gray-800">{Math.floor((stats?.openGrievances || 0) * 0.15)}</p>
+                <p className="text-gray-500 text-[10px] sm:text-xs">Critical Issues</p>
+                <p className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800">{Math.floor((stats?.openGrievances || 0) * 0.15)}</p>
               </div>
             </div>
-            <p className="text-gray-400 text-xs">High priority grievances</p>
+            <p className="text-gray-400 text-[10px] sm:text-xs">High priority grievances</p>
           </div>
 
-          <div className="bg-white rounded-xl p-4 sm:p-5 shadow-sm">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                <span className="text-xl sm:text-2xl">⏱️</span>
+          <div className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-5 shadow-sm">
+            <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                <span className="text-base sm:text-xl lg:text-2xl">⏱️</span>
               </div>
               <div className="flex-1">
-                <p className="text-gray-500 text-xs">Avg Response Time</p>
-                <p className="text-xl sm:text-2xl font-bold text-gray-800">2.4 hrs</p>
+                <p className="text-gray-500 text-[10px] sm:text-xs">Avg Response Time</p>
+                <p className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800">2.4 hrs</p>
               </div>
             </div>
-            <p className="text-gray-400 text-xs">Last 30 days</p>
+            <p className="text-gray-400 text-[10px] sm:text-xs">Last 30 days</p>
           </div>
 
-          <div className="bg-white rounded-xl p-4 sm:p-5 shadow-sm">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-xl flex items-center justify-center">
-                <span className="text-xl sm:text-2xl">📈</span>
+          <div className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-5 shadow-sm">
+            <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                <span className="text-base sm:text-xl lg:text-2xl">📈</span>
               </div>
               <div className="flex-1">
-                <p className="text-gray-500 text-xs">Resolution Rate</p>
-                <p className="text-xl sm:text-2xl font-bold text-gray-800">{stats?.totalGrievances ? Math.round((stats.resolvedGrievances / stats.totalGrievances) * 100) : 0}%</p>
+                <p className="text-gray-500 text-[10px] sm:text-xs">Resolution Rate</p>
+                <p className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800">{stats?.totalGrievances ? Math.round((stats.resolvedGrievances / stats.totalGrievances) * 100) : 0}%</p>
               </div>
             </div>
-            <p className="text-gray-400 text-xs">Successfully resolved</p>
+            <p className="text-gray-400 text-[10px] sm:text-xs">Successfully resolved</p>
           </div>
 
-          <div className="bg-white rounded-xl p-4 sm:p-5 shadow-sm">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-                <span className="text-xl sm:text-2xl">⏳</span>
+          <div className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-5 shadow-sm">
+            <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                <span className="text-base sm:text-xl lg:text-2xl">⏳</span>
               </div>
               <div className="flex-1">
-                <p className="text-gray-500 text-xs">In Progress</p>
-                <p className="text-xl sm:text-2xl font-bold text-gray-800">{Math.floor((stats?.openGrievances || 0) * 0.6)}</p>
+                <p className="text-gray-500 text-[10px] sm:text-xs">In Progress</p>
+                <p className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800">{Math.floor((stats?.openGrievances || 0) * 0.6)}</p>
               </div>
             </div>
-            <p className="text-gray-400 text-xs">Being addressed</p>
+            <p className="text-gray-400 text-[10px] sm:text-xs">Being addressed</p>
           </div>
         </div>
       </Reveal>

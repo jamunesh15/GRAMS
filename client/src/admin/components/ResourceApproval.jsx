@@ -197,44 +197,44 @@ export default function ResourceApproval() {
 
       {/* Stats Cards */}
       {stats && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          <div className="bg-white rounded-xl shadow-md p-4 sm:p-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 lg:gap-6">
+          <div className="bg-white rounded-lg sm:rounded-xl shadow-md p-3 sm:p-4 lg:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-xs sm:text-sm">Total Requests</p>
-                <p className="text-2xl sm:text-3xl font-bold text-gray-800 mt-1">{stats.total}</p>
+                <p className="text-gray-600 text-[10px] sm:text-xs lg:text-sm">Total Requests</p>
+                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 mt-0.5 sm:mt-1">{stats.total}</p>
               </div>
-              <span className="text-3xl sm:text-4xl">📊</span>
+              <span className="text-2xl sm:text-3xl lg:text-4xl">📊</span>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-md p-4 sm:p-6">
+          <div className="bg-white rounded-lg sm:rounded-xl shadow-md p-3 sm:p-4 lg:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-xs sm:text-sm">Pending</p>
-                <p className="text-2xl sm:text-3xl font-bold text-yellow-600 mt-1">{stats.pending}</p>
+                <p className="text-gray-600 text-[10px] sm:text-xs lg:text-sm">Pending</p>
+                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-yellow-600 mt-0.5 sm:mt-1">{stats.pending}</p>
               </div>
-              <span className="text-3xl sm:text-4xl">⏳</span>
+              <span className="text-2xl sm:text-3xl lg:text-4xl">⏳</span>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-md p-4 sm:p-6">
+          <div className="bg-white rounded-lg sm:rounded-xl shadow-md p-3 sm:p-4 lg:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-xs sm:text-sm">Approved</p>
-                <p className="text-2xl sm:text-3xl font-bold text-green-600 mt-1">{stats.approved}</p>
+                <p className="text-gray-600 text-[10px] sm:text-xs lg:text-sm">Approved</p>
+                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-green-600 mt-0.5 sm:mt-1">{stats.approved}</p>
               </div>
-              <span className="text-3xl sm:text-4xl">✅</span>
+              <span className="text-2xl sm:text-3xl lg:text-4xl">✅</span>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-md p-4 sm:p-6">
+          <div className="bg-white rounded-lg sm:rounded-xl shadow-md p-3 sm:p-4 lg:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-xs sm:text-sm">Total Approved Amount</p>
-                <p className="text-xl sm:text-2xl font-bold text-blue-600 mt-1 break-words">{formatCurrency(stats.totalApproved)}</p>
+                <p className="text-gray-600 text-[10px] sm:text-xs lg:text-sm">Total Approved Amount</p>
+                <p className="text-base sm:text-xl lg:text-2xl font-bold text-blue-600 mt-0.5 sm:mt-1 break-words">{formatCurrency(stats.totalApproved)}</p>
               </div>
-              <span className="text-3xl sm:text-4xl">💰</span>
+              <span className="text-2xl sm:text-3xl lg:text-4xl">💰</span>
             </div>
           </div>
         </div>
@@ -277,22 +277,22 @@ export default function ResourceApproval() {
               <div className="space-y-6">
                 {/* Allocated Resources Stats */}
                 {allocatedTotals && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200">
-                      <p className="text-xs sm:text-sm text-blue-700 font-medium">Total Allocated</p>
-                      <p className="text-xl sm:text-2xl font-bold text-blue-900 mt-1 break-words">
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 mb-4 sm:mb-6">
+                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-3 sm:p-4 border border-blue-200">
+                      <p className="text-[10px] sm:text-xs lg:text-sm text-blue-700 font-medium">Total Allocated</p>
+                      <p className="text-base sm:text-xl lg:text-2xl font-bold text-blue-900 mt-0.5 sm:mt-1 break-words">
                         {formatCurrency(allocatedTotals.totalAllocated)}
                       </p>
                     </div>
-                    <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4 border border-green-200">
-                      <p className="text-xs sm:text-sm text-green-700 font-medium">Total Used</p>
-                      <p className="text-xl sm:text-2xl font-bold text-green-900 mt-1 break-words">
+                    <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-3 sm:p-4 border border-green-200">
+                      <p className="text-[10px] sm:text-xs lg:text-sm text-green-700 font-medium">Total Used</p>
+                      <p className="text-base sm:text-xl lg:text-2xl font-bold text-green-900 mt-0.5 sm:mt-1 break-words">
                         {formatCurrency(allocatedTotals.totalUsed)}
                       </p>
                     </div>
-                    <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg p-4 border border-yellow-200">
-                      <p className="text-xs sm:text-sm text-yellow-700 font-medium">Total Remaining</p>
-                      <p className="text-xl sm:text-2xl font-bold text-yellow-900 mt-1 break-words">
+                    <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg p-3 sm:p-4 border border-yellow-200">
+                      <p className="text-[10px] sm:text-xs lg:text-sm text-yellow-700 font-medium">Total Remaining</p>
+                      <p className="text-base sm:text-xl lg:text-2xl font-bold text-yellow-900 mt-0.5 sm:mt-1 break-words">
                         {formatCurrency(allocatedTotals.totalRemaining)}
                       </p>
                     </div>

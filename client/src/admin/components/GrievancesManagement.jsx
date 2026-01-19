@@ -197,23 +197,23 @@ export default function GrievancesManagement() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-green-50/30 pb-10">
       {/* Stats Cards */}
-      <div className="mb-6">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
+      <div className="mb-4 sm:mb-6">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-2 sm:gap-3 md:gap-4">
           {/* Total */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="group relative overflow-hidden bg-gradient-to-br from-purple-500 via-purple-600 to-purple-700 rounded-2xl p-5 text-white shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
+            className="group relative overflow-hidden bg-gradient-to-br from-purple-500 via-purple-600 to-purple-700 rounded-xl sm:rounded-2xl p-3 sm:p-5 text-white shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
             <div className="relative z-10">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-3xl">📊</span>
-                <span className="text-4xl font-bold">{stats.total}</span>
+              <div className="flex items-center justify-between mb-2 sm:mb-3">
+                <span className="text-xl sm:text-3xl">📊</span>
+                <span className="text-2xl sm:text-4xl font-bold">{stats.total}</span>
               </div>
-              <p className="text-white/90 text-sm font-semibold">Total</p>
-              <p className="text-white/60 text-xs mt-1">All submissions</p>
+              <p className="text-white/90 text-xs sm:text-sm font-semibold">Total</p>
+              <p className="text-white/60 text-[10px] sm:text-xs mt-0.5 sm:mt-1">All submissions</p>
             </div>
           </motion.div>
 
@@ -222,19 +222,19 @@ export default function GrievancesManagement() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="group relative overflow-hidden bg-gradient-to-br from-orange-500 via-orange-600 to-red-600 rounded-2xl p-5 text-white shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
+            className="group relative overflow-hidden bg-gradient-to-br from-orange-500 via-orange-600 to-red-600 rounded-xl sm:rounded-2xl p-3 sm:p-5 text-white shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
             <div className="relative z-10">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-3xl">🔴</span>
+              <div className="flex items-center justify-between mb-2 sm:mb-3">
+                <span className="text-xl sm:text-3xl">🔴</span>
                 <div className="text-right">
-                  <p className="text-4xl font-bold">{stats.open}</p>
-                  <p className="text-xs text-white/80">{stats.openPercent}%</p>
+                  <p className="text-2xl sm:text-4xl font-bold">{stats.open}</p>
+                  <p className="text-[10px] sm:text-xs text-white/80">{stats.openPercent}%</p>
                 </div>
               </div>
-              <p className="text-white/90 text-sm font-semibold">Open</p>
-              <div className="w-full bg-white/20 rounded-full h-1.5 mt-2 overflow-hidden">
+              <p className="text-white/90 text-xs sm:text-sm font-semibold">Open</p>
+              <div className="w-full bg-white/20 rounded-full h-1 sm:h-1.5 mt-1 sm:mt-2 overflow-hidden">
                 <div className="bg-white h-full rounded-full transition-all duration-1000 ease-out" style={{ width: `${stats.openPercent}%` }}></div>
               </div>
             </div>
@@ -245,19 +245,19 @@ export default function GrievancesManagement() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="group relative overflow-hidden bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 rounded-2xl p-5 text-white shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
+            className="group relative overflow-hidden bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 rounded-xl sm:rounded-2xl p-3 sm:p-5 text-white shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
             <div className="relative z-10">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-3xl">⚙️</span>
+              <div className="flex items-center justify-between mb-2 sm:mb-3">
+                <span className="text-xl sm:text-3xl">⚙️</span>
                 <div className="text-right">
-                  <p className="text-4xl font-bold">{stats.inProgress}</p>
-                  <p className="text-xs text-white/80">{stats.inProgressPercent}%</p>
+                  <p className="text-2xl sm:text-4xl font-bold">{stats.inProgress}</p>
+                  <p className="text-[10px] sm:text-xs text-white/80">{stats.inProgressPercent}%</p>
                 </div>
               </div>
-              <p className="text-white/90 text-sm font-semibold">In Progress</p>
-              <div className="w-full bg-white/20 rounded-full h-1.5 mt-2 overflow-hidden">
+              <p className="text-white/90 text-xs sm:text-sm font-semibold">In Progress</p>
+              <div className="w-full bg-white/20 rounded-full h-1 sm:h-1.5 mt-1 sm:mt-2 overflow-hidden">
                 <div className="bg-white h-full rounded-full transition-all duration-1000 ease-out" style={{ width: `${stats.inProgressPercent}%` }}></div>
               </div>
             </div>
@@ -268,19 +268,19 @@ export default function GrievancesManagement() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="group relative overflow-hidden bg-gradient-to-br from-green-500 via-green-600 to-emerald-600 rounded-2xl p-5 text-white shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
+            className="group relative overflow-hidden bg-gradient-to-br from-green-500 via-green-600 to-emerald-600 rounded-xl sm:rounded-2xl p-3 sm:p-5 text-white shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
             <div className="relative z-10">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-3xl">✅</span>
+              <div className="flex items-center justify-between mb-2 sm:mb-3">
+                <span className="text-xl sm:text-3xl">✅</span>
                 <div className="text-right">
-                  <p className="text-4xl font-bold">{stats.resolved}</p>
-                  <p className="text-xs text-white/80">{stats.resolvedPercent}%</p>
+                  <p className="text-2xl sm:text-4xl font-bold">{stats.resolved}</p>
+                  <p className="text-[10px] sm:text-xs text-white/80">{stats.resolvedPercent}%</p>
                 </div>
               </div>
-              <p className="text-white/90 text-sm font-semibold">Resolved</p>
-              <div className="w-full bg-white/20 rounded-full h-1.5 mt-2 overflow-hidden">
+              <p className="text-white/90 text-xs sm:text-sm font-semibold">Resolved</p>
+              <div className="w-full bg-white/20 rounded-full h-1 sm:h-1.5 mt-1 sm:mt-2 overflow-hidden">
                 <div className="bg-white h-full rounded-full transition-all duration-1000 ease-out" style={{ width: `${stats.resolvedPercent}%` }}></div>
               </div>
             </div>
@@ -291,19 +291,19 @@ export default function GrievancesManagement() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="group relative overflow-hidden bg-gradient-to-br from-amber-500 via-amber-600 to-orange-600 rounded-2xl p-5 text-white shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
+            className="group relative overflow-hidden bg-gradient-to-br from-amber-500 via-amber-600 to-orange-600 rounded-xl sm:rounded-2xl p-3 sm:p-5 text-white shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
             <div className="relative z-10">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-3xl">⏳</span>
+              <div className="flex items-center justify-between mb-2 sm:mb-3">
+                <span className="text-xl sm:text-3xl">⏳</span>
                 <div className="text-right">
-                  <p className="text-4xl font-bold">{stats.pending}</p>
-                  <p className="text-xs text-white/80">{stats.pendingPercent}%</p>
+                  <p className="text-2xl sm:text-4xl font-bold">{stats.pending}</p>
+                  <p className="text-[10px] sm:text-xs text-white/80">{stats.pendingPercent}%</p>
                 </div>
               </div>
-              <p className="text-white/90 text-sm font-semibold">Pending</p>
-              <div className="w-full bg-white/20 rounded-full h-1.5 mt-2 overflow-hidden">
+              <p className="text-white/90 text-xs sm:text-sm font-semibold">Pending</p>
+              <div className="w-full bg-white/20 rounded-full h-1 sm:h-1.5 mt-1 sm:mt-2 overflow-hidden">
                 <div className="bg-white h-full rounded-full transition-all duration-1000 ease-out" style={{ width: `${stats.pendingPercent}%` }}></div>
               </div>
             </div>

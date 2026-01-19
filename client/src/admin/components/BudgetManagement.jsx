@@ -380,58 +380,58 @@ export default function BudgetManagement() {
       ) : (
         <>
           {/* Budget Overview Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 lg:gap-6">
             {/* Total Allocated */}
-            <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl shadow-lg p-4 sm:p-6">
-              <div className="flex items-center justify-between mb-3 sm:mb-4">
-                <span className="text-3xl sm:text-4xl">💼</span>
+            <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-lg sm:rounded-xl shadow-lg p-3 sm:p-4 lg:p-6">
+              <div className="flex items-center justify-between mb-2 sm:mb-3 lg:mb-4">
+                <span className="text-2xl sm:text-3xl lg:text-4xl">💼</span>
                 <div className="text-right">
-                  <p className="text-blue-100 text-xs sm:text-sm">Total Allocated</p>
-                  <p className="text-2xl sm:text-3xl font-bold mt-1 break-words">{formatCurrency(stats?.totalAllocated || 0)}</p>
+                  <p className="text-blue-100 text-[10px] sm:text-xs lg:text-sm">Total Allocated</p>
+                  <p className="text-lg sm:text-2xl lg:text-3xl font-bold mt-0.5 sm:mt-1 break-words">{formatCurrency(stats?.totalAllocated || 0)}</p>
                 </div>
               </div>
             </div>
 
             {/* Total Spent */}
-            <div className="bg-gradient-to-br from-red-500 to-red-600 text-white rounded-xl shadow-lg p-4 sm:p-6">
-              <div className="flex items-center justify-between mb-3 sm:mb-4">
-                <span className="text-3xl sm:text-4xl">💸</span>
+            <div className="bg-gradient-to-br from-red-500 to-red-600 text-white rounded-lg sm:rounded-xl shadow-lg p-3 sm:p-4 lg:p-6">
+              <div className="flex items-center justify-between mb-2 sm:mb-3 lg:mb-4">
+                <span className="text-2xl sm:text-3xl lg:text-4xl">💸</span>
                 <div className="text-right">
-                  <p className="text-red-100 text-xs sm:text-sm">Total Spent</p>
-                  <p className="text-2xl sm:text-3xl font-bold mt-1 break-words">{formatCurrency(stats?.totalSpent || 0)}</p>
+                  <p className="text-red-100 text-[10px] sm:text-xs lg:text-sm">Total Spent</p>
+                  <p className="text-lg sm:text-2xl lg:text-3xl font-bold mt-0.5 sm:mt-1 break-words">{formatCurrency(stats?.totalSpent || 0)}</p>
                 </div>
               </div>
-              <div className="mt-2">
-                <div className="bg-white/20 rounded-full h-2">
+              <div className="mt-1.5 sm:mt-2">
+                <div className="bg-white/20 rounded-full h-1.5 sm:h-2">
                   <div
-                    className="bg-white rounded-full h-2 transition-all"
+                    className="bg-white rounded-full h-1.5 sm:h-2 transition-all"
                     style={{ width: `${getPercentage(stats?.totalSpent, stats?.totalAllocated)}%` }}
                   />
                 </div>
-                <p className="text-xs mt-1 text-red-100">
+                <p className="text-[10px] sm:text-xs mt-0.5 sm:mt-1 text-red-100">
                   {getPercentage(stats?.totalSpent, stats?.totalAllocated)}% utilized
                 </p>
               </div>
             </div>
 
             {/* Remaining Budget */}
-            <div className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-xl shadow-lg p-4 sm:p-6">
-              <div className="flex items-center justify-between mb-3 sm:mb-4">
-                <span className="text-3xl sm:text-4xl">💚</span>
+            <div className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-lg sm:rounded-xl shadow-lg p-3 sm:p-4 lg:p-6">
+              <div className="flex items-center justify-between mb-2 sm:mb-3 lg:mb-4">
+                <span className="text-2xl sm:text-3xl lg:text-4xl">💚</span>
                 <div className="text-right">
-                  <p className="text-green-100 text-xs sm:text-sm">Remaining</p>
-                  <p className="text-2xl sm:text-3xl font-bold mt-1 break-words">{formatCurrency(stats?.remainingBudget || 0)}</p>
+                  <p className="text-green-100 text-[10px] sm:text-xs lg:text-sm">Remaining</p>
+                  <p className="text-lg sm:text-2xl lg:text-3xl font-bold mt-0.5 sm:mt-1 break-words">{formatCurrency(stats?.remainingBudget || 0)}</p>
                 </div>
               </div>
             </div>
 
             {/* Available (Operational) */}
-            <div className="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-xl shadow-lg p-4 sm:p-6">
-              <div className="flex items-center justify-between mb-3 sm:mb-4">
-                <span className="text-3xl sm:text-4xl">✨</span>
+            <div className="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-lg sm:rounded-xl shadow-lg p-3 sm:p-4 lg:p-6">
+              <div className="flex items-center justify-between mb-2 sm:mb-3 lg:mb-4">
+                <span className="text-2xl sm:text-3xl lg:text-4xl">✨</span>
                 <div className="text-right">
-                  <p className="text-purple-100 text-xs sm:text-sm">Available Now</p>
-                  <p className="text-2xl sm:text-3xl font-bold mt-1 break-words">{formatCurrency(stats?.operational?.available || 0)}</p>
+                  <p className="text-purple-100 text-[10px] sm:text-xs lg:text-sm">Available Now</p>
+                  <p className="text-lg sm:text-2xl lg:text-3xl font-bold mt-0.5 sm:mt-1 break-words">{formatCurrency(stats?.operational?.available || 0)}</p>
                 </div>
               </div>
             </div>

@@ -243,72 +243,72 @@ export default function TransparencyPage() {
       </div>
 
       {/* Stats Grid */}
-      <div className="max-w-7xl mx-auto px-6 md:px-12 py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 py-8 sm:py-12">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
           {/* Total Budget Used */}
           <Reveal delay={0.02}>
-          <div className="bg-gradient-to-br from-white to-green-50 p-6 rounded-2xl shadow-2xl border-2 border-green-200 hover:shadow-green-400 hover:border-green-400 hover:scale-110 hover:-rotate-1 transition-all duration-300 transform group">
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-xs font-bold text-slate-600 uppercase tracking-wide">Total Budget Used</p>
-              <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-500 rounded-xl flex items-center justify-center group-hover:scale-125 group-hover:rotate-12 transition-transform shadow-xl">
-                <span className="text-xl">💰</span>
+          <div className="bg-gradient-to-br from-white to-green-50 p-3 sm:p-6 rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl border-2 border-green-200 hover:shadow-green-400 hover:border-green-400 hover:scale-105 sm:hover:scale-110 hover:-rotate-1 transition-all duration-300 transform group">
+            <div className="flex items-center justify-between mb-2 sm:mb-4">
+              <p className="text-[10px] sm:text-xs font-bold text-slate-600 uppercase tracking-wide">Total Budget Used</p>
+              <div className="w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-br from-green-400 to-emerald-500 rounded-lg sm:rounded-xl flex items-center justify-center group-hover:scale-125 group-hover:rotate-12 transition-transform shadow-lg sm:shadow-xl">
+                <span className="text-sm sm:text-xl">💰</span>
               </div>
             </div>
-            <p className="text-4xl font-extrabold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-2 drop-shadow-lg">₹{(Number(totals.totalBudgetUsed || 0) / 100000).toFixed(1)}L</p>
+            <p className="text-2xl sm:text-4xl font-extrabold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-1 sm:mb-2 drop-shadow-lg">₹{(Number(totals.totalBudgetUsed || 0) / 100000).toFixed(1)}L</p>
             <div className="flex items-center gap-1">
-              <span className="text-green-600 animate-bounce">📈</span>
-              <p className="text-xs text-green-600 font-semibold">↑ 12% from last month</p>
+              <span className="text-green-600 animate-bounce text-xs sm:text-base">📈</span>
+              <p className="text-[10px] sm:text-xs text-green-600 font-semibold">↑ 12% from last month</p>
             </div>
           </div>
           </Reveal>
 
           {/* Avg Resolution */}
           <Reveal delay={0.06}>
-          <div className="bg-gradient-to-br from-white to-blue-50 p-6 rounded-2xl shadow-2xl border-2 border-blue-200 hover:shadow-blue-400 hover:border-blue-400 hover:scale-110 hover:rotate-1 transition-all duration-300 transform group">
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-xs font-bold text-slate-600 uppercase tracking-wide">Avg Resolution</p>
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-xl flex items-center justify-center group-hover:scale-125 group-hover:rotate-12 transition-transform shadow-xl">
-                <span className="text-xl">⏱️</span>
+          <div className="bg-gradient-to-br from-white to-blue-50 p-3 sm:p-6 rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl border-2 border-blue-200 hover:shadow-blue-400 hover:border-blue-400 hover:scale-105 sm:hover:scale-110 hover:rotate-1 transition-all duration-300 transform group">
+            <div className="flex items-center justify-between mb-2 sm:mb-4">
+              <p className="text-[10px] sm:text-xs font-bold text-slate-600 uppercase tracking-wide">Avg Resolution</p>
+              <div className="w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-lg sm:rounded-xl flex items-center justify-center group-hover:scale-125 group-hover:rotate-12 transition-transform shadow-lg sm:shadow-xl">
+                <span className="text-sm sm:text-xl">⏱️</span>
               </div>
             </div>
-            <p className="text-4xl font-extrabold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent mb-2 drop-shadow-lg">{Number(totals.avgResolutionDays || 0).toFixed(1)} Days</p>
+            <p className="text-2xl sm:text-4xl font-extrabold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent mb-1 sm:mb-2 drop-shadow-lg">{Number(totals.avgResolutionDays || 0).toFixed(1)} Days</p>
             <div className="flex items-center gap-1">
-              <span className="text-green-600 animate-bounce">✅</span>
-              <p className="text-xs text-green-600 font-semibold">↓ 0.8 days faster</p>
+              <span className="text-green-600 animate-bounce text-xs sm:text-base">✅</span>
+              <p className="text-[10px] sm:text-xs text-green-600 font-semibold">↓ 0.8 days faster</p>
             </div>
           </div>
           </Reveal>
 
           {/* Active Officers */}
           <Reveal delay={0.1}>
-          <div className="bg-gradient-to-br from-white to-orange-50 p-6 rounded-2xl shadow-2xl border-2 border-orange-200 hover:shadow-orange-400 hover:border-orange-400 hover:scale-110 hover:-rotate-1 transition-all duration-300 transform group">
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-xs font-bold text-slate-600 uppercase tracking-wide">Active Officers</p>
-              <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-amber-500 rounded-xl flex items-center justify-center group-hover:scale-125 group-hover:rotate-12 transition-transform shadow-xl">
-                <span className="text-xl">👨‍💼</span>
+          <div className="bg-gradient-to-br from-white to-orange-50 p-3 sm:p-6 rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl border-2 border-orange-200 hover:shadow-orange-400 hover:border-orange-400 hover:scale-105 sm:hover:scale-110 hover:-rotate-1 transition-all duration-300 transform group">
+            <div className="flex items-center justify-between mb-2 sm:mb-4">
+              <p className="text-[10px] sm:text-xs font-bold text-slate-600 uppercase tracking-wide">Active Officers</p>
+              <div className="w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-br from-orange-400 to-amber-500 rounded-lg sm:rounded-xl flex items-center justify-center group-hover:scale-125 group-hover:rotate-12 transition-transform shadow-lg sm:shadow-xl">
+                <span className="text-sm sm:text-xl">👨‍💼</span>
               </div>
             </div>
-            <p className="text-4xl font-extrabold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent mb-2 drop-shadow-lg">{totals.activeOfficersCount || 0}</p>
+            <p className="text-2xl sm:text-4xl font-extrabold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent mb-1 sm:mb-2 drop-shadow-lg">{totals.activeOfficersCount || 0}</p>
             <div className="flex items-center gap-1">
-              <span className="text-slate-600">📍</span>
-              <p className="text-xs text-slate-600 font-semibold">Across 12 wards</p>
+              <span className="text-slate-600 text-xs sm:text-base">📍</span>
+              <p className="text-[10px] sm:text-xs text-slate-600 font-semibold">Across 12 wards</p>
             </div>
           </div>
           </Reveal>
 
           {/* Satisfaction */}
           <Reveal delay={0.14}>
-          <div className="bg-gradient-to-br from-white to-purple-50 p-6 rounded-2xl shadow-2xl border-2 border-purple-200 hover:shadow-purple-400 hover:border-purple-400 hover:scale-110 hover:rotate-1 transition-all duration-300 transform group">
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-xs font-bold text-slate-600 uppercase tracking-wide">Satisfaction</p>
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-500 rounded-xl flex items-center justify-center group-hover:scale-125 group-hover:rotate-12 transition-transform shadow-xl">
-                <span className="text-xl">⭐</span>
+          <div className="bg-gradient-to-br from-white to-purple-50 p-3 sm:p-6 rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl border-2 border-purple-200 hover:shadow-purple-400 hover:border-purple-400 hover:scale-105 sm:hover:scale-110 hover:rotate-1 transition-all duration-300 transform group">
+            <div className="flex items-center justify-between mb-2 sm:mb-4">
+              <p className="text-[10px] sm:text-xs font-bold text-slate-600 uppercase tracking-wide">Satisfaction</p>
+              <div className="w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-400 to-pink-500 rounded-lg sm:rounded-xl flex items-center justify-center group-hover:scale-125 group-hover:rotate-12 transition-transform shadow-lg sm:shadow-xl">
+                <span className="text-sm sm:text-xl">⭐</span>
               </div>
             </div>
-            <p className="text-4xl font-extrabold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2 drop-shadow-lg">{(satisfaction.avg || 0) > 0 ? `${satisfaction.avg}/5` : '0/5'}</p>
+            <p className="text-2xl sm:text-4xl font-extrabold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-1 sm:mb-2 drop-shadow-lg">{(satisfaction.avg || 0) > 0 ? `${satisfaction.avg}/5` : '0/5'}</p>
             <div className="flex items-center gap-1">
-              <span className="text-purple-600 animate-pulse">📊</span>
-              <p className="text-xs text-purple-600 font-semibold">+0.3 from last quarter</p>
+              <span className="text-purple-600 animate-pulse text-xs sm:text-base">📊</span>
+              <p className="text-[10px] sm:text-xs text-purple-600 font-semibold">+0.3 from last quarter</p>
             </div>
           </div>
           </Reveal>
@@ -551,64 +551,64 @@ export default function TransparencyPage() {
           </Reveal>
 
           {/* Budget Overview Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6 mb-8 sm:mb-12">
             <Reveal delay={0.02}>
-              <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl shadow-2xl p-6 hover:scale-105 transition-all">
-                <div className="flex items-center justify-between mb-4">
-                  <p className="text-sm font-bold uppercase tracking-wide opacity-90">Total Allocated</p>
-                  <span className="text-4xl">💼</span>
+              <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl p-3 sm:p-6 hover:scale-105 transition-all">
+                <div className="flex items-center justify-between mb-2 sm:mb-4">
+                  <p className="text-[10px] sm:text-sm font-bold uppercase tracking-wide opacity-90">Total Allocated</p>
+                  <span className="text-xl sm:text-4xl">💼</span>
                 </div>
-                <p className="text-4xl font-extrabold mb-2">
+                <p className="text-xl sm:text-4xl font-extrabold mb-1 sm:mb-2">
                   ₹{((systemBudget.totalAllocated || 0) / 10000000).toFixed(2)}Cr
                 </p>
-                <p className="text-sm opacity-90">Fiscal Year {systemBudget.fiscalYear}</p>
+                <p className="text-[10px] sm:text-sm opacity-90">Fiscal Year {systemBudget.fiscalYear}</p>
               </div>
             </Reveal>
 
             <Reveal delay={0.04}>
-              <div className="bg-gradient-to-br from-red-500 to-red-600 text-white rounded-2xl shadow-2xl p-6 hover:scale-105 transition-all">
-                <div className="flex items-center justify-between mb-4">
-                  <p className="text-sm font-bold uppercase tracking-wide opacity-90">Total Spent</p>
-                  <span className="text-4xl">💸</span>
+              <div className="bg-gradient-to-br from-red-500 to-red-600 text-white rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl p-3 sm:p-6 hover:scale-105 transition-all">
+                <div className="flex items-center justify-between mb-2 sm:mb-4">
+                  <p className="text-[10px] sm:text-sm font-bold uppercase tracking-wide opacity-90">Total Spent</p>
+                  <span className="text-xl sm:text-4xl">💸</span>
                 </div>
-                <p className="text-4xl font-extrabold mb-2">
+                <p className="text-xl sm:text-4xl font-extrabold mb-1 sm:mb-2">
                   ₹{((systemBudget.totalSpent || 0) / 10000000).toFixed(2)}Cr
                 </p>
-                <div className="w-full bg-white/20 rounded-full h-2 mt-3">
+                <div className="w-full bg-white/20 rounded-full h-1.5 sm:h-2 mt-2 sm:mt-3">
                   <div
-                    className="bg-white rounded-full h-2 transition-all"
+                    className="bg-white rounded-full h-1.5 sm:h-2 transition-all"
                     style={{ width: `${systemBudget.totalAllocated > 0 ? ((systemBudget.totalSpent / systemBudget.totalAllocated) * 100).toFixed(1) : 0}%` }}
                   ></div>
                 </div>
-                <p className="text-sm opacity-90 mt-1">
+                <p className="text-[10px] sm:text-sm opacity-90 mt-1">
                   {systemBudget.totalAllocated > 0 ? ((systemBudget.totalSpent / systemBudget.totalAllocated) * 100).toFixed(1) : 0}% utilized
                 </p>
               </div>
             </Reveal>
 
             <Reveal delay={0.06}>
-              <div className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-2xl shadow-2xl p-6 hover:scale-105 transition-all">
-                <div className="flex items-center justify-between mb-4">
-                  <p className="text-sm font-bold uppercase tracking-wide opacity-90">Remaining</p>
-                  <span className="text-4xl">💵</span>
+              <div className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl p-3 sm:p-6 hover:scale-105 transition-all">
+                <div className="flex items-center justify-between mb-2 sm:mb-4">
+                  <p className="text-[10px] sm:text-sm font-bold uppercase tracking-wide opacity-90">Remaining</p>
+                  <span className="text-xl sm:text-4xl">💵</span>
                 </div>
-                <p className="text-4xl font-extrabold mb-2">
+                <p className="text-xl sm:text-4xl font-extrabold mb-1 sm:mb-2">
                   ₹{((systemBudget.remainingBudget || 0) / 10000000).toFixed(2)}Cr
                 </p>
-                <p className="text-sm opacity-90">Available for allocation</p>
+                <p className="text-[10px] sm:text-sm opacity-90">Available for allocation</p>
               </div>
             </Reveal>
 
             <Reveal delay={0.08}>
-              <div className="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-2xl shadow-2xl p-6 hover:scale-105 transition-all">
-                <div className="flex items-center justify-between mb-4">
-                  <p className="text-sm font-bold uppercase tracking-wide opacity-90">Available</p>
-                  <span className="text-4xl">✅</span>
+              <div className="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl p-3 sm:p-6 hover:scale-105 transition-all">
+                <div className="flex items-center justify-between mb-2 sm:mb-4">
+                  <p className="text-[10px] sm:text-sm font-bold uppercase tracking-wide opacity-90">Available</p>
+                  <span className="text-xl sm:text-4xl">✅</span>
                 </div>
-                <p className="text-4xl font-extrabold mb-2">
+                <p className="text-xl sm:text-4xl font-extrabold mb-1 sm:mb-2">
                   ₹{((systemBudget.operational?.remaining || 0) / 10000000).toFixed(2)}Cr
                 </p>
-                <p className="text-sm opacity-90">Operational funds ready</p>
+                <p className="text-[10px] sm:text-sm opacity-90">Operational funds ready</p>
               </div>
             </Reveal>
           </div>
@@ -830,54 +830,54 @@ export default function TransparencyPage() {
             </div>
           </Reveal>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
             {/* SLA Compliance */}
             <Reveal delay={0.02}>
-            <div className="bg-gradient-to-br from-green-100 to-emerald-100 p-6 rounded-2xl border-2 border-green-300 text-center hover:shadow-2xl hover:shadow-green-400 hover:scale-110 hover:-rotate-2 transition-all duration-300 transform">
-              <div className="w-16 h-16 bg-gradient-to-br from-green-600 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl shadow-xl hover:scale-110 transition-transform">
+            <div className="bg-gradient-to-br from-green-100 to-emerald-100 p-3 sm:p-6 rounded-xl sm:rounded-2xl border-2 border-green-300 text-center hover:shadow-2xl hover:shadow-green-400 hover:scale-105 sm:hover:scale-110 hover:-rotate-2 transition-all duration-300 transform">
+              <div className="w-10 h-10 sm:w-16 sm:h-16 bg-gradient-to-br from-green-600 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-4 text-base sm:text-2xl shadow-lg sm:shadow-xl hover:scale-110 transition-transform">
                 📋
               </div>
-              <p className="text-4xl font-extrabold bg-gradient-to-r from-green-700 to-emerald-700 bg-clip-text text-transparent mb-2 drop-shadow-lg">{performance.slaComplianceRate ?? 0}%</p>
-              <p className="font-bold text-slate-900 mb-1">SLA Compliance</p>
-              <p className="text-sm text-slate-700 font-semibold">Resolved within 7 days</p>
+              <p className="text-2xl sm:text-4xl font-extrabold bg-gradient-to-r from-green-700 to-emerald-700 bg-clip-text text-transparent mb-1 sm:mb-2 drop-shadow-lg">{performance.slaComplianceRate ?? 0}%</p>
+              <p className="font-bold text-slate-900 mb-0.5 sm:mb-1 text-xs sm:text-base">SLA Compliance</p>
+              <p className="text-[10px] sm:text-sm text-slate-700 font-semibold">Resolved within 7 days</p>
             </div>
             </Reveal>
 
             {/* First Response */}
             <Reveal delay={0.06}>
-            <div className="bg-gradient-to-br from-blue-100 to-cyan-100 p-6 rounded-2xl border-2 border-blue-300 text-center hover:shadow-2xl hover:shadow-blue-400 hover:scale-110 hover:rotate-2 transition-all duration-300 transform">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl shadow-xl hover:scale-110 transition-transform">
+            <div className="bg-gradient-to-br from-blue-100 to-cyan-100 p-3 sm:p-6 rounded-xl sm:rounded-2xl border-2 border-blue-300 text-center hover:shadow-2xl hover:shadow-blue-400 hover:scale-105 sm:hover:scale-110 hover:rotate-2 transition-all duration-300 transform">
+              <div className="w-10 h-10 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-4 text-base sm:text-2xl shadow-lg sm:shadow-xl hover:scale-110 transition-transform">
                 ⏱️
               </div>
-              <p className="text-4xl font-extrabold bg-gradient-to-r from-blue-700 to-cyan-700 bg-clip-text text-transparent mb-2 drop-shadow-lg">{performance.firstResponseHoursAvg ?? 0}h</p>
-              <p className="font-bold text-slate-900 mb-1">First Response</p>
-              <p className="text-sm text-slate-700 font-semibold">Avg time to assignment</p>
+              <p className="text-2xl sm:text-4xl font-extrabold bg-gradient-to-r from-blue-700 to-cyan-700 bg-clip-text text-transparent mb-1 sm:mb-2 drop-shadow-lg">{performance.firstResponseHoursAvg ?? 0}h</p>
+              <p className="font-bold text-slate-900 mb-0.5 sm:mb-1 text-xs sm:text-base">First Response</p>
+              <p className="text-[10px] sm:text-sm text-slate-700 font-semibold">Avg time to assignment</p>
             </div>
             </Reveal>
 
             {/* Repeat Issues */}
             <Reveal delay={0.1}>
-            <div className="bg-gradient-to-br from-orange-100 to-amber-100 p-6 rounded-2xl border-2 border-orange-300 text-center hover:shadow-2xl hover:shadow-orange-400 hover:scale-110 hover:-rotate-2 transition-all duration-300 transform">
-              <div className="w-16 h-16 bg-gradient-to-br from-orange-600 to-amber-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl shadow-xl hover:scale-110 transition-transform">
+            <div className="bg-gradient-to-br from-orange-100 to-amber-100 p-3 sm:p-6 rounded-xl sm:rounded-2xl border-2 border-orange-300 text-center hover:shadow-2xl hover:shadow-orange-400 hover:scale-105 sm:hover:scale-110 hover:-rotate-2 transition-all duration-300 transform">
+              <div className="w-10 h-10 sm:w-16 sm:h-16 bg-gradient-to-br from-orange-600 to-amber-600 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-4 text-base sm:text-2xl shadow-lg sm:shadow-xl hover:scale-110 transition-transform">
                 🔄
               </div>
-              <p className="text-4xl font-extrabold bg-gradient-to-r from-orange-700 to-amber-700 bg-clip-text text-transparent mb-2 drop-shadow-lg">{performance.repeatIssuesCount ?? 0}</p>
-              <p className="font-bold text-slate-900 mb-1">Repeat Issues</p>
-              <p className="text-sm text-slate-700 font-semibold">Re-opened complaints</p>
+              <p className="text-2xl sm:text-4xl font-extrabold bg-gradient-to-r from-orange-700 to-amber-700 bg-clip-text text-transparent mb-1 sm:mb-2 drop-shadow-lg">{performance.repeatIssuesCount ?? 0}</p>
+              <p className="font-bold text-slate-900 mb-0.5 sm:mb-1 text-xs sm:text-base">Repeat Issues</p>
+              <p className="text-[10px] sm:text-sm text-slate-700 font-semibold">Re-opened complaints</p>
             </div>
             </Reveal>
 
             {/* Citizen Rating */}
             <Reveal delay={0.14}>
-            <div className="bg-gradient-to-br from-purple-100 to-pink-100 p-6 rounded-2xl border-2 border-purple-300 text-center hover:shadow-2xl hover:shadow-purple-400 hover:scale-110 hover:rotate-2 transition-all duration-300 transform">
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl shadow-xl hover:scale-110 transition-transform">
+            <div className="bg-gradient-to-br from-purple-100 to-pink-100 p-3 sm:p-6 rounded-xl sm:rounded-2xl border-2 border-purple-300 text-center hover:shadow-2xl hover:shadow-purple-400 hover:scale-105 sm:hover:scale-110 hover:rotate-2 transition-all duration-300 transform">
+              <div className="w-10 h-10 sm:w-16 sm:h-16 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-4 text-base sm:text-2xl shadow-lg sm:shadow-xl hover:scale-110 transition-transform">
                 ⭐
               </div>
-              <p className="text-4xl font-extrabold bg-gradient-to-r from-purple-700 to-pink-700 bg-clip-text text-transparent mb-2 drop-shadow-lg">
+              <p className="text-2xl sm:text-4xl font-extrabold bg-gradient-to-r from-purple-700 to-pink-700 bg-clip-text text-transparent mb-1 sm:mb-2 drop-shadow-lg">
                 {(satisfaction.avg || 0) > 0 ? `${satisfaction.avg}/5` : '0/5'}
               </p>
-              <p className="font-bold text-slate-900 mb-1">Citizen Rating</p>
-              <p className="text-sm text-slate-700 font-semibold">Based on {satisfaction.count || 0} feedbacks</p>
+              <p className="font-bold text-slate-900 mb-0.5 sm:mb-1 text-xs sm:text-base">Citizen Rating</p>
+              <p className="text-[10px] sm:text-sm text-slate-700 font-semibold">Based on {satisfaction.count || 0} feedbacks</p>
             </div>
             </Reveal>
           </div>

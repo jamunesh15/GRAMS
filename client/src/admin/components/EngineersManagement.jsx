@@ -371,19 +371,19 @@ const EngineersManagement = () => {
       ) : (
         <>
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 mb-4 sm:mb-6">
             <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-5 text-white shadow-md"
+          className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg sm:rounded-xl p-3 sm:p-5 text-white shadow-md"
         >
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-blue-100 text-sm font-medium">Total Engineers</p>
-              <h3 className="text-4xl font-bold mt-2">{stats.totalEngineers}</h3>
+              <p className="text-blue-100 text-[10px] sm:text-sm font-medium">Total Engineers</p>
+              <h3 className="text-2xl sm:text-4xl font-bold mt-1 sm:mt-2">{stats.totalEngineers}</h3>
             </div>
-            <div className="w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center">
-              <span className="text-4xl">👷</span>
+            <div className="w-10 h-10 sm:w-16 sm:h-16 bg-white/20 rounded-lg flex items-center justify-center">
+              <span className="text-2xl sm:text-4xl">👷</span>
             </div>
           </div>
         </motion.div>
@@ -392,15 +392,15 @@ const EngineersManagement = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-gradient-to-br from-green-500 to-emerald-300 rounded-xl p-5 text-white shadow-md"
+          className="bg-gradient-to-br from-green-500 to-emerald-300 rounded-lg sm:rounded-xl p-3 sm:p-5 text-white shadow-md"
         >
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-green-100 text-sm font-medium">Active Engineers</p>
-              <h3 className="text-4xl font-bold mt-2">{stats.activeEngineers}</h3>
+              <p className="text-green-100 text-[10px] sm:text-sm font-medium">Active Engineers</p>
+              <h3 className="text-2xl sm:text-4xl font-bold mt-1 sm:mt-2">{stats.activeEngineers}</h3>
             </div>
-            <div className="w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center">
-              <span className="text-4xl">✅</span>
+            <div className="w-10 h-10 sm:w-16 sm:h-16 bg-white/20 rounded-lg flex items-center justify-center">
+              <span className="text-2xl sm:text-4xl">✅</span>
             </div>
           </div>
         </motion.div>
@@ -409,15 +409,15 @@ const EngineersManagement = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-gradient-to-br from-orange-500 to-red-600 rounded-xl p-5 text-white shadow-md"
+          className="bg-gradient-to-br from-orange-500 to-red-600 rounded-lg sm:rounded-xl p-3 sm:p-5 text-white shadow-md"
         >
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-orange-100 text-sm font-medium">Active Tasks</p>
-              <h3 className="text-4xl font-bold mt-2">{stats.totalTasksAssigned}</h3>
+              <p className="text-orange-100 text-[10px] sm:text-sm font-medium">Active Tasks</p>
+              <h3 className="text-2xl sm:text-4xl font-bold mt-1 sm:mt-2">{stats.totalTasksAssigned}</h3>
             </div>
-            <div className="w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center">
-              <span className="text-4xl">📋</span>
+            <div className="w-10 h-10 sm:w-16 sm:h-16 bg-white/20 rounded-lg flex items-center justify-center">
+              <span className="text-2xl sm:text-4xl">📋</span>
             </div>
           </div>
         </motion.div>
@@ -426,15 +426,15 @@ const EngineersManagement = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl p-5 text-white shadow-md"
+          className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg sm:rounded-xl p-3 sm:p-5 text-white shadow-md"
         >
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-purple-100 text-sm font-medium">Completed Tasks</p>
-              <h3 className="text-4xl font-bold mt-2">{stats.totalTasksCompleted}</h3>
+              <p className="text-purple-100 text-[10px] sm:text-sm font-medium">Completed Tasks</p>
+              <h3 className="text-2xl sm:text-4xl font-bold mt-1 sm:mt-2">{stats.totalTasksCompleted}</h3>
             </div>
-            <div className="w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center">
-              <span className="text-4xl">🎯</span>
+            <div className="w-10 h-10 sm:w-16 sm:h-16 bg-white/20 rounded-lg flex items-center justify-center">
+              <span className="text-2xl sm:text-4xl">🎯</span>
             </div>
           </div>
         </motion.div>

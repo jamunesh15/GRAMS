@@ -135,22 +135,22 @@ const Analytics = () => {
           className="space-y-6"
         >
           {/* Summary Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-            <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 sm:p-6 text-white shadow-lg">
-              <div className="text-xs sm:text-sm opacity-90 mb-1">Average Resolution Time</div>
-              <div className="text-2xl sm:text-3xl font-bold">{resolutionData.overall.average} days</div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4">
+            <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-6 text-white shadow-lg">
+              <div className="text-[10px] sm:text-xs lg:text-sm opacity-90 mb-0.5 sm:mb-1">Average Resolution Time</div>
+              <div className="text-xl sm:text-2xl lg:text-3xl font-bold">{resolutionData.overall.average} days</div>
             </div>
-            <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-4 sm:p-6 text-white shadow-lg">
-              <div className="text-xs sm:text-sm opacity-90 mb-1">Minimum Time</div>
-              <div className="text-2xl sm:text-3xl font-bold">{resolutionData.overall.minimum} days</div>
+            <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-6 text-white shadow-lg">
+              <div className="text-[10px] sm:text-xs lg:text-sm opacity-90 mb-0.5 sm:mb-1">Minimum Time</div>
+              <div className="text-xl sm:text-2xl lg:text-3xl font-bold">{resolutionData.overall.minimum} days</div>
             </div>
-            <div className="bg-gradient-to-br from-orange-500 to-red-500 rounded-xl p-4 sm:p-6 text-white shadow-lg">
-              <div className="text-xs sm:text-sm opacity-90 mb-1">Maximum Time</div>
-              <div className="text-2xl sm:text-3xl font-bold">{resolutionData.overall.maximum} days</div>
+            <div className="bg-gradient-to-br from-orange-500 to-red-500 rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-6 text-white shadow-lg">
+              <div className="text-[10px] sm:text-xs lg:text-sm opacity-90 mb-0.5 sm:mb-1">Maximum Time</div>
+              <div className="text-xl sm:text-2xl lg:text-3xl font-bold">{resolutionData.overall.maximum} days</div>
             </div>
-            <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-4 sm:p-6 text-white shadow-lg">
-              <div className="text-xs sm:text-sm opacity-90 mb-1">Total Resolved</div>
-              <div className="text-2xl sm:text-3xl font-bold">{resolutionData.overall.total}</div>
+            <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-6 text-white shadow-lg">
+              <div className="text-[10px] sm:text-xs lg:text-sm opacity-90 mb-0.5 sm:mb-1">Total Resolved</div>
+              <div className="text-xl sm:text-2xl lg:text-3xl font-bold">{resolutionData.overall.total}</div>
             </div>
           </div>
 

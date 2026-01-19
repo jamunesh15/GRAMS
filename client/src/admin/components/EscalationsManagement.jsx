@@ -192,23 +192,23 @@ export default function EscalationsManagement() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-red-50/30 to-orange-50/30 pb-10">
       {/* Stats Cards */}
-      <div className="mb-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+      <div className="mb-4 sm:mb-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
           {/* Total Escalated */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="group relative overflow-hidden bg-gradient-to-br from-red-500 via-red-600 to-rose-700 rounded-2xl p-5 text-white shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
+            className="group relative overflow-hidden bg-gradient-to-br from-red-500 via-red-600 to-rose-700 rounded-xl sm:rounded-2xl p-3 sm:p-5 text-white shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
             <div className="relative z-10">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-3xl">🚨</span>
-                <span className="text-4xl font-bold">{stats.total}</span>
+              <div className="flex items-center justify-between mb-2 sm:mb-3">
+                <span className="text-xl sm:text-3xl">🚨</span>
+                <span className="text-2xl sm:text-4xl font-bold">{stats.total}</span>
               </div>
-              <p className="text-white/90 text-sm font-semibold">Total Escalated</p>
-              <p className="text-white/60 text-xs mt-1">Urgent cases</p>
+              <p className="text-white/90 text-xs sm:text-sm font-semibold">Total Escalated</p>
+              <p className="text-white/60 text-[10px] sm:text-xs mt-0.5 sm:mt-1">Urgent cases</p>
             </div>
           </motion.div>
 
@@ -217,18 +217,18 @@ export default function EscalationsManagement() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="group relative overflow-hidden bg-gradient-to-br from-rose-500 via-pink-600 to-red-600 rounded-2xl p-5 text-white shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
+            className="group relative overflow-hidden bg-gradient-to-br from-rose-500 via-pink-600 to-red-600 rounded-xl sm:rounded-2xl p-3 sm:p-5 text-white shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
             <div className="relative z-10">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-3xl">⚠️</span>
+              <div className="flex items-center justify-between mb-2 sm:mb-3">
+                <span className="text-xl sm:text-3xl">⚠️</span>
                 <div className="text-right">
-                  <p className="text-4xl font-bold">{stats.critical}</p>
+                  <p className="text-2xl sm:text-4xl font-bold">{stats.critical}</p>
                 </div>
               </div>
-              <p className="text-white/90 text-sm font-semibold">Critical Priority</p>
-              <div className="w-full bg-white/20 rounded-full h-1.5 mt-2 overflow-hidden">
+              <p className="text-white/90 text-xs sm:text-sm font-semibold">Critical Priority</p>
+              <div className="w-full bg-white/20 rounded-full h-1 sm:h-1.5 mt-1 sm:mt-2 overflow-hidden">
                 <div className="bg-white h-full rounded-full transition-all duration-1000 ease-out" 
                      style={{ width: stats.total > 0 ? `${(stats.critical / stats.total) * 100}%` : '0%' }}></div>
               </div>
@@ -240,18 +240,18 @@ export default function EscalationsManagement() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="group relative overflow-hidden bg-gradient-to-br from-orange-500 via-orange-600 to-amber-600 rounded-2xl p-5 text-white shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
+            className="group relative overflow-hidden bg-gradient-to-br from-orange-500 via-orange-600 to-amber-600 rounded-xl sm:rounded-2xl p-3 sm:p-5 text-white shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
             <div className="relative z-10">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-3xl">🔥</span>
+              <div className="flex items-center justify-between mb-2 sm:mb-3">
+                <span className="text-xl sm:text-3xl">🔥</span>
                 <div className="text-right">
-                  <p className="text-4xl font-bold">{stats.high}</p>
+                  <p className="text-2xl sm:text-4xl font-bold">{stats.high}</p>
                 </div>
               </div>
-              <p className="text-white/90 text-sm font-semibold">High Priority</p>
-              <div className="w-full bg-white/20 rounded-full h-1.5 mt-2 overflow-hidden">
+              <p className="text-white/90 text-xs sm:text-sm font-semibold">High Priority</p>
+              <div className="w-full bg-white/20 rounded-full h-1 sm:h-1.5 mt-1 sm:mt-2 overflow-hidden">
                 <div className="bg-white h-full rounded-full transition-all duration-1000 ease-out" 
                      style={{ width: stats.total > 0 ? `${(stats.high / stats.total) * 100}%` : '0%' }}></div>
               </div>
@@ -263,18 +263,18 @@ export default function EscalationsManagement() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="group relative overflow-hidden bg-gradient-to-br from-purple-500 via-purple-600 to-indigo-600 rounded-2xl p-5 text-white shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
+            className="group relative overflow-hidden bg-gradient-to-br from-purple-500 via-purple-600 to-indigo-600 rounded-xl sm:rounded-2xl p-3 sm:p-5 text-white shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
             <div className="relative z-10">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-3xl">⏱️</span>
+              <div className="flex items-center justify-between mb-2 sm:mb-3">
+                <span className="text-xl sm:text-3xl">⏱️</span>
                 <div className="text-right">
-                  <p className="text-4xl font-bold">{stats.avgDaysOpen}</p>
+                  <p className="text-2xl sm:text-4xl font-bold">{stats.avgDaysOpen}</p>
                 </div>
               </div>
-              <p className="text-white/90 text-sm font-semibold">Avg Days Open</p>
-              <p className="text-white/60 text-xs mt-1">Average resolution time</p>
+              <p className="text-white/90 text-xs sm:text-sm font-semibold">Avg Days Open</p>
+              <p className="text-white/60 text-[10px] sm:text-xs mt-0.5 sm:mt-1">Average resolution time</p>
             </div>
           </motion.div>
         </div>
