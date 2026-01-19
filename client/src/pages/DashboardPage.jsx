@@ -517,17 +517,17 @@ const DashboardPage = () => {
 
         {/* Main Content */}
         <div className={`flex-1 w-full lg:ml-0 transition-all duration-200 ${isSidebarOpen ? 'lg:blur-none blur-sm' : ''}`}>
-          {/* Mobile Hamburger Button - Top position after navbar */}
+          {/* Mobile Hamburger Button - Bottom right position */}
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="lg:hidden fixed top-[72px] left-4 w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg shadow-lg flex items-center justify-center hover:shadow-xl transition-all z-[999]"
+            className="lg:hidden fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full shadow-2xl flex items-center justify-center hover:shadow-xl hover:scale-110 transition-all z-[999]"
           >
             {isSidebarOpen ? (
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
               </svg>
             ) : (
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             )}
