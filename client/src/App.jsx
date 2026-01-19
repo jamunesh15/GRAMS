@@ -7,6 +7,7 @@ import PrivateRoute from './components/PrivateRoute';
 import PageTransition from './components/PageTransition';
 import AppIntro from './components/AppIntro';
 import Footer from './components/Footer';
+import ScrollToTop from './components/ScrollToTop';
 import HomePage from './pages/HomePage';
 import LoginPageNew from './pages/LoginPageNew';
 import RegisterPageNew from './pages/RegisterPageNew';
@@ -283,6 +284,7 @@ function ConditionalLayout() {
 
   return (
     <div className="overflow-x-hidden w-full">
+      <ScrollToTop />
       <Navbar />
       <AnimatedRoutes />
       {!isAdminRoute && !isEngineerRoute && <Footer />}

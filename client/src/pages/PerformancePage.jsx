@@ -28,13 +28,24 @@ export default function PerformancePage() {
 
   useEffect(() => {
     fetchAnalyticsData();
-  }, []);
+  }, [token]);
 
   const fetchAnalyticsData = async () => {
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+    
     setLoading(true);
     try {
-      // Fetch status analysis
-      const statusResponse = await getStatusAnalysis(token, 30);
+      // Use Promise.all to fetch all data at once
+      const [statusResponse, resolutionResponse, areaResponse] = await Promise.all([
+        getStatusAnalysis(token, 30),
+        getResolutionTimeAnalytics(token),
+        getAreaAnalysis(token)
+      ]);
+
+      // Process status analysis
       if (statusResponse?.data?.success) {
         const statusDist = statusResponse.data.data.statusDistribution;
         
@@ -62,8 +73,7 @@ export default function PerformancePage() {
         }));
       }
 
-      // Fetch resolution time analytics
-      const resolutionResponse = await getResolutionTimeAnalytics(token);
+      // Process resolution time analytics
       if (resolutionResponse?.data?.success) {
         const resolutionData = resolutionResponse.data.data;
         const avgTime = resolutionData.overall?.average || 0;
@@ -93,8 +103,7 @@ export default function PerformancePage() {
         }));
       }
 
-      // Fetch area analysis for ward and category performance
-      const areaResponse = await getAreaAnalysis(token);
+      // Process area analysis for ward and category performance
       if (areaResponse?.data?.success) {
         const areas = areaResponse.data.data.areas || [];
         
@@ -151,28 +160,115 @@ export default function PerformancePage() {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ scale: 1.05, rotate: 1 }}
-      className={`bg-gradient-to-br ${color} p-6 rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 transform border-2 border-white/20`}
+      whileHover={{ scale: 1.03 }}
+      className={`bg-gradient-to-br ${color} p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform border-2 border-white/20`}
     >
-      <div className="flex items-start justify-between mb-4">
-        <div className="text-5xl animate-bounce">{icon}</div>
+      <div className="flex items-start justify-between mb-2 sm:mb-3 md:mb-4">
+        <div className="text-3xl sm:text-4xl md:text-5xl">{icon}</div>
         <div className="text-right">
-          <p className="text-sm font-bold opacity-90 drop-shadow-md">{title}</p>
-          <p className="text-4xl font-black mt-2 drop-shadow-lg">{value}</p>
+          <p className="text-[10px] sm:text-xs md:text-sm font-bold opacity-90 drop-shadow-md">{title}</p>
+          <p className="text-2xl sm:text-3xl md:text-4xl font-black mt-1 sm:mt-2 drop-shadow-lg">{value}</p>
         </div>
       </div>
-      <p className="text-sm font-semibold opacity-90">{subtitle}</p>
+      <p className="text-[10px] sm:text-xs md:text-sm font-semibold opacity-90">{subtitle}</p>
     </motion.div>
   );
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-pink-50">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-pink-50 relative overflow-hidden">
         <Navbar />
-        <div className="flex items-center justify-center h-screen">
+        
+        {/* Animated Background Blobs */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <motion.div
+            animate={{
+              scale: [1, 1.2, 1],
+              rotate: [0, 90, 0],
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+            className="absolute top-20 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-40"
+          />
+          <motion.div
+            animate={{
+              scale: [1, 1.3, 1],
+              rotate: [0, -90, 0],
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+            className="absolute bottom-20 right-10 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-40"
+          />
+        </div>
+
+        <div className="flex items-center justify-center h-screen relative z-10">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-purple-600 mx-auto mb-4"></div>
-            <p className="text-xl font-semibold text-slate-700">Loading performance data...</p>
+            {/* Multi-layered animated loader */}
+            <div className="relative w-32 h-32 mx-auto mb-8">
+              {/* Outer ring */}
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+                className="absolute inset-0 rounded-full border-4 border-transparent border-t-purple-600 border-r-purple-400"
+              />
+              {/* Middle ring */}
+              <motion.div
+                animate={{ rotate: -360 }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
+                className="absolute inset-2 rounded-full border-4 border-transparent border-t-pink-600 border-l-pink-400"
+              />
+              {/* Inner ring */}
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                className="absolute inset-4 rounded-full border-4 border-transparent border-b-cyan-600 border-r-cyan-400"
+              />
+              {/* Center pulse */}
+              <motion.div
+                animate={{ 
+                  scale: [1, 1.2, 1],
+                  opacity: [0.5, 1, 0.5]
+                }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+                className="absolute inset-0 m-auto w-8 h-8 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full"
+              />
+            </div>
+
+            {/* Loading text with gradient */}
+            <motion.div
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+            >
+              <h2 className="text-2xl sm:text-3xl font-extrabold bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-600 bg-clip-text text-transparent mb-2">
+                Loading Performance Data
+              </h2>
+              <p className="text-sm sm:text-base text-slate-600">Fetching analytics and statistics...</p>
+            </motion.div>
+
+            {/* Loading dots */}
+            <div className="flex items-center justify-center gap-2 mt-6">
+              {[0, 1, 2].map((i) => (
+                <motion.div
+                  key={i}
+                  animate={{
+                    y: [-10, 10, -10],
+                  }}
+                  transition={{
+                    duration: 1,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                    delay: i * 0.2,
+                  }}
+                  className="w-3 h-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full"
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -229,28 +325,28 @@ export default function PerformancePage() {
       
       <Navbar />
     
-      <div className="pt-24 pb-12 px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="pt-20 sm:pt-24 pb-8 sm:pb-12 px-4 sm:px-6 lg:px-8 relative z-20 min-h-screen">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-center mb-10"
+            className="text-center mb-6 sm:mb-8 md:mb-10"
           >
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-xs font-bold uppercase shadow-lg animate-pulse inline-block mb-4">
+            <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-[10px] sm:text-xs font-bold uppercase shadow-lg animate-pulse inline-block mb-3 sm:mb-4">
               ✨ Analytics Dashboard
             </span>
-            <h1 className="text-5xl lg:text-6xl font-extrabold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent mb-4 drop-shadow-2xl">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2 sm:mb-3 md:mb-4 drop-shadow-2xl px-4">
               Performance Dashboard
             </h1>
-            <p className="text-lg text-slate-700 font-medium">
+            <p className="text-sm sm:text-base md:text-lg text-slate-700 font-medium px-4">
               Real-time analytics and performance metrics
             </p>
           </motion.div>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-6 sm:mb-8 md:mb-10">
             <StatCard
               title="Total Grievances"
               value={stats.totalGrievances}
@@ -314,36 +410,36 @@ export default function PerformancePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl p-8 mb-10 border-2 border-white/50"
+            className="bg-white/80 backdrop-blur-md rounded-2xl sm:rounded-3xl shadow-xl sm:shadow-2xl p-4 sm:p-6 md:p-8 mb-6 sm:mb-8 md:mb-10 border-2 border-white/50"
           >
-            <div className="flex items-center gap-3 mb-6">
-              <span className="text-4xl">📈</span>
-              <h2 className="text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent drop-shadow-md">
+            <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-5 md:mb-6">
+              <span className="text-2xl sm:text-3xl md:text-4xl">📈</span>
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent drop-shadow-md">
                 Performance by Category
               </h2>
             </div>
             {categoryData.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-slate-500 text-lg">No category data available yet</p>
+              <div className="text-center py-6 sm:py-8">
+                <p className="text-slate-500 text-base sm:text-lg">No category data available yet</p>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {categoryData.map((category, index) => (
                 <motion.div
                   key={category.name}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  whileHover={{ scale: 1.02, x: 5 }}
-                  className="bg-gradient-to-r from-slate-50 to-white p-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-slate-200 hover:border-blue-300"
+                  whileHover={{ scale: 1.01, x: 5 }}
+                  className="bg-gradient-to-r from-slate-50 to-white p-3 sm:p-4 rounded-lg sm:rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-slate-200 hover:border-blue-300"
                 >
                   <div className="flex justify-between items-center mb-2">
-                    <span className="font-bold text-slate-900 text-base">{category.name}</span>
-                    <span className="text-xs text-slate-600 font-semibold bg-slate-100 px-2 py-1 rounded-full">
+                    <span className="font-bold text-slate-900 text-sm sm:text-base">{category.name}</span>
+                    <span className="text-[10px] sm:text-xs text-slate-600 font-semibold bg-slate-100 px-2 py-1 rounded-full">
                       {category.resolved}/{category.total}
                     </span>
                   </div>
-                  <div className="relative w-full h-3 bg-slate-200 rounded-full overflow-hidden shadow-inner">
+                  <div className="relative w-full h-2 sm:h-3 bg-slate-200 rounded-full overflow-hidden shadow-inner">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${category.percentage}%` }}
@@ -352,9 +448,9 @@ export default function PerformancePage() {
                       style={{ boxShadow: '0 0 10px rgba(34, 197, 94, 0.5)' }}
                     />
                   </div>
-                  <div className="flex justify-between items-center mt-2">
-                    <span className="text-xs text-slate-500">Rate</span>
-                    <span className="text-sm font-bold text-green-600">{category.percentage}%</span>
+                  <div className="flex justify-between items-center mt-1.5 sm:mt-2">
+                    <span className="text-[10px] sm:text-xs text-slate-500">Rate</span>
+                    <span className="text-xs sm:text-sm font-bold text-green-600">{category.percentage}%</span>
                   </div>
                 </motion.div>
               ))}
@@ -367,20 +463,20 @@ export default function PerformancePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl p-8 border-2 border-white/50"
+            className="bg-white/80 backdrop-blur-md rounded-2xl sm:rounded-3xl shadow-xl sm:shadow-2xl p-4 sm:p-6 md:p-8 border-2 border-white/50"
           >
-            <div className="flex items-center gap-3 mb-8">
-              <span className="text-4xl">🏛️</span>
-              <h2 className="text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent drop-shadow-md">
+            <div className="flex items-center gap-2 sm:gap-3 mb-5 sm:mb-6 md:mb-8">
+              <span className="text-2xl sm:text-3xl md:text-4xl">🏛️</span>
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent drop-shadow-md">
                 Ward-wise Performance
               </h2>
             </div>
             {wardPerformance.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-slate-500 text-lg">No ward data available yet</p>
+              <div className="text-center py-6 sm:py-8">
+                <p className="text-slate-500 text-base sm:text-lg">No ward data available yet</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
                 {wardPerformance.map((ward, index) => {
                 const cardColors = [
                   'from-blue-100 via-cyan-100 to-teal-100 border-blue-300 hover:border-blue-500 hover:shadow-blue-300',
@@ -402,27 +498,27 @@ export default function PerformancePage() {
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.3 }}
-                    whileHover={{ scale: 1.08, rotate: 2, transition: { duration: 0.25 } }}
-                    className={`bg-gradient-to-br ${cardColors[index % cardColors.length]} p-6 rounded-2xl border-2 hover:shadow-2xl transition-all duration-300 transform`}
+                    whileHover={{ scale: 1.03, transition: { duration: 0.25 } }}
+                    className={`bg-gradient-to-br ${cardColors[index % cardColors.length]} p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl border-2 hover:shadow-xl sm:hover:shadow-2xl transition-all duration-300 transform`}
                   >
-                    <h3 className={`text-xl font-extrabold bg-gradient-to-r ${textColors[index % textColors.length]} bg-clip-text text-transparent mb-4 drop-shadow-sm`}>
+                    <h3 className={`text-base sm:text-lg md:text-xl font-extrabold bg-gradient-to-r ${textColors[index % textColors.length]} bg-clip-text text-transparent mb-3 sm:mb-4 drop-shadow-sm`}>
                       {ward.ward}
                     </h3>
-                    <div className="space-y-3">
-                      <div className="flex justify-between text-sm">
+                    <div className="space-y-2 sm:space-y-3">
+                      <div className="flex justify-between text-xs sm:text-sm">
                         <span className="text-slate-600 font-semibold">Total:</span>
                         <span className="font-bold text-slate-900">{ward.total}</span>
                       </div>
-                      <div className="flex justify-between text-sm">
+                      <div className="flex justify-between text-xs sm:text-sm">
                         <span className="text-slate-600 font-semibold">Resolved:</span>
                         <span className="font-bold text-green-600">{ward.resolved}</span>
                       </div>
-                      <div className="flex justify-between text-sm">
+                      <div className="flex justify-between text-xs sm:text-sm">
                         <span className="text-slate-600 font-semibold">Rate:</span>
-                        <span className="font-extrabold text-green-600 text-lg">{ward.rate}%</span>
+                        <span className="font-extrabold text-green-600 text-base sm:text-lg">{ward.rate}%</span>
                       </div>  
                     </div>
-                    <div className="mt-5 relative w-full h-3 bg-slate-200 rounded-full overflow-hidden shadow-inner">
+                    <div className="mt-3 sm:mt-4 md:mt-5 relative w-full h-2 sm:h-3 bg-slate-200 rounded-full overflow-hidden shadow-inner">
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${ward.rate}%` }}

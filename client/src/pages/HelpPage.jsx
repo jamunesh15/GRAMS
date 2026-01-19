@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import useAuthStore from '../store/authStore';
@@ -10,6 +10,11 @@ export default function HelpPage() {
   const fromDashboard = location.state?.fromDashboard;
   const [openFaq, setOpenFaq] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const faqs = [
     {
@@ -190,7 +195,7 @@ export default function HelpPage() {
 
       <Navbar />
 
-      <div className="pt-24 pb-16 px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="pt-20 sm:pt-24 pb-12 sm:pb-16 px-4 sm:px-6 lg:px-8 relative z-20 min-h-screen">
         <div className="max-w-6xl mx-auto">
           {/* Back Button for Dashboard Navigation */}
           {fromDashboard && (
@@ -198,13 +203,13 @@ export default function HelpPage() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
-              className="mb-6"
+              className="mb-4 sm:mb-6"
             >
               <motion.button
                 onClick={() => navigate('/dashboard')}
                 whileHover={{ scale: 1.05, x: -5 }}
                 whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all"
+                className="flex items-center gap-2 px-4 py-2 sm:px-6 sm:py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg text-sm sm:text-base font-semibold shadow-lg hover:shadow-xl transition-all"
               >
                 <span>←</span> Back to Dashboard
               </motion.button>
@@ -213,33 +218,33 @@ export default function HelpPage() {
 
           {/* Header */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-center mb-12"
+            className="text-center mb-8 sm:mb-10 md:mb-12"
           >
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-              className="inline-block mb-4"
+              className="inline-block mb-3 sm:mb-4"
             >
-              <span className="text-6xl">❓</span>
+              <span className="text-4xl sm:text-5xl md:text-6xl">❓</span>
             </motion.div>
-            <h1 className="text-5xl lg:text-6xl font-extrabold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4 drop-shadow-lg">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-3 sm:mb-4 drop-shadow-lg px-4">
               How Can We Help?
             </h1>
-            <p className="text-lg text-slate-700 font-medium max-w-2xl mx-auto">
+            <p className="text-sm sm:text-base md:text-lg text-slate-700 font-medium max-w-2xl mx-auto px-4">
               Find answers to common questions or reach out to our support team
             </p>
           </motion.div>
 
           {/* Search Box */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="max-w-2xl mx-auto mb-12"
+            className="max-w-2xl mx-auto mb-8 sm:mb-10 md:mb-12"
           >
             <div className="relative">
               <input
@@ -247,10 +252,10 @@ export default function HelpPage() {
                 placeholder="Search for help..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-6 py-4 pl-14 rounded-2xl border-2 border-slate-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-200 outline-none transition-all duration-300 text-lg shadow-lg"
+                className="w-full px-4 py-3 pl-12 sm:px-6 sm:py-4 sm:pl-14 rounded-xl sm:rounded-2xl border-2 border-slate-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-200 outline-none transition-all duration-300 text-sm sm:text-base md:text-lg shadow-lg"
               />
               <svg
-                className="absolute left-5 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-400"
+                className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 w-5 h-5 sm:w-6 sm:h-6 text-slate-400"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -266,23 +271,23 @@ export default function HelpPage() {
           </motion.div>
 
           {/* FAQ Sections */}
-          <div className="space-y-8 mb-16">
+          <div className="space-y-6 sm:space-y-8 mb-12 sm:mb-14 md:mb-16">
             {filteredFaqs.map((category, categoryIndex) => (
               <motion.div
                 key={category.category}
-                initial={{ opacity: 0, y: 20 }}
+                initial={false}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: categoryIndex * 0.1 }}
-                className="bg-white/80 backdrop-blur-md rounded-3xl shadow-xl p-8 border-2 border-white/50"
+                className="bg-white/80 backdrop-blur-md rounded-2xl sm:rounded-3xl shadow-lg sm:shadow-xl p-4 sm:p-6 md:p-8 border-2 border-white/50"
               >
-                <div className="flex items-center gap-3 mb-6">
-                  <span className="text-4xl">{category.icon}</span>
-                  <h2 className="text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-5 md:mb-6">
+                  <span className="text-2xl sm:text-3xl md:text-4xl">{category.icon}</span>
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                     {category.category}
                   </h2>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-2 sm:space-y-3">
                   {category.questions.map((faq, index) => {
                     const faqId = `${categoryIndex}-${index}`;
                     const isOpen = openFaq === faqId;
@@ -293,19 +298,19 @@ export default function HelpPage() {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.05 }}
-                        className="border-2 border-slate-200 rounded-xl overflow-hidden hover:border-purple-300 transition-all duration-300"
+                        className="border-2 border-slate-200 rounded-lg sm:rounded-xl overflow-hidden hover:border-purple-300 transition-all duration-300"
                       >
                         <button
                           onClick={() => setOpenFaq(isOpen ? null : faqId)}
-                          className="w-full px-6 py-4 flex items-center justify-between bg-gradient-to-r from-slate-50 to-white hover:from-purple-50 hover:to-pink-50 transition-all duration-300"
+                          className="w-full px-4 py-3 sm:px-6 sm:py-4 flex items-center justify-between bg-gradient-to-r from-slate-50 to-white hover:from-purple-50 hover:to-pink-50 transition-all duration-300"
                         >
-                          <span className="font-bold text-slate-900 text-left text-lg">
+                          <span className="font-bold text-slate-900 text-left text-sm sm:text-base md:text-lg">
                             {faq.q}
                           </span>
                           <motion.svg
                             animate={{ rotate: isOpen ? 180 : 0 }}
                             transition={{ duration: 0.3 }}
-                            className="w-6 h-6 text-purple-600 flex-shrink-0 ml-4"
+                            className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600 flex-shrink-0 ml-2 sm:ml-4"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -327,7 +332,7 @@ export default function HelpPage() {
                           transition={{ duration: 0.3 }}
                           className="overflow-hidden"
                         >
-                          <div className="px-6 py-4 bg-slate-50 text-slate-700 leading-relaxed">
+                          <div className="px-4 py-3 sm:px-6 sm:py-4 bg-slate-50 text-slate-700 text-sm sm:text-base leading-relaxed">
                             {faq.a}
                           </div>
                         </motion.div>
@@ -341,19 +346,19 @@ export default function HelpPage() {
 
           {/* Contact Methods */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="bg-white/80 backdrop-blur-md rounded-3xl shadow-xl p-8 border-2 border-white/50"
+            className="bg-white/80 backdrop-blur-md rounded-2xl sm:rounded-3xl shadow-lg sm:shadow-xl p-4 sm:p-6 md:p-8 border-2 border-white/50"
           >
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+            <div className="text-center mb-6 sm:mb-8">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
                 Still Need Help?
               </h2>
-              <p className="text-slate-600">Choose your preferred way to reach us</p>
+              <p className="text-sm sm:text-base text-slate-600">Choose your preferred way to reach us</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
               {contactMethods.map((method, index) => (
                 <motion.div
                   key={index}
@@ -361,15 +366,15 @@ export default function HelpPage() {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: index * 0.1 }}
                   whileHover={{ scale: 1.05, y: -5 }}
-                  className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-slate-100 hover:border-purple-300 cursor-pointer"
+                  className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-slate-100 hover:border-purple-300 cursor-pointer"
                 >
-                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${method.color} flex items-center justify-center mb-4 mx-auto`}>
-                    <span className="text-4xl">{method.icon}</span>
+                  <div className={`w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br ${method.color} flex items-center justify-center mb-3 sm:mb-4 mx-auto`}>
+                    <span className="text-2xl sm:text-3xl md:text-4xl">{method.icon}</span>
                   </div>
-                  <h3 className="font-bold text-slate-900 text-center mb-2">
+                  <h3 className="font-bold text-slate-900 text-center mb-2 text-sm sm:text-base">
                     {method.title}
                   </h3>
-                  <p className={`text-sm font-semibold bg-gradient-to-r ${method.color} bg-clip-text text-transparent text-center mb-2`}>
+                  <p className={`text-xs sm:text-sm font-semibold bg-gradient-to-r ${method.color} bg-clip-text text-transparent text-center mb-2`}>
                     {method.value}
                   </p>
                   <p className="text-xs text-slate-500 text-center">
@@ -382,42 +387,42 @@ export default function HelpPage() {
 
           {/* Quick Tips */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="mt-12 bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 rounded-3xl p-8 border-2 border-white/50"
+            className="mt-8 sm:mt-10 md:mt-12 bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 border-2 border-white/50"
           >
-            <h3 className="text-2xl font-extrabold text-slate-900 mb-6 text-center">
+            <h3 className="text-lg sm:text-xl md:text-2xl font-extrabold text-slate-900 mb-4 sm:mb-5 md:mb-6 text-center">
               💡 Quick Tips
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
               <motion.div
                 whileHover={{ scale: 1.05 }}
-                className="bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md"
+                className="bg-white/70 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 shadow-md"
               >
-                <div className="text-3xl mb-2">📸</div>
-                <h4 className="font-bold text-slate-900 mb-2">Add Photos</h4>
-                <p className="text-sm text-slate-600">
+                <div className="text-2xl sm:text-3xl mb-2">📸</div>
+                <h4 className="font-bold text-slate-900 mb-2 text-sm sm:text-base">Add Photos</h4>
+                <p className="text-xs sm:text-sm text-slate-600">
                   Include clear photos to help authorities understand the issue better
                 </p>
               </motion.div>
               <motion.div
                 whileHover={{ scale: 1.05 }}
-                className="bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md"
+                className="bg-white/70 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 shadow-md"
               >
-                <div className="text-3xl mb-2">📍</div>
-                <h4 className="font-bold text-slate-900 mb-2">Precise Location</h4>
-                <p className="text-sm text-slate-600">
+                <div className="text-2xl sm:text-3xl mb-2">📍</div>
+                <h4 className="font-bold text-slate-900 mb-2 text-sm sm:text-base">Precise Location</h4>
+                <p className="text-xs sm:text-sm text-slate-600">
                   Provide exact location or use map pin for faster resolution
                 </p>
               </motion.div>
               <motion.div
                 whileHover={{ scale: 1.05 }}
-                className="bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-md"
+                className="bg-white/70 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 shadow-md"
               >
-                <div className="text-3xl mb-2">🔔</div>
-                <h4 className="font-bold text-slate-900 mb-2">Stay Updated</h4>
-                <p className="text-sm text-slate-600">
+                <div className="text-2xl sm:text-3xl mb-2">🔔</div>
+                <h4 className="font-bold text-slate-900 mb-2 text-sm sm:text-base">Stay Updated</h4>
+                <p className="text-xs sm:text-sm text-slate-600">
                   Check your tracking ID regularly for status updates
                 </p>
               </motion.div>

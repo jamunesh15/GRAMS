@@ -33,6 +33,15 @@ export default function PageTransition({ children }) {
   const navigate = useNavigate();
   const shouldReduceMotion = useReducedMotion();
   const isCoarsePointer = useCoarsePointer();
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    // Small delay to ensure DOM is ready
+    const timer = requestAnimationFrame(() => {
+      setHasMounted(true);
+    });
+    return () => cancelAnimationFrame(timer);
+  }, []);
 
   const variants = shouldReduceMotion
     ? {
@@ -55,7 +64,7 @@ export default function PageTransition({ children }) {
   return (
     <motion.main
       className="min-h-screen"
-      initial="initial"
+      initial={hasMounted ? "initial" : false}
       animate="animate"
       exit="exit"
       variants={variants}

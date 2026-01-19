@@ -349,7 +349,7 @@ export default function CommunityPage() {
                     {upvoting[issue.id] ? '⏳' : issue.hasUpvoted ? '✓' : '👍'}
                   </motion.span>
                   <motion.span
-                    key={issue.upvotes}
+                    key={`${issue.id}-upvotes-full`}
                     initial={{ y: -10, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ duration: 0.3 }}
@@ -358,7 +358,7 @@ export default function CommunityPage() {
                     {issue.upvotes} Upvotes
                   </motion.span>
                   <motion.span
-                    key={issue.upvotes}
+                    key={`${issue.id}-upvotes-short`}
                     initial={{ y: -10, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ duration: 0.3 }}
