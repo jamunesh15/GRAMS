@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://grams-lyart.vercel.app/api"
+const BASE_URL =  "https://grams-lyart.vercel.app/api"
 
 // AUTH ENDPOINTS
 export const authEndpoints = {
