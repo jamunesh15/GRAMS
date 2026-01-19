@@ -36,13 +36,13 @@ export default function Footer() {
     { 
       name: 'Instagram', 
       icon: Instagram, 
-      url: 'https://instagram.com/grams', 
+      url: 'https://www.instagram.com/_jemu_15/', 
       color: 'hover:text-pink-400' 
     },
     { 
       name: 'LinkedIn', 
       icon: Linkedin, 
-      url: 'https://linkedin.com/company/grams', 
+      url: 'https://www.linkedin.com/in/jamunesh-sheta/', 
       color: 'hover:text-blue-500' 
     },
   ];
