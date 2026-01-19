@@ -45,7 +45,7 @@ export default function AppIntro({ show, onDone }) {
               <GramsLogo size={38} />
               <div className="leading-tight">
                 <div className="text-slate-900 font-extrabold text-xl">GRAMS</div>
-                <div className="text-green-700 text-xs font-bold uppercase">Portal</div>
+                <div className="text-green-700 text-xs font-bold uppercase">Portals</div>
               </div>
             </div>
           </motion.div>
