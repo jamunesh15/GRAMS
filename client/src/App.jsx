@@ -282,10 +282,10 @@ function ConditionalLayout() {
   const isEngineerRoute = location.pathname.startsWith('/engineer-dashboard');
 
   return (
-    <>
+    <div className="overflow-x-hidden w-full">
       <Navbar />
       <AnimatedRoutes />
       {!isAdminRoute && !isEngineerRoute && <Footer />}
-    </>
+    </div>
   );
 }

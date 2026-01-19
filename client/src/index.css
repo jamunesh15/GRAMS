@@ -25,6 +25,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: #f1f5f9;
   color: #334155;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
 }
 
 /* Subtle app-wide background texture */
@@ -44,20 +47,24 @@ body::before {
   background: rgba(19, 136, 8, 0.18);
 }
 
-/* Nicer scrollbars (Chromium/WebKit) */
+/* Hide scrollbars completely but keep functionality */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 0px;
+  height: 0px;
+  display: none;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(15, 23, 42, 0.18);
-  border-radius: 999px;
-  border: 2px solid rgba(241, 245, 249, 0.9);
+  background: transparent;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(15, 23, 42, 0.28);
+/* For Firefox */
+html {
+  scrollbar-width: none;
 }
 
 /* Hide scrollbar utility class */
