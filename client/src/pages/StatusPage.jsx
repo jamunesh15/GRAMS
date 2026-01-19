@@ -213,7 +213,7 @@ export default function StatusPage() {
                     </div>
                     <p className="text-sm text-slate-600 mb-2">
                       {incident.date} • Duration: {incident.duration}
-                    </p>
+                    </p>  
                     <p className="text-sm text-slate-700">
                       Impact: {incident.impact}
                     </p>

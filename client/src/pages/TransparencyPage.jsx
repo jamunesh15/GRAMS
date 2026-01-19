@@ -577,11 +577,11 @@ export default function TransparencyPage() {
                 <div className="w-full bg-white/20 rounded-full h-2 mt-3">
                   <div
                     className="bg-white rounded-full h-2 transition-all"
-                    style={{ width: `${((systemBudget.totalSpent / systemBudget.totalAllocated) * 100).toFixed(1)}%` }}
+                    style={{ width: `${systemBudget.totalAllocated > 0 ? ((systemBudget.totalSpent / systemBudget.totalAllocated) * 100).toFixed(1) : 0}%` }}
                   ></div>
                 </div>
                 <p className="text-sm opacity-90 mt-1">
-                  {((systemBudget.totalSpent / systemBudget.totalAllocated) * 100).toFixed(1)}% utilized
+                  {systemBudget.totalAllocated > 0 ? ((systemBudget.totalSpent / systemBudget.totalAllocated) * 100).toFixed(1) : 0}% utilized
                 </p>
               </div>
             </Reveal>
@@ -746,11 +746,11 @@ export default function TransparencyPage() {
                       <div className="w-full bg-gray-200 rounded-full h-2 mt-3">
                         <div
                           className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-full h-2 transition-all"
-                          style={{ width: `${((cat.spent / cat.allocated) * 100).toFixed(1)}%` }}
+                          style={{ width: `${cat.allocated > 0 ? ((cat.spent / cat.allocated) * 100).toFixed(1) : 0}%` }}
                         ></div>
                       </div>
                       <p className="text-xs text-center text-slate-600 mt-1 font-semibold">
-                        {((cat.spent / cat.allocated) * 100).toFixed(1)}% utilized
+                        {cat.allocated > 0 ? ((cat.spent / cat.allocated) * 100).toFixed(1) : 0}% utilized
                       </p>
                     </motion.div>
                   ))}
