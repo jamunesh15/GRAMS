@@ -217,7 +217,7 @@ export default function StatusPage() {
                     <p className="text-sm text-slate-700">
                       Impact: {incident.impact}
                     </p>
-                  </motion.div>
+                  </motion.div>   
                 ))}
               </div>
             ) : (

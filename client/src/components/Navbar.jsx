@@ -487,24 +487,6 @@ export default function Navbar() {
             </Link>
           </motion.div>
 
-          {/* Dark Mode Toggle */}
-          <motion.button 
-            className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 transition-all duration-300 text-slate-700 hover:shadow-md relative group"
-            title="Toggle Dark Mode"
-            whileHover={{ scale: 1.1, rotate: 15 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            <motion.svg 
-              className="w-5 h-5" 
-              fill="currentColor" 
-              viewBox="0 0 20 20"
-              whileHover={{ rotate: 180 }}
-              transition={{ duration: 0.6 }}
-            >
-              <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
-            </motion.svg>
-          </motion.button>
-
           {/* Hamburger Menu Button - Beautiful Design */}
           <motion.button 
             className="lg:hidden flex flex-col justify-center items-center w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 transition-all duration-300 shadow-md hover:shadow-lg relative group"
