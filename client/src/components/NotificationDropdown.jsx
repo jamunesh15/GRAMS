@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getRecentNotifications, markNotificationAsRead, deleteNotification, markAllNotificationsAsRead } from '../api/notificationAPI';
 import { Link } from 'react-router-dom';
@@ -9,8 +10,12 @@ const NotificationDropdown = ({ isOpen, onClose }) => {
   const [loading, setLoading] = useState(false);
   const dropdownRef = useRef(null);
 
+  // Debug logging
+  console.log('🔔 NotificationDropdown render - isOpen:', isOpen);
+
   useEffect(() => {
     if (isOpen) {
+      console.log('🔔 Dropdown opened, fetching notifications...');
       fetchNotifications();
     }
   }, [isOpen]);
@@ -18,6 +23,7 @@ const NotificationDropdown = ({ isOpen, onClose }) => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        console.log('🔔 Click outside detected, closing dropdown');
         onClose();
       }
     };
@@ -31,11 +37,13 @@ const NotificationDropdown = ({ isOpen, onClose }) => {
   const fetchNotifications = async () => {
     try {
       setLoading(true);
+      console.log('🔔 Fetching notifications from API...');
       const data = await getRecentNotifications();
+      console.log('🔔 Notifications fetched:', data);
       setNotifications(data.notifications);
       setUnreadCount(data.unreadCount);
     } catch (error) {
-      console.error('Failed to fetch notifications:', error);
+      console.error('🔔 Failed to fetch notifications:', error);
     } finally {
       setLoading(false);
     }
@@ -100,30 +108,59 @@ const NotificationDropdown = ({ isOpen, onClose }) => {
     }
   };
 
-  return (
+  // Debug: log when rendering
+  console.log('🔔 NotificationDropdown - isOpen:', isOpen, 'loading:', loading, 'notifications count:', notifications.length);
+
+  // Use Portal to render outside of parent stacking context
+  const modalContent = (
     <AnimatePresence>
       {isOpen && (
-        <motion.div
-          ref={dropdownRef}
-          initial={{ opacity: 0, y: -10, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -10, scale: 0.95 }}
-          transition={{ duration: 0.15 }}
-          className="absolute top-16 right-0 w-96 bg-white rounded-2xl shadow-2xl border border-slate-200 z-50 max-h-96 overflow-hidden flex flex-col"
-        >
+        <>
+          {console.log('🔔 Rendering notification modal via Portal...')}
+          {/* Overlay for mobile and desktop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/30"
+            style={{ zIndex: 99998 }}
+            onClick={onClose}
+          />
+          
+          {/* Centered Modal Container */}
+          <div 
+            className="fixed inset-x-0 top-16 sm:top-20 bottom-0 flex items-start justify-center px-4 overflow-y-auto pointer-events-none"
+            style={{ zIndex: 99999 }}
+          >
+            <motion.div
+              ref={dropdownRef}
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.2 }}
+              className="w-full max-w-[340px] bg-white rounded-2xl shadow-2xl border border-slate-200 max-h-[calc(100vh-5rem)] sm:max-h-[75vh] overflow-hidden flex flex-col mt-2 mb-4 pointer-events-auto"
+            >
           {/* Header */}
           <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-slate-200 p-4">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-slate-800">Notifications</h3>
-              {unreadCount > 0 && (
-                <motion.span
-                  initial={{ scale: 0.8 }}
-                  animate={{ scale: 1 }}
-                  className="bg-red-500 text-white text-xs font-bold px-2.5 py-1 rounded-full"
+              <div className="flex items-center gap-3">
+                {unreadCount > 0 && (
+                  <motion.span
+                    initial={{ scale: 0.8 }}
+                    animate={{ scale: 1 }}
+                    className="bg-red-500 text-white text-xs font-bold px-2.5 py-1 rounded-full"
+                  >
+                    {unreadCount} new
+                  </motion.span>
+                )}
+                <button
+                  onClick={onClose}
+                  className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 transition-colors text-slate-500 hover:text-slate-700"
                 >
-                  {unreadCount} new
-                </motion.span>
-              )}
+                  ✕
+                </button>
+              </div>
             </div>
           </div>
 
@@ -222,10 +259,15 @@ const NotificationDropdown = ({ isOpen, onClose }) => {
               </Link>
             </div>
           )}
-        </motion.div>
+            </motion.div>
+          </div>
+        </>
       )}
     </AnimatePresence>
   );
+
+  // Render via Portal to escape stacking context
+  return createPortal(modalContent, document.body);
 };
 
 export default NotificationDropdown;
