@@ -80,22 +80,122 @@ export default function MyResourceRequests() {
 
   if (loading) {
     return (
-      <div className="bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-50 rounded-xl p-12 shadow-lg border border-cyan-100 text-center">
-        <div className="animate-spin text-6xl">⏳</div>
-        <p className="text-gray-700 font-semibold mt-4">Loading requests...</p>
-      </div>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-50 rounded-2xl p-12 shadow-2xl border-2 border-cyan-200 text-center relative overflow-hidden"
+      >
+        {/* Animated background circles */}
+        <motion.div
+          animate={{
+            scale: [1, 1.3, 1],
+            opacity: [0.3, 0.5, 0.3],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+          }}
+          className="absolute top-0 left-0 w-64 h-64 bg-gradient-to-br from-cyan-300 to-blue-300 rounded-full blur-3xl"
+        />
+        <motion.div
+          animate={{
+            scale: [1, 1.3, 1],
+            opacity: [0.3, 0.5, 0.3],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            delay: 1,
+          }}
+          className="absolute bottom-0 right-0 w-64 h-64 bg-gradient-to-br from-indigo-300 to-cyan-300 rounded-full blur-3xl"
+        />
+
+        <div className="relative z-10">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            className="text-6xl mb-4 inline-block"
+          >
+            📦
+          </motion.div>
+          <p className="text-gray-700 font-bold text-xl">Loading requests...</p>
+          <motion.div
+            className="mt-4 flex justify-center gap-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            {[0, 1, 2].map((i) => (
+              <motion.div
+                key={i}
+                animate={{
+                  y: [-10, 10, -10],
+                }}
+                transition={{
+                  duration: 1,
+                  repeat: Infinity,
+                  delay: i * 0.2,
+                }}
+                className="w-3 h-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full"
+              />
+            ))}
+          </motion.div>
+        </div>
+      </motion.div>
     );
   }
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <div className="bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-50 rounded-xl p-3 sm:p-6 shadow-lg border border-cyan-100">
-        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent flex items-center gap-2 sm:gap-3">
-          <span className="text-2xl sm:text-3xl">📦</span>
-          My Resource Requests
-        </h1>
-        <p className="text-gray-700 font-medium mt-2 text-sm sm:text-base">Track your resource request submissions and approvals</p>
-      </div>
+      {/* Header Section */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-gradient-to-br from-cyan-600 via-blue-600 to-indigo-600 rounded-2xl p-6 sm:p-8 shadow-2xl border border-cyan-400 relative overflow-hidden"
+      >
+        {/* Animated background pattern */}
+        <motion.div
+          animate={{
+            backgroundPosition: ['0% 0%', '100% 100%'],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            repeatType: "reverse",
+          }}
+          className="absolute inset-0 opacity-10"
+          style={{
+            backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px)',
+            backgroundSize: '40px 40px',
+          }}
+        />
+
+        <div className="relative z-10">
+          <motion.h1
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-2xl sm:text-3xl font-extrabold text-white flex items-center gap-3"
+          >
+            <motion.span
+              animate={{ rotate: [0, 10, -10, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="text-4xl"
+            >
+              📦
+            </motion.span>
+            My Resource Requests
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="text-white/90 text-sm font-medium mt-2"
+          >
+            Track your resource request submissions and approvals
+          </motion.p>
+        </div>
+      </motion.div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
@@ -103,14 +203,28 @@ export default function MyResourceRequests() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-xl shadow-lg p-4 sm:p-6 border-2 border-cyan-200 transform hover:scale-105 transition-all duration-300"
+          whileHover={{ scale: 1.05, boxShadow: "0 12px 24px rgba(6, 182, 212, 0.3)" }}
+          className="bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-2xl shadow-xl p-4 sm:p-6 border-2 border-cyan-200"
         >
           <div className="flex items-center justify-between">
             <div>
               <p className="text-cyan-700 text-sm font-semibold">Total Requests</p>
-              <p className="text-3xl font-bold text-cyan-800 mt-1">{stats.total}</p>
+              <motion.p
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.3, type: "spring" }}
+                className="text-3xl font-bold text-cyan-800 mt-1"
+              >
+                {stats.total}
+              </motion.p>
             </div>
-            <span className="text-4xl">📊</span>
+            <motion.span
+              animate={{ rotate: [0, 10, -10, 0] }}
+              transition={{ duration: 3, repeat: Infinity }}
+              className="text-4xl"
+            >
+              📊
+            </motion.span>
           </div>
         </motion.div>
 
@@ -118,14 +232,28 @@ export default function MyResourceRequests() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl shadow-lg p-4 sm:p-6 border-2 border-yellow-200 transform hover:scale-105 transition-all duration-300"
+          whileHover={{ scale: 1.05, boxShadow: "0 12px 24px rgba(234, 179, 8, 0.3)" }}
+          className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-2xl shadow-xl p-4 sm:p-6 border-2 border-yellow-200"
         >
           <div className="flex items-center justify-between">
             <div>
               <p className="text-yellow-700 text-sm font-semibold">Pending</p>
-              <p className="text-3xl font-bold text-yellow-800 mt-1">{stats.pending}</p>
+              <motion.p
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.4, type: "spring" }}
+                className="text-3xl font-bold text-yellow-800 mt-1"
+              >
+                {stats.pending}
+              </motion.p>
             </div>
-            <span className="text-4xl">⏳</span>
+            <motion.span
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="text-4xl"
+            >
+              ⏳
+            </motion.span>
           </div>
         </motion.div>
 
@@ -133,14 +261,28 @@ export default function MyResourceRequests() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl shadow-lg p-4 sm:p-6 border-2 border-green-200 transform hover:scale-105 transition-all duration-300"
+          whileHover={{ scale: 1.05, boxShadow: "0 12px 24px rgba(34, 197, 94, 0.3)" }}
+          className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl shadow-xl p-4 sm:p-6 border-2 border-green-200"
         >
           <div className="flex items-center justify-between">
             <div>
               <p className="text-green-700 text-sm font-semibold">Approved</p>
-              <p className="text-3xl font-bold text-green-800 mt-1">{stats.approved}</p>
+              <motion.p
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.5, type: "spring" }}
+                className="text-3xl font-bold text-green-800 mt-1"
+              >
+                {stats.approved}
+              </motion.p>
             </div>
-            <span className="text-4xl">✅</span>
+            <motion.span
+              animate={{ rotate: [0, 360] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+              className="text-4xl"
+            >
+              ✅
+            </motion.span>
           </div>
         </motion.div>
 
@@ -148,14 +290,28 @@ export default function MyResourceRequests() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="bg-gradient-to-br from-red-50 to-red-100 rounded-xl shadow-lg p-4 sm:p-6 border-2 border-red-200 transform hover:scale-105 transition-all duration-300"
+          whileHover={{ scale: 1.05, boxShadow: "0 12px 24px rgba(239, 68, 68, 0.3)" }}
+          className="bg-gradient-to-br from-red-50 to-red-100 rounded-2xl shadow-xl p-4 sm:p-6 border-2 border-red-200"
         >
           <div className="flex items-center justify-between">
             <div>
               <p className="text-red-700 text-sm font-semibold">Rejected</p>
-              <p className="text-3xl font-bold text-red-800 mt-1">{stats.rejected}</p>
+              <motion.p
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.6, type: "spring" }}
+                className="text-3xl font-bold text-red-800 mt-1"
+              >
+                {stats.rejected}
+              </motion.p>
             </div>
-            <span className="text-4xl">❌</span>
+            <motion.span
+              animate={{ rotate: [0, -10, 10, -10, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="text-4xl"
+            >
+              ❌
+            </motion.span>
           </div>
         </motion.div>
       </div>

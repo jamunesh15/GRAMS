@@ -151,37 +151,172 @@ export default function ResourceRequestForm() {
 
   if (loading) {
     return (
-      <div className="bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 rounded-xl p-12 shadow-lg border border-orange-100 text-center">
-        <div className="animate-spin text-6xl">⏳</div>
-        <p className="text-gray-700 font-semibold mt-4">Loading grievances...</p>
-      </div>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 rounded-2xl p-12 shadow-2xl border-2 border-orange-200 text-center relative overflow-hidden"
+      >
+        {/* Animated background circles */}
+        <motion.div
+          animate={{
+            scale: [1, 1.3, 1],
+            opacity: [0.3, 0.5, 0.3],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+          }}
+          className="absolute top-0 left-0 w-64 h-64 bg-gradient-to-br from-orange-300 to-amber-300 rounded-full blur-3xl"
+        />
+        <motion.div
+          animate={{
+            scale: [1, 1.3, 1],
+            opacity: [0.3, 0.5, 0.3],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            delay: 1,
+          }}
+          className="absolute bottom-0 right-0 w-64 h-64 bg-gradient-to-br from-yellow-300 to-orange-300 rounded-full blur-3xl"
+        />
+
+        <div className="relative z-10">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            className="text-6xl mb-4 inline-block"
+          >
+            📋
+          </motion.div>
+          <p className="text-gray-700 font-bold text-xl">Loading grievances...</p>
+          <motion.div
+            className="mt-4 flex justify-center gap-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            {[0, 1, 2].map((i) => (
+              <motion.div
+                key={i}
+                animate={{
+                  y: [-10, 10, -10],
+                }}
+                transition={{
+                  duration: 1,
+                  repeat: Infinity,
+                  delay: i * 0.2,
+                }}
+                className="w-3 h-3 bg-gradient-to-r from-orange-500 to-amber-500 rounded-full"
+              />
+            ))}
+          </motion.div>
+        </div>
+      </motion.div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <div className="bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 rounded-xl p-6 shadow-lg border border-orange-100">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent flex items-center gap-3">
-          <span>📝</span>
-          Create Resource Request
-        </h1>
-        <p className="text-gray-700 font-medium mt-2">Request materials, equipment, or manpower for your assigned grievances</p>
-      </div>
+      {/* Header Section */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-gradient-to-br from-orange-600 via-amber-600 to-yellow-600 rounded-2xl p-6 sm:p-8 shadow-2xl border border-orange-400 relative overflow-hidden"
+      >
+        {/* Animated background pattern */}
+        <motion.div
+          animate={{
+            backgroundPosition: ['0% 0%', '100% 100%'],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            repeatType: "reverse",
+          }}
+          className="absolute inset-0 opacity-10"
+          style={{
+            backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px)',
+            backgroundSize: '40px 40px',
+          }}
+        />
+
+        <div className="relative z-10">
+          <motion.h1
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-2xl sm:text-3xl font-extrabold text-white flex items-center gap-3"
+          >
+            <motion.span
+              animate={{ rotate: [0, 10, -10, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="text-4xl"
+            >
+              📝
+            </motion.span>
+            Create Resource Request
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="text-white/90 text-sm font-medium mt-2"
+          >
+            Request materials, equipment, or manpower for your assigned grievances
+          </motion.p>
+        </div>
+      </motion.div>
 
       {grievances.length === 0 ? (
-        <div className="bg-gradient-to-br from-gray-50 to-orange-50 rounded-xl shadow-lg border border-orange-100 p-12 text-center">
-          <span className="text-6xl">📭</span>
-          <p className="text-gray-700 font-semibold mt-4">No assigned grievances found</p>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="bg-gradient-to-br from-gray-50 to-orange-50 rounded-2xl shadow-2xl border-2 border-orange-200 p-12 text-center relative overflow-hidden"
+        >
+          <motion.div
+            animate={{
+              scale: [1, 1.2, 1],
+              rotate: [0, 10, -10, 0],
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+            }}
+            className="text-7xl mb-4"
+          >
+            📭
+          </motion.div>
+          <p className="text-gray-700 font-bold text-xl mt-4">No assigned grievances found</p>
           <p className="text-gray-500 text-sm mt-2">You need to be assigned to a grievance to request resources</p>
-        </div>
+        </motion.div>
       ) : (
-        <form onSubmit={handleSubmit} className="bg-gradient-to-br from-white via-orange-50/30 to-amber-50/30 rounded-xl shadow-lg border border-orange-100 p-8 space-y-6">
+        <motion.form
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          onSubmit={handleSubmit}
+          className="bg-gradient-to-br from-white via-orange-50/30 to-amber-50/30 rounded-2xl shadow-2xl border-2 border-orange-200 p-8 space-y-6"
+        >
           {/* Info Banner */}
-          <div className="bg-gradient-to-r from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-2xl p-5">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3 }}
+            whileHover={{ scale: 1.01, boxShadow: "0 8px 20px rgba(59, 130, 246, 0.3)" }}
+            className="bg-gradient-to-r from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-2xl p-5"
+          >
             <div className="flex items-start gap-3">
-              <svg className="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <motion.svg
+                animate={{ rotate: [0, 10, -10, 0] }}
+                transition={{ duration: 3, repeat: Infinity }}
+                className="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+              </motion.svg>
               <div>
                 <p className="text-sm text-blue-900 font-semibold">Request Additional Resources</p>
                 <p className="text-xs text-blue-700 mt-1">
@@ -189,17 +324,22 @@ export default function ResourceRequestForm() {
                 </p>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Grievance Selection */}
-          <div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
             <label className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
               <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
               Select Grievance <span className="text-red-500">*</span>
             </label>
-            <select
+            <motion.select
+              whileFocus={{ scale: 1.01, boxShadow: "0 0 0 3px rgba(249, 115, 22, 0.2)" }}
               value={formData.grievanceId}
               onChange={(e) => setFormData({ ...formData, grievanceId: e.target.value })}
               className="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all text-base font-medium"
@@ -211,11 +351,11 @@ export default function ResourceRequestForm() {
                   {g.trackingId} - {g.title}
                 </option>
               ))}
-            </select>
+            </motion.select>
             <p className="text-xs text-gray-600 mt-2 ml-1">
               Select which assigned task you need resources for
             </p>
-          </div>
+          </motion.div>
 
           {/* Resources List */}
           <div>
@@ -342,30 +482,45 @@ export default function ResourceRequestForm() {
           </div>
 
           {/* Submit Button */}
-          <div className="flex gap-4 pt-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="flex gap-4 pt-4"
+          >
             <motion.button
-              whileHover={{ scale: 1.02, y: -2 }}
+              whileHover={{ scale: 1.02, y: -2, boxShadow: "0 12px 24px rgba(249, 115, 22, 0.5)" }}
               whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={submitting}
-              className="flex-1 px-6 py-4 bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="flex-1 px-6 py-4 bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 text-white font-bold text-lg rounded-xl shadow-xl hover:shadow-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {submitting ? (  
                 <>
-                  <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full"></div>
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
+                  />
                   <span>Submitting...</span>
                 </>
               ) : (
                 <>
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <motion.svg
+                    whileHover={{ rotate: 15, scale: 1.2 }}
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                  </svg>
+                  </motion.svg>
                   <span>Submit Request</span>
                 </>
               )}
             </motion.button>
             <motion.button
-              whileHover={{ scale: 1.02 }}
+              whileHover={{ scale: 1.02, backgroundColor: "rgba(209, 213, 219, 1)" }}
               whileTap={{ scale: 0.98 }}
               type="button"
               onClick={() =>
@@ -376,12 +531,12 @@ export default function ResourceRequestForm() {
                   description: '',
                 })
               }
-              className="px-8 py-4 bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 font-bold rounded-xl hover:from-gray-300 hover:to-gray-400 transition-all"
+              className="px-8 py-4 bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 font-bold rounded-xl hover:from-gray-300 hover:to-gray-400 transition-all border-2 border-gray-300"
             >
               Reset
             </motion.button>
-          </div>
-        </form>
+          </motion.div>
+        </motion.form>
       )}
     </div>
   );
