@@ -5,6 +5,40 @@ export const axiosInstance = axios.create({
   validateStatus: status => status < 500 // Only throw for server errors
 });
 
+// Add request interceptor to automatically include auth token
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token && !config.headers.Authorization) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor to handle 401 errors globally
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      console.warn('🔐 401 Unauthorized - Token may be invalid or expired');
+      // Optionally clear token and redirect to login
+      // This can help debug token issues
+      const token = localStorage.getItem('token');
+      if (token) {
+        console.log('🔐 Token exists but request failed with 401');
+        console.log('🔐 Token preview:', token.substring(0, 20) + '...');
+      } else {
+        console.log('🔐 No token found in localStorage');
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const apiconnector = (method, url, bodyData, headers, params) => {
   // Handle headers based on data type
   let combinedHeaders = headers;
