@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getWardMapData, getWardDetails, getGeoJSONData } from '../../Services/operations/wardMapAPI';
 import { 
@@ -19,6 +19,7 @@ const WardMap = () => {
     priority: 'all',
     category: 'all',
   });
+  const [urgencyFilter, setUrgencyFilter] = useState('all');
   const [toast, setToast] = useState({ show: false, message: '', type: '' });
   
   const mapRef = useRef(null);
@@ -57,6 +58,16 @@ const WardMap = () => {
       fetchMapData();
     }
   }, [filters, mapLoaded]);
+
+  useEffect(() => {
+    if (!mapLoaded) return;
+
+    const intervalId = setInterval(() => {
+      fetchMapData();
+    }, 30000);
+
+    return () => clearInterval(intervalId);
+  }, [mapLoaded, filters]);
 
   const fetchMapData = async () => {
     try {
@@ -152,6 +163,29 @@ const WardMap = () => {
     if (count >= 10) return '#f59e0b';
     return '#10b981';
   };
+
+  const filteredAndSortedGrievances = useMemo(() => {
+    const grievances = Array.isArray(wardData?.locations) ? [...wardData.locations] : [];
+
+    const filtered = grievances.filter((grievance) => {
+      if (urgencyFilter === 'all') return true;
+
+      const priority = (grievance.priority || '').toLowerCase();
+      if (urgencyFilter === 'high') {
+        return priority === 'high' || priority === 'critical';
+      }
+      if (urgencyFilter === 'moderate') {
+        return priority === 'medium';
+      }
+      if (urgencyFilter === 'low') {
+        return priority === 'low';
+      }
+
+      return true;
+    });
+
+    return filtered.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+  }, [wardData, urgencyFilter]);
 
   const initializeMap = (geoData) => {
     const mapContainer = document.getElementById('ward-map-container');
@@ -269,13 +303,22 @@ const WardMap = () => {
               Ticket density across wards (geo-spatial view)
             </p>
           </div>
-          <button
-            onClick={downloadData}
-            className="px-6 py-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 hover:scale-105"
-          >
-            <span>⬇️</span>
-            <span>Download Data</span>
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={fetchMapData}
+              className="px-5 py-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl font-semibold transition-all duration-300 flex items-center gap-2"
+            >
+              <span>🔄</span>
+              <span>Refresh</span>
+            </button>
+            <button
+              onClick={downloadData}
+              className="px-6 py-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 hover:scale-105"
+            >
+              <span>⬇️</span>
+              <span>Download Data</span>
+            </button>
+          </div>
         </div>
       </motion.div>
 
@@ -516,12 +559,25 @@ const WardMap = () => {
               � Individual Grievances
             </h2>
             <p className="text-sm text-gray-600 mt-1">All reported issues on map</p>
+            <div className="mt-3">
+              <label className="block text-xs font-medium text-gray-600 mb-1">Urgency</label>
+              <select
+                value={urgencyFilter}
+                onChange={(e) => setUrgencyFilter(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              >
+                <option value="all">All</option>
+                <option value="high">High</option>
+                <option value="moderate">Moderate</option>
+                <option value="low">Low</option>
+              </select>
+            </div>
           </div>
           <div className="overflow-y-auto max-h-[410px]">
-            {wardData?.locations && wardData.locations.length > 0 ? (
-              wardData.locations.map((grievance, index) => (
+            {filteredAndSortedGrievances.length > 0 ? (
+              filteredAndSortedGrievances.map((grievance, index) => (
                 <motion.div
-                  key={grievance._id || index}
+                  key={grievance._id || grievance.id || index}
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.02 * index }}
@@ -538,7 +594,7 @@ const WardMap = () => {
                         {grievance.title || 'Untitled'}
                       </h3>
                       <p className="text-xs text-gray-600 mt-0.5">
-                        ID: {grievance.grievanceId || 'N/A'}
+                        ID: {grievance.trackingId || grievance.grievanceId || 'N/A'}
                       </p>
                     </div>
                   </div>
@@ -574,10 +630,10 @@ const WardMap = () => {
                         <span>{grievance.ward}</span>
                       </div>
                     )}
-                    {grievance.address && (
+                    {grievance.location && (
                       <div className="flex items-start gap-1">
                         <span className="font-medium flex-shrink-0">🏠</span>
-                        <span className="line-clamp-2">{grievance.address}</span>
+                        <span className="line-clamp-2">{grievance.location}</span>
                       </div>
                     )}
                     {grievance.assignedEngineer && (

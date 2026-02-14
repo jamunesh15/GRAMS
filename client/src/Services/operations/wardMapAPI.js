@@ -60,11 +60,12 @@ export const getWardDetails = async (token, wardNumber) => {
  */
 export const getGeoJSONData = async (token, filters = {}) => {
   try {
-    const { status, priority } = filters;
+    const { status, priority, category } = filters;
     const params = new URLSearchParams();
     
     if (status) params.append('status', status);
     if (priority) params.append('priority', priority);
+    if (category) params.append('category', category);
 
     const queryString = params.toString();
     const url = queryString ? `${GET_GEOJSON_DATA_API}?${queryString}` : GET_GEOJSON_DATA_API;

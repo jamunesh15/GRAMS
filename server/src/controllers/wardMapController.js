@@ -1,5 +1,112 @@
 const Grievance = require('../models/Grievance');
 
+const locationAnchors = {
+  kosamba: { latitude: 21.4628, longitude: 72.9582 },
+  surat: { latitude: 21.1702, longitude: 72.8311 },
+};
+
+const wardCenters = {
+  1: { latitude: 21.1702, longitude: 72.8311 },
+  2: { latitude: 21.1959, longitude: 72.8302 },
+  3: { latitude: 21.1458, longitude: 72.7709 },
+  4: { latitude: 21.1458, longitude: 72.8850 },
+  5: { latitude: 21.1200, longitude: 72.8311 },
+  6: { latitude: 21.2200, longitude: 72.8400 },
+  7: { latitude: 21.2100, longitude: 72.7800 },
+  8: { latitude: 21.1800, longitude: 72.8900 },
+  9: { latitude: 21.1500, longitude: 72.8100 },
+  10: { latitude: 21.1300, longitude: 72.7600 },
+};
+
+function toFiniteNumber(value) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : null;
+}
+
+function getWardNumber(location) {
+  const wardMatch = location?.match(/Ward\s*(\d+)/i);
+  return wardMatch ? Number(wardMatch[1]) : null;
+}
+
+function getStableOffset(seed, magnitude = 0.008) {
+  const seedText = String(seed || 'default-seed');
+  let hash = 0;
+
+  for (let index = 0; index < seedText.length; index += 1) {
+    hash = (hash << 5) - hash + seedText.charCodeAt(index);
+    hash |= 0;
+  }
+
+  const normalized = ((Math.abs(hash) % 1000) / 1000) - 0.5;
+  return normalized * magnitude;
+}
+
+function getCoordinatesForMap(grievance) {
+  const latitude = toFiniteNumber(grievance.coordinates?.latitude);
+  const longitude = toFiniteNumber(grievance.coordinates?.longitude);
+
+  if (
+    latitude !== null &&
+    longitude !== null &&
+    latitude >= -90 &&
+    latitude <= 90 &&
+    longitude >= -180 &&
+    longitude <= 180
+  ) {
+    return { latitude, longitude };
+  }
+
+  const parsedCoordinates = parseCoordinatesFromLocation(grievance.location);
+  if (parsedCoordinates) {
+    return parsedCoordinates;
+  }
+
+  const wardNumber = getWardNumber(grievance.location);
+  if (wardNumber && wardCenters[wardNumber]) {
+    return {
+      latitude: wardCenters[wardNumber].latitude + getStableOffset(`${grievance._id}-lat`),
+      longitude: wardCenters[wardNumber].longitude + getStableOffset(`${grievance._id}-lng`),
+    };
+  }
+
+  return {
+    latitude: locationAnchors.surat.latitude + getStableOffset(`${grievance._id}-lat-default`),
+    longitude: locationAnchors.surat.longitude + getStableOffset(`${grievance._id}-lng-default`),
+  };
+}
+
+function parseCoordinatesFromLocation(location) {
+  if (!location || typeof location !== 'string') {
+    return null;
+  }
+
+  const coordinateMatch = location.match(/(-?\d+(?:\.\d+)?)\s*[, ]\s*(-?\d+(?:\.\d+)?)/);
+  if (coordinateMatch) {
+    const latitude = Number(coordinateMatch[1]);
+    const longitude = Number(coordinateMatch[2]);
+
+    if (
+      Number.isFinite(latitude) &&
+      Number.isFinite(longitude) &&
+      latitude >= -90 &&
+      latitude <= 90 &&
+      longitude >= -180 &&
+      longitude <= 180
+    ) {
+      return { latitude, longitude };
+    }
+  }
+
+  const normalizedLocation = location.toLowerCase();
+  for (const [anchor, coords] of Object.entries(locationAnchors)) {
+    if (normalizedLocation.includes(anchor)) {
+      return coords;
+    }
+  }
+
+  return null;
+}
+
 /**
  * Get ward-wise grievance statistics and map data
  */
@@ -21,7 +128,7 @@ exports.getWardMapData = async (req, res) => {
 
     // Fetch all grievances with location data
     const grievances = await Grievance.find(filter)
-      .select('trackingId title category status priority location createdAt')
+      .select('trackingId title category status priority location coordinates createdAt')
       .lean();
 
     // Parse ward information from location field
@@ -30,50 +137,49 @@ exports.getWardMapData = async (req, res) => {
     const locationData = [];
 
     grievances.forEach((grievance) => {
-      if (grievance.location) {
-        // Extract ward number from location string
-        const wardMatch = grievance.location.match(/Ward\s*(\d+)/i);
-        const wardNumber = wardMatch ? wardMatch[1] : 'Others';
-        const wardKey = wardNumber === 'Others' ? 'Others' : `Ward ${wardNumber}`;
+      const wardMatch = grievance.location?.match(/Ward\s*(\d+)/i);
+      const wardNumber = wardMatch ? wardMatch[1] : 'Others';
+      const wardKey = wardNumber === 'Others' ? 'Others' : `Ward ${wardNumber}`;
 
-        // Initialize ward if not exists
-        if (!wardData[wardKey]) {
-          wardData[wardKey] = {
-            wardName: wardKey,
-            wardNumber: wardNumber,
-            total: 0,
-            open: 0,
-            inProgress: 0,
-            resolved: 0,
-            closed: 0,
-            rejected: 0,
-            high: 0,
-            medium: 0,
-            low: 0,
-            critical: 0,
-          };
-        }
-
-        // Increment counters
-        wardData[wardKey].total++;
-        wardData[wardKey][grievance.status.replace('-', '')] = 
-          (wardData[wardKey][grievance.status.replace('-', '')] || 0) + 1;
-        wardData[wardKey][grievance.priority] = 
-          (wardData[wardKey][grievance.priority] || 0) + 1;
-
-        // Add to location data for map markers
-        locationData.push({
-          id: grievance._id,
-          trackingId: grievance.trackingId,
-          title: grievance.title,
-          category: grievance.category,
-          status: grievance.status,
-          priority: grievance.priority,
-          location: grievance.location,
-          ward: wardKey,
-          createdAt: grievance.createdAt,
-        });
+      if (!wardData[wardKey]) {
+        wardData[wardKey] = {
+          wardName: wardKey,
+          wardNumber: wardNumber,
+          total: 0,
+          open: 0,
+          inProgress: 0,
+          resolved: 0,
+          closed: 0,
+          rejected: 0,
+          high: 0,
+          medium: 0,
+          low: 0,
+          critical: 0,
+        };
       }
+
+      wardData[wardKey].total++;
+      wardData[wardKey][grievance.status.replace('-', '')] =
+        (wardData[wardKey][grievance.status.replace('-', '')] || 0) + 1;
+      wardData[wardKey][grievance.priority] =
+        (wardData[wardKey][grievance.priority] || 0) + 1;
+
+      const coordinates = getCoordinatesForMap(grievance);
+
+      locationData.push({
+        _id: grievance._id,
+        id: grievance._id,
+        grievanceId: grievance.trackingId,
+        trackingId: grievance.trackingId,
+        title: grievance.title,
+        category: grievance.category,
+        status: grievance.status,
+        priority: grievance.priority,
+        location: grievance.location,
+        ward: wardKey,
+        coordinates,
+        createdAt: grievance.createdAt,
+      });
     });
 
     // Convert ward data to array and sort by total count
@@ -188,7 +294,7 @@ exports.getWardDetails = async (req, res) => {
  */
 exports.getGeoJSONData = async (req, res) => {
   try {
-    const { status, priority } = req.query;
+    const { status, priority, category } = req.query;
 
     const filter = {};
     if (status && status !== 'all') {
@@ -197,6 +303,9 @@ exports.getGeoJSONData = async (req, res) => {
     if (priority && priority !== 'all') {
       filter.priority = priority;
     }
+    if (category && category !== 'all') {
+      filter.category = category;
+    }
 
     const grievances = await Grievance.find(filter)
       .select('trackingId title category status priority location coordinates createdAt')
@@ -204,8 +313,8 @@ exports.getGeoJSONData = async (req, res) => {
 
     // Create GeoJSON FeatureCollection using actual coordinates
     const features = grievances
-      .filter(g => g.coordinates && g.coordinates.latitude && g.coordinates.longitude)
       .map((g, index) => {
+        const coords = getCoordinatesForMap(g);
         // Extract ward number
         const wardMatch = g.location ? g.location.match(/Ward\s*(\d+)/i) : null;
         const wardNumber = wardMatch ? parseInt(wardMatch[1]) : 0;
@@ -215,8 +324,8 @@ exports.getGeoJSONData = async (req, res) => {
           geometry: {
             type: 'Point',
             coordinates: [
-              g.coordinates.longitude,
-              g.coordinates.latitude,
+              coords.longitude,
+              coords.latitude,
             ],
           },
           properties: {
