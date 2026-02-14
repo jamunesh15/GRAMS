@@ -182,20 +182,53 @@ export default function GrievancesManagement() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-        <div className="text-center">
-          <div className="relative w-20 h-20 mx-auto mb-4">
-            <div className="absolute inset-0 border-4 border-green-200 rounded-full animate-ping"></div>
-            <div className="absolute inset-0 border-4 border-t-green-500 border-r-green-500 border-b-transparent border-l-transparent rounded-full animate-spin"></div>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="flex justify-center items-center h-screen bg-gradient-to-br from-slate-50 to-slate-100"
+      >
+        <div className="text-center relative">
+          <motion.div
+            animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
+            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+            className="absolute inset-0 bg-green-200 rounded-full blur-3xl -z-10"
+          />
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+            className="text-6xl mb-4"
+          >
+            📋
+          </motion.div>
+          <motion.p
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+            className="text-gray-600 font-medium text-lg"
+          >
+            Loading grievances...
+          </motion.p>
+          <div className="flex justify-center gap-1 mt-3">
+            {[0, 1, 2].map((i) => (
+              <motion.div
+                key={i}
+                animate={{ y: [-10, 10, -10] }}
+                transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
+                className="w-3 h-3 bg-green-500 rounded-full"
+              />
+            ))}
           </div>
-          <p className="text-gray-600 font-medium">Loading grievances...</p>
         </div>
-      </div>
+      </motion.div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-green-50/30 pb-10">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-green-50/30 pb-10"
+    >
       {/* Stats Cards */}
       <div className="mb-4 sm:mb-6">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-2 sm:gap-3 md:gap-4">
@@ -834,6 +867,6 @@ export default function GrievancesManagement() {
           </div>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }

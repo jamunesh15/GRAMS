@@ -271,43 +271,64 @@ export default function ActiveTasks() {
               </motion.button>
             </div>
 
-            {/* Stats with Premium Design */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+            {/* Stats Cards - Premium Design */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mt-6">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                whileHover={{ scale: 1.05 }}
-                className="bg-white/20 backdrop-blur-md p-4 rounded-xl border-2 border-white/30 shadow-lg"
+                whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(59, 130, 246, 0.4)' }}
+                className="bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden"
               >
-                <p className="text-white/80 text-xs font-semibold mb-1">Total Active</p>
-                <p className="text-3xl font-black text-white">{activeTasks.length}</p>
+                <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <p className="text-blue-100 text-sm font-medium mb-1">Total Active</p>
+                      <motion.p initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.5, type: 'spring' }} className="text-5xl font-extrabold">{activeTasks.length}</motion.p>
+                    </div>
+                    <span className="text-4xl">⚙️</span>
+                  </div>
+                  <div className="h-1 bg-blue-400 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 0.5 }} className="h-full bg-white" /></div>
+                </div>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                whileHover={{ scale: 1.05 }}
-                className="bg-white/20 backdrop-blur-md p-4 rounded-xl border-2 border-white/30 shadow-lg"
+                whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(245, 158, 11, 0.4)' }}
+                className="bg-gradient-to-br from-orange-500 via-orange-600 to-amber-600 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden"
               >
-                <p className="text-white/80 text-xs font-semibold mb-1">High Priority</p>
-                <p className="text-3xl font-black text-white">
-                  {activeTasks.filter(t => t.priority === 'high' || t.priority === 'critical').length}
-                </p>
+                <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 0.5, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <p className="text-orange-100 text-sm font-medium mb-1">High Priority</p>
+                      <motion.p initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.6, type: 'spring' }} className="text-5xl font-extrabold">{activeTasks.filter(t => t.priority === 'high' || t.priority === 'critical').length}</motion.p>
+                    </div>
+                    <span className="text-4xl">🔥</span>
+                  </div>
+                  <div className="h-1 bg-orange-400 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: activeTasks.length > 0 ? `${(activeTasks.filter(t => t.priority === 'high' || t.priority === 'critical').length / activeTasks.length) * 100}%` : '0%' }} transition={{ delay: 0.8, duration: 1 }} className="h-full bg-white" /></div>
+                </div>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
-                whileHover={{ scale: 1.05 }}
-                className="bg-white/20 backdrop-blur-md p-4 rounded-xl border-2 border-white/30 shadow-lg"
+                whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(139, 92, 246, 0.4)' }}
+                className="bg-gradient-to-br from-purple-500 via-purple-600 to-violet-600 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden"
               >
-                <p className="text-white/80 text-xs font-semibold mb-1">Avg. Days Working</p>
-                <p className="text-3xl font-black text-white">
-                  {activeTasks.length > 0 
-                    ? Math.round(activeTasks.reduce((sum, t) => sum + calculateDaysWorking(t.workStartedAt), 0) / activeTasks.length)
-                    : 0}
-                </p>
+                <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 1, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <p className="text-purple-100 text-sm font-medium mb-1">Avg. Days Working</p>
+                      <motion.p initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.7, type: 'spring' }} className="text-5xl font-extrabold">{activeTasks.length > 0 ? Math.round(activeTasks.reduce((sum, t) => sum + calculateDaysWorking(t.workStartedAt), 0) / activeTasks.length) : 0}</motion.p>
+                    </div>
+                    <span className="text-4xl">📅</span>
+                  </div>
+                  <div className="h-1 bg-purple-400 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: '60%' }} transition={{ delay: 0.9, duration: 1 }} className="h-full bg-white" /></div>
+                </div>
               </motion.div>
             </div>
           </div>

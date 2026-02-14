@@ -252,25 +252,41 @@ const Reports = () => {
                 <div className="space-y-6">
                   {/* Summary Cards */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-xl border border-blue-200">
-                      <div className="text-blue-600 text-sm font-semibold mb-1">Total Grievances</div>
-                      <div className="text-3xl font-black text-blue-900">{previewData.totalGrievances}</div>
-                    </div>
+                    <motion.div whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(59, 130, 246, 0.4)' }} className="bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 p-4 rounded-xl text-white shadow-xl relative overflow-hidden">
+                      <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+                      <div className="relative z-10">
+                        <div className="text-blue-100 text-sm font-medium mb-1">Total Grievances</div>
+                        <div className="text-3xl font-extrabold">{previewData.totalGrievances}</div>
+                        <div className="mt-2 h-1 bg-blue-400 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 0.5 }} className="h-full bg-white" /></div>
+                      </div>
+                    </motion.div>
 
-                    <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-xl border border-green-200">
-                      <div className="text-green-600 text-sm font-semibold mb-1">Resolved</div>
-                      <div className="text-3xl font-black text-green-900">{previewData.resolved}</div>
-                    </div>
+                    <motion.div whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(16, 185, 129, 0.4)' }} className="bg-gradient-to-br from-green-500 via-green-600 to-emerald-600 p-4 rounded-xl text-white shadow-xl relative overflow-hidden">
+                      <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 0.5, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+                      <div className="relative z-10">
+                        <div className="text-green-100 text-sm font-medium mb-1">Resolved</div>
+                        <div className="text-3xl font-extrabold">{previewData.resolved}</div>
+                        <div className="mt-2 h-1 bg-green-400 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: previewData.totalGrievances > 0 ? `${(previewData.resolved / previewData.totalGrievances) * 100}%` : '0%' }} transition={{ duration: 1, delay: 0.2 }} className="h-full bg-white" /></div>
+                      </div>
+                    </motion.div>
 
-                    <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 p-4 rounded-xl border border-yellow-200">
-                      <div className="text-yellow-600 text-sm font-semibold mb-1">In Progress</div>
-                      <div className="text-3xl font-black text-yellow-900">{previewData.inProgress}</div>
-                    </div>
+                    <motion.div whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(245, 158, 11, 0.4)' }} className="bg-gradient-to-br from-yellow-500 via-amber-500 to-orange-500 p-4 rounded-xl text-white shadow-xl relative overflow-hidden">
+                      <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 1, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+                      <div className="relative z-10">
+                        <div className="text-yellow-100 text-sm font-medium mb-1">In Progress</div>
+                        <div className="text-3xl font-extrabold">{previewData.inProgress}</div>
+                        <div className="mt-2 h-1 bg-yellow-300 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: previewData.totalGrievances > 0 ? `${(previewData.inProgress / previewData.totalGrievances) * 100}%` : '0%' }} transition={{ duration: 1, delay: 0.3 }} className="h-full bg-white" /></div>
+                      </div>
+                    </motion.div>
 
-                    <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-xl border border-purple-200">
-                      <div className="text-purple-600 text-sm font-semibold mb-1">Resolution Rate</div>
-                      <div className="text-3xl font-black text-purple-900">{previewData.resolutionRate}%</div>
-                    </div>
+                    <motion.div whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(139, 92, 246, 0.4)' }} className="bg-gradient-to-br from-purple-500 via-purple-600 to-violet-600 p-4 rounded-xl text-white shadow-xl relative overflow-hidden">
+                      <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 1.5, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+                      <div className="relative z-10">
+                        <div className="text-purple-100 text-sm font-medium mb-1">Resolution Rate</div>
+                        <div className="text-3xl font-extrabold">{previewData.resolutionRate}%</div>
+                        <div className="mt-2 h-1 bg-purple-400 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: `${previewData.resolutionRate}%` }} transition={{ duration: 1, delay: 0.4 }} className="h-full bg-white" /></div>
+                      </div>
+                    </motion.div>
                   </div>
 
                   {/* Additional Metrics */}

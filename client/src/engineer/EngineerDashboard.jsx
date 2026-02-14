@@ -9,6 +9,7 @@ import CompletedTasks from './components/CompletedTasks';
 import EngineerReports from './components/EngineerReports';
 import SupportRequestForm from './components/SupportRequestForm';
 
+
 export default function EngineerDashboard() {
   const [activeTab, setActiveTab] = useState('assigned');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -25,6 +26,8 @@ export default function EngineerDashboard() {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [isSidebarOpen]);
+
+
 
   const menuItems = [
     { id: 'assigned', label: 'Assigned to Me', icon: '📋', badge: null },

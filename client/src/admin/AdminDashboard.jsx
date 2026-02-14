@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import useAuthStore from '../store/authStore';
 import GramsLogo from '../components/GramsLogo';
 import Reveal from '../components/Reveal';
@@ -18,7 +19,7 @@ export default function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { logout } = useAuthStore();
+  const { user, logout } = useAuthStore();
 
   useEffect(() => {
     fetchDashboardStats();
@@ -116,9 +117,14 @@ export default function AdminDashboard() {
 
         <div className="flex-1 overflow-y-auto px-4 pb-4 scrollbar-hide">
           <nav className="space-y-2">
-            {menuItems.map((item) => (
-              <button
+            {menuItems.map((item, index) => (
+              <motion.button
                 key={item.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.05, duration: 0.3 }}
+                whileHover={{ scale: 1.02, x: 5 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => {
                   setActiveTab(item.id);
                   if (window.innerWidth < 1024) {
@@ -133,7 +139,7 @@ export default function AdminDashboard() {
               >
                 <span className="text-lg">{item.icon}</span>
                 <span className="font-medium">{item.label}</span>
-              </button>
+              </motion.button>
             ))}
           </nav>
 
@@ -153,23 +159,73 @@ export default function AdminDashboard() {
       <div className="w-full lg:pl-64">
         {/* Content Area */}
         <div className="pt-20 px-3 sm:px-6 lg:px-8 pb-32">
-          {activeTab === 'overview' && <DashboardOverview stats={stats} loading={loading} onTabChange={setActiveTab} />}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-6 sm:mb-8"
+          >
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 bg-clip-text text-transparent">
+              Welcome, {user?.name || 'Admin'}!
+            </h1>
+            <p className="text-gray-600 mt-2 text-base sm:text-lg">Admin Dashboard</p>
+          </motion.div>
 
-          {activeTab === 'grievances' && <GrievancesManagement />}
+          <AnimatePresence mode="wait">
+            {activeTab === 'overview' && (
+              <motion.div key="overview" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3 }}>
+                <DashboardOverview stats={stats} loading={loading} onTabChange={setActiveTab} />
+              </motion.div>
+            )}
 
-          {activeTab === 'escalations' && <EscalationsManagement />}
+            {activeTab === 'grievances' && (
+              <motion.div key="grievances" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3 }}>
+                <GrievancesManagement />
+              </motion.div>
+            )}
 
-          {activeTab === 'engineers' && <EngineersManagement />}
+            {activeTab === 'escalations' && (
+              <motion.div key="escalations" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3 }}>
+                <EscalationsManagement />
+              </motion.div>
+            )}
 
-          {activeTab === 'budget' && <BudgetManagement />}
+            {activeTab === 'engineers' && (
+              <motion.div key="engineers" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3 }}>
+                <EngineersManagement />
+              </motion.div>
+            )}
 
-          {activeTab === 'resources' && <ResourceApproval />}
+            {activeTab === 'budget' && (
+              <motion.div key="budget" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3 }}>
+                <BudgetManagement />
+              </motion.div>
+            )}
 
-          {activeTab === 'ward-map' && <WardMap />}
+            {activeTab === 'resources' && (
+              <motion.div key="resources" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3 }}>
+                <ResourceApproval />
+              </motion.div>
+            )}
 
-          {activeTab === 'analytics' && <Analytics />}
+            {activeTab === 'ward-map' && (
+              <motion.div key="ward-map" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3 }}>
+                <WardMap />
+              </motion.div>
+            )}
 
-          {activeTab === 'reports' && <Reports />}
+            {activeTab === 'analytics' && (
+              <motion.div key="analytics" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3 }}>
+                <Analytics />
+              </motion.div>
+            )}
+
+            {activeTab === 'reports' && (
+              <motion.div key="reports" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3 }}>
+                <Reports />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>

@@ -286,22 +286,38 @@ const WardMap = () => {
           transition={{ delay: 0.1 }}
           className="grid grid-cols-1 md:grid-cols-4 gap-4"
         >
-          <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white shadow-lg">
-            <div className="text-sm opacity-90 mb-1">Total Grievances</div>
-            <div className="text-3xl font-bold">{wardData.summary.totalGrievances}</div>
-          </div>
-          <div className="bg-gradient-to-br from-red-500 to-red-600 rounded-xl p-6 text-white shadow-lg">
-            <div className="text-sm opacity-90 mb-1">High Density (20+)</div>
-            <div className="text-3xl font-bold">{wardData.summary.highDensityWards}</div>
-          </div>
-          <div className="bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl p-6 text-white shadow-lg">
-            <div className="text-sm opacity-90 mb-1">Medium Density (10-19)</div>
-            <div className="text-3xl font-bold">{wardData.summary.mediumDensityWards}</div>
-          </div>
-          <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 text-white shadow-lg">
-            <div className="text-sm opacity-90 mb-1">Low Density (&lt;10)</div>
-            <div className="text-3xl font-bold">{wardData.summary.lowDensityWards}</div>
-          </div>
+          <motion.div whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(59, 130, 246, 0.4)' }} className="bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 rounded-xl sm:rounded-2xl p-6 text-white shadow-xl relative overflow-hidden">
+            <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+            <div className="relative z-10">
+              <div className="text-blue-100 text-sm font-medium mb-1">Total Grievances</div>
+              <div className="text-3xl font-extrabold">{wardData.summary.totalGrievances}</div>
+              <div className="mt-2 h-1 bg-blue-400 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 0.5 }} className="h-full bg-white" /></div>
+            </div>
+          </motion.div>
+          <motion.div whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(239, 68, 68, 0.4)' }} className="bg-gradient-to-br from-red-500 via-red-600 to-rose-600 rounded-xl sm:rounded-2xl p-6 text-white shadow-xl relative overflow-hidden">
+            <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 0.5, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+            <div className="relative z-10">
+              <div className="text-red-100 text-sm font-medium mb-1">High Density (20+)</div>
+              <div className="text-3xl font-extrabold">{wardData.summary.highDensityWards}</div>
+              <div className="mt-2 h-1 bg-red-400 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 0.5, delay: 0.2 }} className="h-full bg-white" /></div>
+            </div>
+          </motion.div>
+          <motion.div whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(245, 158, 11, 0.4)' }} className="bg-gradient-to-br from-amber-500 via-orange-500 to-orange-600 rounded-xl sm:rounded-2xl p-6 text-white shadow-xl relative overflow-hidden">
+            <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 1, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+            <div className="relative z-10">
+              <div className="text-amber-100 text-sm font-medium mb-1">Medium Density (10-19)</div>
+              <div className="text-3xl font-extrabold">{wardData.summary.mediumDensityWards}</div>
+              <div className="mt-2 h-1 bg-amber-300 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 0.5, delay: 0.3 }} className="h-full bg-white" /></div>
+            </div>
+          </motion.div>
+          <motion.div whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(16, 185, 129, 0.4)' }} className="bg-gradient-to-br from-green-500 via-green-600 to-emerald-600 rounded-xl sm:rounded-2xl p-6 text-white shadow-xl relative overflow-hidden">
+            <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 1.5, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+            <div className="relative z-10">
+              <div className="text-green-100 text-sm font-medium mb-1">Low Density (&lt;10)</div>
+              <div className="text-3xl font-extrabold">{wardData.summary.lowDensityWards}</div>
+              <div className="mt-2 h-1 bg-green-400 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 0.5, delay: 0.4 }} className="h-full bg-white" /></div>
+            </div>
+          </motion.div>
         </motion.div>
       )}
 
@@ -695,22 +711,34 @@ const WardMap = () => {
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4">
-                  <div className="text-sm text-blue-700 mb-1">Total</div>
-                  <div className="text-2xl font-bold text-blue-900">{selectedWard.stats.total}</div>
-                </div>
-                <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg p-4">
-                  <div className="text-sm text-yellow-700 mb-1">Open</div>
-                  <div className="text-2xl font-bold text-yellow-900">{selectedWard.stats.byStatus.open || 0}</div>
-                </div>
-                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4">
-                  <div className="text-sm text-green-700 mb-1">Resolved</div>
-                  <div className="text-2xl font-bold text-green-900">{selectedWard.stats.byStatus.resolved || 0}</div>
-                </div>
-                <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-lg p-4">
-                  <div className="text-sm text-red-700 mb-1">Overdue</div>
-                  <div className="text-2xl font-bold text-red-900">{selectedWard.stats.overdue}</div>
-                </div>
+                <motion.div whileHover={{ y: -4, boxShadow: '0 12px 24px rgba(59, 130, 246, 0.3)' }} className="bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 rounded-lg p-4 text-white shadow-lg relative overflow-hidden">
+                  <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, repeat: Infinity }} className="absolute -right-6 -top-6 w-20 h-20 bg-white rounded-full opacity-10" />
+                  <div className="relative z-10">
+                    <div className="text-blue-100 text-sm mb-1">Total</div>
+                    <div className="text-2xl font-extrabold">{selectedWard.stats.total}</div>
+                  </div>
+                </motion.div>
+                <motion.div whileHover={{ y: -4, boxShadow: '0 12px 24px rgba(245, 158, 11, 0.3)' }} className="bg-gradient-to-br from-yellow-500 via-amber-500 to-orange-500 rounded-lg p-4 text-white shadow-lg relative overflow-hidden">
+                  <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 0.5, repeat: Infinity }} className="absolute -right-6 -top-6 w-20 h-20 bg-white rounded-full opacity-10" />
+                  <div className="relative z-10">
+                    <div className="text-yellow-100 text-sm mb-1">Open</div>
+                    <div className="text-2xl font-extrabold">{selectedWard.stats.byStatus.open || 0}</div>
+                  </div>
+                </motion.div>
+                <motion.div whileHover={{ y: -4, boxShadow: '0 12px 24px rgba(16, 185, 129, 0.3)' }} className="bg-gradient-to-br from-green-500 via-green-600 to-emerald-600 rounded-lg p-4 text-white shadow-lg relative overflow-hidden">
+                  <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 1, repeat: Infinity }} className="absolute -right-6 -top-6 w-20 h-20 bg-white rounded-full opacity-10" />
+                  <div className="relative z-10">
+                    <div className="text-green-100 text-sm mb-1">Resolved</div>
+                    <div className="text-2xl font-extrabold">{selectedWard.stats.byStatus.resolved || 0}</div>
+                  </div>
+                </motion.div>
+                <motion.div whileHover={{ y: -4, boxShadow: '0 12px 24px rgba(239, 68, 68, 0.3)' }} className="bg-gradient-to-br from-red-500 via-red-600 to-rose-600 rounded-lg p-4 text-white shadow-lg relative overflow-hidden">
+                  <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 1.5, repeat: Infinity }} className="absolute -right-6 -top-6 w-20 h-20 bg-white rounded-full opacity-10" />
+                  <div className="relative z-10">
+                    <div className="text-red-100 text-sm mb-1">Overdue</div>
+                    <div className="text-2xl font-extrabold">{selectedWard.stats.overdue}</div>
+                  </div>
+                </motion.div>
               </div>
 
               <div className="mt-6">

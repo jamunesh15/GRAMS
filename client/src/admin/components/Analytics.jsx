@@ -136,22 +136,38 @@ const Analytics = () => {
         >
           {/* Summary Cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4">
-            <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-6 text-white shadow-lg">
-              <div className="text-[10px] sm:text-xs lg:text-sm opacity-90 mb-0.5 sm:mb-1">Average Resolution Time</div>
-              <div className="text-xl sm:text-2xl lg:text-3xl font-bold">{resolutionData.overall.average} days</div>
-            </div>
-            <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-6 text-white shadow-lg">
-              <div className="text-[10px] sm:text-xs lg:text-sm opacity-90 mb-0.5 sm:mb-1">Minimum Time</div>
-              <div className="text-xl sm:text-2xl lg:text-3xl font-bold">{resolutionData.overall.minimum} days</div>
-            </div>
-            <div className="bg-gradient-to-br from-orange-500 to-red-500 rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-6 text-white shadow-lg">
-              <div className="text-[10px] sm:text-xs lg:text-sm opacity-90 mb-0.5 sm:mb-1">Maximum Time</div>
-              <div className="text-xl sm:text-2xl lg:text-3xl font-bold">{resolutionData.overall.maximum} days</div>
-            </div>
-            <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-6 text-white shadow-lg">
-              <div className="text-[10px] sm:text-xs lg:text-sm opacity-90 mb-0.5 sm:mb-1">Total Resolved</div>
-              <div className="text-xl sm:text-2xl lg:text-3xl font-bold">{resolutionData.overall.total}</div>
-            </div>
+            <motion.div whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(59, 130, 246, 0.4)' }} className="bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 rounded-lg sm:rounded-2xl p-3 sm:p-4 lg:p-6 text-white shadow-xl relative overflow-hidden">
+              <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+              <div className="relative z-10">
+                <div className="text-blue-100 text-[10px] sm:text-xs lg:text-sm font-medium mb-1">Average Resolution Time</div>
+                <div className="text-xl sm:text-2xl lg:text-4xl font-extrabold">{resolutionData.overall.average} days</div>
+                <div className="mt-2 h-1 bg-blue-400 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 0.5 }} className="h-full bg-white" /></div>
+              </div>
+            </motion.div>
+            <motion.div whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(16, 185, 129, 0.4)' }} className="bg-gradient-to-br from-green-500 via-green-600 to-emerald-600 rounded-lg sm:rounded-2xl p-3 sm:p-4 lg:p-6 text-white shadow-xl relative overflow-hidden">
+              <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 0.5, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+              <div className="relative z-10">
+                <div className="text-green-100 text-[10px] sm:text-xs lg:text-sm font-medium mb-1">Minimum Time</div>
+                <div className="text-xl sm:text-2xl lg:text-4xl font-extrabold">{resolutionData.overall.minimum} days</div>
+                <div className="mt-2 h-1 bg-green-400 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: '60%' }} transition={{ duration: 0.5, delay: 0.2 }} className="h-full bg-white" /></div>
+              </div>
+            </motion.div>
+            <motion.div whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(239, 68, 68, 0.4)' }} className="bg-gradient-to-br from-orange-500 via-red-500 to-rose-600 rounded-lg sm:rounded-2xl p-3 sm:p-4 lg:p-6 text-white shadow-xl relative overflow-hidden">
+              <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 1, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+              <div className="relative z-10">
+                <div className="text-orange-100 text-[10px] sm:text-xs lg:text-sm font-medium mb-1">Maximum Time</div>
+                <div className="text-xl sm:text-2xl lg:text-4xl font-extrabold">{resolutionData.overall.maximum} days</div>
+                <div className="mt-2 h-1 bg-orange-400 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 0.5, delay: 0.3 }} className="h-full bg-white" /></div>
+              </div>
+            </motion.div>
+            <motion.div whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(139, 92, 246, 0.4)' }} className="bg-gradient-to-br from-purple-500 via-purple-600 to-violet-600 rounded-lg sm:rounded-2xl p-3 sm:p-4 lg:p-6 text-white shadow-xl relative overflow-hidden">
+              <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 1.5, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+              <div className="relative z-10">
+                <div className="text-purple-100 text-[10px] sm:text-xs lg:text-sm font-medium mb-1">Total Resolved</div>
+                <div className="text-xl sm:text-2xl lg:text-4xl font-extrabold">{resolutionData.overall.total}</div>
+                <div className="mt-2 h-1 bg-purple-400 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 0.5, delay: 0.4 }} className="h-full bg-white" /></div>
+              </div>
+            </motion.div>
           </div>
 
           {/* Charts Row */}
@@ -250,14 +266,22 @@ const Analytics = () => {
           className="space-y-4 sm:space-y-6"
         >
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-            <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl p-4 sm:p-6 text-white shadow-lg">
-              <div className="text-xs sm:text-sm opacity-90 mb-1">Total Engineers</div>
-              <div className="text-2xl sm:text-3xl font-bold">{engineerData.summary.totalEngineers}</div>
-            </div>
-            <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-4 sm:p-6 text-white shadow-lg">
-              <div className="text-xs sm:text-sm opacity-90 mb-1">Avg Resolution Rate</div>
-              <div className="text-2xl sm:text-3xl font-bold">{engineerData.summary.avgResolutionRate}%</div>
-            </div>
+            <motion.div whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(99, 102, 241, 0.4)' }} className="bg-gradient-to-br from-indigo-500 via-indigo-600 to-blue-600 rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white shadow-xl relative overflow-hidden">
+              <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+              <div className="relative z-10">
+                <div className="text-indigo-100 text-xs sm:text-sm font-medium mb-1">Total Engineers</div>
+                <div className="text-2xl sm:text-4xl font-extrabold">{engineerData.summary.totalEngineers}</div>
+                <div className="mt-3 h-1 bg-indigo-400 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 0.5 }} className="h-full bg-white" /></div>
+              </div>
+            </motion.div>
+            <motion.div whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(16, 185, 129, 0.4)' }} className="bg-gradient-to-br from-green-500 via-green-600 to-emerald-600 rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white shadow-xl relative overflow-hidden">
+              <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 0.5, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+              <div className="relative z-10">
+                <div className="text-green-100 text-xs sm:text-sm font-medium mb-1">Avg Resolution Rate</div>
+                <div className="text-2xl sm:text-4xl font-extrabold">{engineerData.summary.avgResolutionRate}%</div>
+                <div className="mt-3 h-1 bg-green-400 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: `${engineerData.summary.avgResolutionRate}%` }} transition={{ duration: 1, delay: 0.2 }} className="h-full bg-white" /></div>
+              </div>
+            </motion.div>
           </div>
 
           {/* Engineer Performance Charts */}

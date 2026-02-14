@@ -282,25 +282,37 @@ export default function BudgetManagement() {
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="space-y-4 sm:space-y-6"
+    >
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+      >
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 flex items-center gap-2 sm:gap-3">
-            <span>💰</span>
+            <motion.span animate={{ rotate: [0, 10, -10, 0] }} transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}>💰</motion.span>
             <span className="break-words">Budget Management</span>
           </h1>
           <p className="text-sm sm:text-base text-gray-600 mt-1">
             {budget ? `Fiscal Year: ${budget.fiscalYear}` : 'System Budget Overview'}
           </p>
         </div>
-        <button
+        <motion.button
+          whileHover={{ scale: 1.05, boxShadow: '0 10px 20px rgba(16,185,129,0.3)' }}
+          whileTap={{ scale: 0.95 }}
           onClick={() => setShowCreateModal(true)}
           className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-semibold text-sm sm:text-base rounded-lg hover:from-green-600 hover:to-emerald-600 transition shadow-md"
         >
           + Create New Budget
-        </button>
-      </div>
+        </motion.button>
+      </motion.div>
 
       {!budget ? (
         <div className="space-y-6">
@@ -325,11 +337,13 @@ export default function BudgetManagement() {
             <div className="bg-white rounded-xl shadow-md p-6">
               <h3 className="text-xl font-bold text-gray-800 mb-4">Draft Budgets</h3>
               <div className="space-y-4">
-                {allBudgets.map((draftBudget) => (
+                {allBudgets.map((draftBudget, index) => (
                   <motion.div
                     key={draftBudget._id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05, type: 'spring' }}
+                    whileHover={{ scale: 1.01, y: -3, boxShadow: '0 12px 24px rgba(0,0,0,0.1)' }}
                     className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition"
                   >
                     <div className="flex items-center justify-between">
@@ -382,59 +396,69 @@ export default function BudgetManagement() {
           {/* Budget Overview Cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 lg:gap-6">
             {/* Total Allocated */}
-            <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-lg sm:rounded-xl shadow-lg p-3 sm:p-4 lg:p-6">
-              <div className="flex items-center justify-between mb-2 sm:mb-3 lg:mb-4">
-                <span className="text-2xl sm:text-3xl lg:text-4xl">💼</span>
-                <div className="text-right">
-                  <p className="text-blue-100 text-[10px] sm:text-xs lg:text-sm">Total Allocated</p>
-                  <p className="text-lg sm:text-2xl lg:text-3xl font-bold mt-0.5 sm:mt-1 break-words">{formatCurrency(stats?.totalAllocated || 0)}</p>
+            <motion.div whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(59, 130, 246, 0.4)' }} className="bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 text-white rounded-lg sm:rounded-2xl shadow-xl p-3 sm:p-4 lg:p-6 relative overflow-hidden">
+              <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                  <div>
+                    <p className="text-blue-100 text-[10px] sm:text-xs lg:text-sm font-medium mb-1">Total Allocated</p>
+                    <p className="text-lg sm:text-2xl lg:text-3xl font-extrabold break-words">{formatCurrency(stats?.totalAllocated || 0)}</p>
+                  </div>
+                  <span className="text-2xl sm:text-3xl lg:text-4xl">💼</span>
                 </div>
+                <div className="h-1 bg-blue-400 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 0.5 }} className="h-full bg-white" /></div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Total Spent */}
-            <div className="bg-gradient-to-br from-red-500 to-red-600 text-white rounded-lg sm:rounded-xl shadow-lg p-3 sm:p-4 lg:p-6">
-              <div className="flex items-center justify-between mb-2 sm:mb-3 lg:mb-4">
-                <span className="text-2xl sm:text-3xl lg:text-4xl">💸</span>
-                <div className="text-right">
-                  <p className="text-red-100 text-[10px] sm:text-xs lg:text-sm">Total Spent</p>
-                  <p className="text-lg sm:text-2xl lg:text-3xl font-bold mt-0.5 sm:mt-1 break-words">{formatCurrency(stats?.totalSpent || 0)}</p>
+            <motion.div whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(239, 68, 68, 0.4)' }} className="bg-gradient-to-br from-red-500 via-red-600 to-rose-600 text-white rounded-lg sm:rounded-2xl shadow-xl p-3 sm:p-4 lg:p-6 relative overflow-hidden">
+              <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 0.5, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                  <div>
+                    <p className="text-red-100 text-[10px] sm:text-xs lg:text-sm font-medium mb-1">Total Spent</p>
+                    <p className="text-lg sm:text-2xl lg:text-3xl font-extrabold break-words">{formatCurrency(stats?.totalSpent || 0)}</p>
+                  </div>
+                  <span className="text-2xl sm:text-3xl lg:text-4xl">💸</span>
                 </div>
-              </div>
-              <div className="mt-1.5 sm:mt-2">
-                <div className="bg-white/20 rounded-full h-1.5 sm:h-2">
-                  <div
-                    className="bg-white rounded-full h-1.5 sm:h-2 transition-all"
-                    style={{ width: `${getPercentage(stats?.totalSpent, stats?.totalAllocated)}%` }}
-                  />
+                <div className="h-1 bg-red-400 rounded-full overflow-hidden">
+                  <motion.div initial={{ width: 0 }} animate={{ width: `${getPercentage(stats?.totalSpent, stats?.totalAllocated)}%` }} transition={{ duration: 1, delay: 0.2 }} className="h-full bg-white" />
                 </div>
-                <p className="text-[10px] sm:text-xs mt-0.5 sm:mt-1 text-red-100">
+                <p className="text-[10px] sm:text-xs mt-1 text-red-200">
                   {getPercentage(stats?.totalSpent, stats?.totalAllocated)}% utilized
                 </p>
               </div>
-            </div>
+            </motion.div>
 
             {/* Remaining Budget */}
-            <div className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-lg sm:rounded-xl shadow-lg p-3 sm:p-4 lg:p-6">
-              <div className="flex items-center justify-between mb-2 sm:mb-3 lg:mb-4">
-                <span className="text-2xl sm:text-3xl lg:text-4xl">💚</span>
-                <div className="text-right">
-                  <p className="text-green-100 text-[10px] sm:text-xs lg:text-sm">Remaining</p>
-                  <p className="text-lg sm:text-2xl lg:text-3xl font-bold mt-0.5 sm:mt-1 break-words">{formatCurrency(stats?.remainingBudget || 0)}</p>
+            <motion.div whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(16, 185, 129, 0.4)' }} className="bg-gradient-to-br from-green-500 via-green-600 to-emerald-600 text-white rounded-lg sm:rounded-2xl shadow-xl p-3 sm:p-4 lg:p-6 relative overflow-hidden">
+              <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 1, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                  <div>
+                    <p className="text-green-100 text-[10px] sm:text-xs lg:text-sm font-medium mb-1">Remaining</p>
+                    <p className="text-lg sm:text-2xl lg:text-3xl font-extrabold break-words">{formatCurrency(stats?.remainingBudget || 0)}</p>
+                  </div>
+                  <span className="text-2xl sm:text-3xl lg:text-4xl">💚</span>
                 </div>
+                <div className="h-1 bg-green-400 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: `${100 - getPercentage(stats?.totalSpent, stats?.totalAllocated)}%` }} transition={{ duration: 1, delay: 0.3 }} className="h-full bg-white" /></div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Available (Operational) */}
-            <div className="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-lg sm:rounded-xl shadow-lg p-3 sm:p-4 lg:p-6">
-              <div className="flex items-center justify-between mb-2 sm:mb-3 lg:mb-4">
-                <span className="text-2xl sm:text-3xl lg:text-4xl">✨</span>
-                <div className="text-right">
-                  <p className="text-purple-100 text-[10px] sm:text-xs lg:text-sm">Available Now</p>
-                  <p className="text-lg sm:text-2xl lg:text-3xl font-bold mt-0.5 sm:mt-1 break-words">{formatCurrency(stats?.operational?.available || 0)}</p>
+            <motion.div whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(139, 92, 246, 0.4)' }} className="bg-gradient-to-br from-purple-500 via-purple-600 to-violet-600 text-white rounded-lg sm:rounded-2xl shadow-xl p-3 sm:p-4 lg:p-6 relative overflow-hidden">
+              <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 1.5, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                  <div>
+                    <p className="text-purple-100 text-[10px] sm:text-xs lg:text-sm font-medium mb-1">Available Now</p>
+                    <p className="text-lg sm:text-2xl lg:text-3xl font-extrabold break-words">{formatCurrency(stats?.operational?.available || 0)}</p>
+                  </div>
+                  <span className="text-2xl sm:text-3xl lg:text-4xl">✨</span>
                 </div>
+                <div className="h-1 bg-purple-400 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 0.5, delay: 0.4 }} className="h-full bg-white" /></div>
               </div>
-            </div>
+            </motion.div>
           </div>
 
           {/* Tabs */}
@@ -933,11 +957,13 @@ export default function BudgetManagement() {
                 All Budgets
               </h3>
               <div className="space-y-4">
-                {allBudgets.map((draftBudget) => (
+                {allBudgets.map((draftBudget, index) => (
                   <motion.div
                     key={draftBudget._id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05, type: 'spring' }}
+                    whileHover={{ scale: 1.01, y: -3, boxShadow: '0 12px 24px rgba(0,0,0,0.1)' }}
                     className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition"
                   >
                     <div className="flex items-center justify-between">
@@ -1359,6 +1385,6 @@ export default function BudgetManagement() {
           </motion.div>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }
