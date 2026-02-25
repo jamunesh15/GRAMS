@@ -42,6 +42,7 @@ app.use(cors({
     'http://localhost:3000',
     'https://grams-oc3p-frontend.vercel.app',
     'https://grams-lyart.vercel.app',
+    "https://main.d3ry7pqpwswyf4.amplifyapp.com"
     /\.vercel\.app$/  // Allow all Vercel preview deployments
   ],
   credentials: true,
