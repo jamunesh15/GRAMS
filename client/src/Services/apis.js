@@ -1,5 +1,5 @@
 // Use VITE_API_BASE_URL from env, otherwise detect based on environment
-const BASE_URL ="https://grams-oc3p-frontend.vercel.app/api" || 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 
   (import.meta.env.PROD ? "https://grams-lyart.vercel.app/api": "http://localhost:5000/api")
 
 // AUTH ENDPOINTS
