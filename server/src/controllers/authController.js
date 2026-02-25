@@ -91,6 +91,11 @@ exports.login = async (req, res) => {
 
     const token = generateToken(user._id);
 
+    console.log('========== USER LOGIN ==========');
+    console.log('User:', user.email);
+    console.log('Token:', token);
+    console.log('================================');
+
     res.status(200).json({
       success: true,
       token,
@@ -361,6 +366,11 @@ exports.verifyCitizenOTP = async (req, res) => {
     // Generate JWT token
     const token = generateToken(user._id);
 
+    console.log('========== PHONE OTP LOGIN ==========');
+    console.log('User:', user.phone);
+    console.log('Token:', token);
+    console.log('======================================');
+
     res.status(200).json({
       success: true,
       message: 'Phone authentication successful',
@@ -428,6 +438,11 @@ exports.googleLogin = async (req, res) => {
     // Generate JWT token
     const token = generateToken(user._id);
 
+    console.log('========== GOOGLE LOGIN ==========');
+    console.log('User:', user.email);
+    console.log('Token:', token);
+    console.log('===================================');
+
     res.status(200).json({
       success: true,
       token,
@@ -491,6 +506,11 @@ exports.microsoftLogin = async (req, res) => {
     // Generate JWT token
     const token = generateToken(user._id);
 
+    console.log('========== MICROSOFT LOGIN ==========');
+    console.log('User:', user.email);
+    console.log('Token:', token);
+    console.log('======================================');
+
     res.status(200).json({
       success: true,
       token,
@@ -534,9 +554,8 @@ exports.sendEmailOTP = async (req, res) => {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({
-        success: false,
         message: 'User with this email already exists. Please login instead.'
-      });
+      })
     }
 
     // Generate 6-digit OTP
