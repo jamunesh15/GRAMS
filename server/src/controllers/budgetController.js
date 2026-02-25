@@ -612,38 +612,62 @@ exports.getPublicSystemBudget = async (req, res) => {
   try {
     const budget = await SystemBudget.getCurrentBudget();
     
-    if (!budget || !budget.transparency.publiclyVisible) {
-      return res.status(404).json({
-        success: false,
-        message: 'Budget information not available',
+    // Handle case when no budget exists or not publicly visible
+    if (!budget) {
+      return res.status(200).json({
+        success: true,
+        data: {
+          fiscalYear: 'N/A',
+          totalAllocated: 0,
+          totalSpent: 0,
+          remainingBudget: 0,
+          operational: { allocated: 0, spent: 0, remaining: 0 },
+          categoryWise: [],
+          message: 'No budget data available'
+        },
+      });
+    }
+
+    if (budget.transparency && !budget.transparency.publiclyVisible) {
+      return res.status(200).json({
+        success: true,
+        data: {
+          fiscalYear: budget.fiscalYear || 'N/A',
+          totalAllocated: 0,
+          totalSpent: 0,
+          remainingBudget: 0,
+          operational: { allocated: 0, spent: 0, remaining: 0 },
+          categoryWise: [],
+          message: 'Budget information not publicly visible'
+        },
       });
     }
 
     const publicData = {
-      fiscalYear: budget.fiscalYear,
-      totalAllocated: budget.totalAllocated,
-      totalSpent: budget.totalSpent,
-      remainingBudget: budget.remainingBudget,
+      fiscalYear: budget.fiscalYear || 'N/A',
+      totalAllocated: budget.totalAllocated || 0,
+      totalSpent: budget.totalSpent || 0,
+      remainingBudget: budget.remainingBudget || 0,
       
       operational: {
-        allocated: budget.operationalBudget.allocated,
-        spent: budget.operationalBudget.spent,
-        remaining: budget.operationalBudgetRemaining,
+        allocated: budget.operationalBudget?.allocated || 0,
+        spent: budget.operationalBudget?.spent || 0,
+        remaining: budget.operationalBudgetRemaining || 0,
       },
       
-      categoryWise: budget.categoryBudgets.map(cat => ({
+      categoryWise: (budget.categoryBudgets || []).map(cat => ({
         category: cat.category,
-        allocated: cat.allocated,
-        spent: cat.spent,
-        remaining: cat.allocated - cat.spent,
-        grievanceCount: cat.grievanceCount,
+        allocated: cat.allocated || 0,
+        spent: cat.spent || 0,
+        remaining: (cat.allocated || 0) - (cat.spent || 0),
+        grievanceCount: cat.grievanceCount || 0,
       })),
     };
 
-    if (budget.transparency.showSalaries) {
+    if (budget.transparency?.showSalaries && budget.salaryBudget) {
       publicData.salary = {
-        allocated: budget.salaryBudget.allocated,
-        spent: budget.salaryBudget.spent,
+        allocated: budget.salaryBudget.allocated || 0,
+        spent: budget.salaryBudget.spent || 0,
       };
     }
 
