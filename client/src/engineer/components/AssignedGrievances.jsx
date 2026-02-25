@@ -258,28 +258,78 @@ export default function AssignedGrievances() {
             </div>
           </div>
 
-          {/* Quick Stats */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-3 sm:p-5 rounded-lg sm:rounded-xl border-2 border-blue-200 transform hover:scale-105 transition-all duration-200 shadow-md">
-              <p className="text-xs sm:text-sm text-blue-700 font-semibold mb-1">Total Assigned</p>
-              <p className="text-2xl sm:text-3xl font-bold text-blue-800">{stats.totalAssigned}</p>
-            </div>
-            <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 p-3 sm:p-5 rounded-lg sm:rounded-xl border-2 border-yellow-200 transform hover:scale-105 transition-all duration-200 shadow-md">
-              <p className="text-xs sm:text-sm text-yellow-700 font-semibold mb-1">Pending</p>
-              <p className="text-2xl sm:text-3xl font-bold text-yellow-800">{stats.pending}</p>
-            </div>
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-3 sm:p-5 rounded-lg sm:rounded-xl border-2 border-purple-200 transform hover:scale-105 transition-all duration-200 shadow-md">
-              <p className="text-xs sm:text-sm text-purple-700 font-semibold mb-1">In Progress</p>
-              <p className="text-2xl sm:text-3xl font-bold text-purple-800">{stats.inProgress}</p>
-            </div>
-            <div className="bg-gradient-to-br from-green-50 to-green-100 p-3 sm:p-5 rounded-lg sm:rounded-xl border-2 border-green-200 transform hover:scale-105 transition-all duration-200 shadow-md">
-              <p className="text-xs sm:text-sm text-green-700 font-semibold mb-1">Completed</p>
-              <p className="text-2xl sm:text-3xl font-bold text-green-800">{stats.completed}</p>
-            </div>
-            <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-3 sm:p-5 rounded-lg sm:rounded-xl border-2 border-orange-200 transform hover:scale-105 transition-all duration-200 shadow-md col-span-2 sm:col-span-1">
-              <p className="text-xs sm:text-sm text-orange-700 font-semibold mb-1">Urgent</p>
-              <p className="text-2xl sm:text-3xl font-bold text-orange-800">{stats.urgent}</p>
-            </div>
+          {/* Quick Stats - Premium Design */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-5">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(59, 130, 246, 0.4)' }}
+              className="bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 rounded-2xl p-5 text-white shadow-xl relative overflow-hidden"
+            >
+              <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, repeat: Infinity }} className="absolute -right-6 -top-6 w-24 h-24 bg-white rounded-full opacity-10" />
+              <div className="relative z-10">
+                <p className="text-blue-100 text-sm font-medium mb-1">Total Assigned</p>
+                <motion.p initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.3, type: 'spring' }} className="text-4xl font-extrabold">{stats.totalAssigned}</motion.p>
+                <div className="h-1 bg-blue-400 rounded-full overflow-hidden mt-3"><motion.div initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 0.5 }} className="h-full bg-white" /></div>
+              </div>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(245, 158, 11, 0.4)' }}
+              className="bg-gradient-to-br from-yellow-500 via-yellow-600 to-amber-600 rounded-2xl p-5 text-white shadow-xl relative overflow-hidden"
+            >
+              <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 0.5, repeat: Infinity }} className="absolute -right-6 -top-6 w-24 h-24 bg-white rounded-full opacity-10" />
+              <div className="relative z-10">
+                <p className="text-yellow-100 text-sm font-medium mb-1">Pending</p>
+                <motion.p initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.4, type: 'spring' }} className="text-4xl font-extrabold">{stats.pending}</motion.p>
+                <div className="h-1 bg-yellow-400 rounded-full overflow-hidden mt-3"><motion.div initial={{ width: 0 }} animate={{ width: stats.totalAssigned > 0 ? `${(stats.pending / stats.totalAssigned) * 100}%` : '0%' }} transition={{ delay: 0.6, duration: 1 }} className="h-full bg-white" /></div>
+              </div>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(139, 92, 246, 0.4)' }}
+              className="bg-gradient-to-br from-purple-500 via-purple-600 to-violet-600 rounded-2xl p-5 text-white shadow-xl relative overflow-hidden"
+            >
+              <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 1, repeat: Infinity }} className="absolute -right-6 -top-6 w-24 h-24 bg-white rounded-full opacity-10" />
+              <div className="relative z-10">
+                <p className="text-purple-100 text-sm font-medium mb-1">In Progress</p>
+                <motion.p initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.5, type: 'spring' }} className="text-4xl font-extrabold">{stats.inProgress}</motion.p>
+                <div className="h-1 bg-purple-400 rounded-full overflow-hidden mt-3"><motion.div initial={{ width: 0 }} animate={{ width: stats.totalAssigned > 0 ? `${(stats.inProgress / stats.totalAssigned) * 100}%` : '0%' }} transition={{ delay: 0.7, duration: 1 }} className="h-full bg-white" /></div>
+              </div>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(16, 185, 129, 0.4)' }}
+              className="bg-gradient-to-br from-green-500 via-green-600 to-emerald-600 rounded-2xl p-5 text-white shadow-xl relative overflow-hidden"
+            >
+              <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 1.5, repeat: Infinity }} className="absolute -right-6 -top-6 w-24 h-24 bg-white rounded-full opacity-10" />
+              <div className="relative z-10">
+                <p className="text-green-100 text-sm font-medium mb-1">Completed</p>
+                <motion.p initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.6, type: 'spring' }} className="text-4xl font-extrabold">{stats.completed}</motion.p>
+                <div className="h-1 bg-green-400 rounded-full overflow-hidden mt-3"><motion.div initial={{ width: 0 }} animate={{ width: stats.totalAssigned > 0 ? `${(stats.completed / stats.totalAssigned) * 100}%` : '0%' }} transition={{ delay: 0.8, duration: 1 }} className="h-full bg-white" /></div>
+              </div>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(239, 68, 68, 0.4)' }}
+              className="bg-gradient-to-br from-red-500 via-rose-600 to-pink-600 rounded-2xl p-5 text-white shadow-xl relative overflow-hidden col-span-1"
+            >
+              <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 2, repeat: Infinity }} className="absolute -right-6 -top-6 w-24 h-24 bg-white rounded-full opacity-10" />
+              <div className="relative z-10">
+                <p className="text-red-100 text-sm font-medium mb-1">Urgent</p>
+                <motion.p initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.7, type: 'spring' }} className="text-4xl font-extrabold">{stats.urgent}</motion.p>
+                <div className="h-1 bg-red-400 rounded-full overflow-hidden mt-3"><motion.div initial={{ width: 0 }} animate={{ width: stats.totalAssigned > 0 ? `${(stats.urgent / stats.totalAssigned) * 100}%` : '0%' }} transition={{ delay: 0.9, duration: 1 }} className="h-full bg-white" /></div>
+              </div>
+            </motion.div>
           </div>
         </div>
 

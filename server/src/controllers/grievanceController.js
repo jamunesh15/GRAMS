@@ -15,6 +15,11 @@ const wardCoordinates = {
   10: { lat: 21.1300, lng: 72.7600 }, // Magdalla
 };
 
+const locationAnchors = {
+  kosamba: { lat: 21.4628, lng: 72.9582 },
+  surat: { lat: 21.1702, lng: 72.8311 },
+};
+
 // Extract coordinates from location string
 function getCoordinatesFromLocation(location) {
   if (!location) {
@@ -23,6 +28,24 @@ function getCoordinatesFromLocation(location) {
       latitude: 21.1702 + (Math.random() * 0.01 - 0.005),
       longitude: 72.8311 + (Math.random() * 0.01 - 0.005),
     };
+  }
+
+  // Try direct lat,lon pattern first
+  const coordinateMatch = String(location).match(/(-?\d+(?:\.\d+)?)\s*[, ]\s*(-?\d+(?:\.\d+)?)/);
+  if (coordinateMatch) {
+    const latitude = Number(coordinateMatch[1]);
+    const longitude = Number(coordinateMatch[2]);
+
+    if (
+      Number.isFinite(latitude) &&
+      Number.isFinite(longitude) &&
+      latitude >= -90 &&
+      latitude <= 90 &&
+      longitude >= -180 &&
+      longitude <= 180
+    ) {
+      return { latitude, longitude };
+    }
   }
 
   // Try to extract ward number
@@ -37,6 +60,16 @@ function getCoordinatesFromLocation(location) {
       return {
         latitude: wardCoord.lat + (Math.random() * 0.01 - 0.005),
         longitude: wardCoord.lng + (Math.random() * 0.01 - 0.005),
+      };
+    }
+  }
+
+  const normalizedLocation = String(location).toLowerCase();
+  for (const [anchor, coords] of Object.entries(locationAnchors)) {
+    if (normalizedLocation.includes(anchor)) {
+      return {
+        latitude: coords.lat + (Math.random() * 0.006 - 0.003),
+        longitude: coords.lng + (Math.random() * 0.006 - 0.003),
       };
     }
   }
@@ -233,6 +266,10 @@ exports.updateGrievance = async (req, res) => {
     const prevAssignedTo = grievance.assignedTo ? String(grievance.assignedTo) : null;
 
     Object.assign(grievance, req.body);
+
+    if (typeof req.body.location === 'string' && req.body.location.trim()) {
+      grievance.coordinates = getCoordinatesFromLocation(req.body.location.trim());
+    }
 
     const nextStatus = grievance.status;
     if (['resolved', 'closed'].includes(prevStatus) && ['open', 'in-progress'].includes(nextStatus)) {

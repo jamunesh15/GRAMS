@@ -58,6 +58,8 @@ const EngineersManagement = () => {
     instructions: '',
   });
   
+  const [grievanceSearch, setGrievanceSearch] = useState('');
+  
   const [messageData, setMessageData] = useState({
     engineerId: '',
     message: '',
@@ -65,65 +67,92 @@ const EngineersManagement = () => {
   });
 
   const token = localStorage.getItem('token');
-  const dropdownRef = useRef(null);
-  const dropdownMenuRef = useRef(null);
-  const [dropdownPosition, setDropdownPosition] = useState({ direction: 'bottom', top: 0, left: 0 });
 
-  // Close dropdown when clicking outside
+  // Refs for dropdown elements
+  const dropdownRefs = useRef({});
+  const dropdownMenuRefs = useRef({});
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
+
+  // Close dropdown when clicking outside or scrolling
   useEffect(() => {
+    if (!openActionMenu) return;
+
     const handleClickOutside = (event) => {
-      // Check if click is outside both the button container and the dropdown menu
-      if (
-        dropdownRef.current && 
-        !dropdownRef.current.contains(event.target) &&
-        dropdownMenuRef.current &&
-        !dropdownMenuRef.current.contains(event.target)
-      ) {
-        setOpenActionMenu(null);
-      }
+      const menuRef = dropdownMenuRefs.current[openActionMenu];
+      const buttonRef = dropdownRefs.current[openActionMenu];
+      
+      if (menuRef && menuRef.contains(event.target)) return;
+      if (buttonRef && buttonRef.contains(event.target)) return;
+      
+      setOpenActionMenu(null);
+    };
+
+    const handleScroll = () => {
+      setOpenActionMenu(null);
     };
 
     document.addEventListener('mousedown', handleClickOutside);
+    window.addEventListener('scroll', handleScroll, true);
+    
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('scroll', handleScroll, true);
     };
-  }, []);
+  }, [openActionMenu]);
 
-  // Calculate dropdown position
+  // Prevent mousedown on button from triggering click-outside handler
+  const handleButtonMouseDown = (event) => {
+    event.stopPropagation();
+  };
+
+  // Calculate position and toggle menu
   const handleActionMenuClick = (engineerId, event) => {
+    event.stopPropagation();
+    event.preventDefault();
+    
+    if (openActionMenu === engineerId) {
+      setOpenActionMenu(null);
+      return;
+    }
+    
     const button = event.currentTarget;
     const rect = button.getBoundingClientRect();
-    const viewportHeight = window.innerHeight;
-    const spaceBelow = viewportHeight - rect.bottom;
-    const spaceAbove = rect.top;
-    const dropdownHeight = 350; // Approximate dropdown height
-
-    // Calculate position
-    let direction = 'bottom';
-    let top = rect.bottom + 8; // 8px gap from button
+    const menuWidth = Math.min(256, window.innerWidth - 20);
+    const menuHeight = 280;
+    const isMobile = window.innerWidth < 768;
     
-    // Open upward if not enough space below but enough space above
-    if (spaceBelow < dropdownHeight && spaceAbove > dropdownHeight) {
-      direction = 'top';
-      top = rect.top - dropdownHeight - 8;
-    } else if (spaceBelow < dropdownHeight && spaceAbove < dropdownHeight) {
-      // If not enough space on either side, center it or use what's available
-      if (spaceAbove > spaceBelow) {
-        direction = 'top';
-        top = Math.max(10, rect.top - dropdownHeight - 8);
-      } else {
-        direction = 'bottom';
+    let top, left;
+    
+    if (isMobile) {
+      // For mobile - center horizontally, position above or below button
+      left = (window.innerWidth - menuWidth) / 2;
+      
+      // Check if there's space below
+      if (window.innerHeight - rect.bottom > menuHeight + 20) {
         top = rect.bottom + 8;
+      } else {
+        // Show above
+        top = Math.max(10, rect.top - menuHeight - 8);
       }
+    } else {
+      // Desktop - align to right edge of button
+      left = rect.right - menuWidth;
+      top = rect.bottom + 8;
+      
+      // If not enough space below, show above
+      if (window.innerHeight - rect.bottom < menuHeight + 20) {
+        top = rect.top - menuHeight - 8;
+      }
+      
+      // Keep menu within viewport
+      if (left < 10) left = 10;
     }
-
-    setDropdownPosition({
-      direction,
-      top,
-      left: rect.right - 256 // 256px = w-64 (dropdown width)
-    });
-
-    setOpenActionMenu(openActionMenu === engineerId ? null : engineerId);
+    
+    // Ensure top is never negative
+    if (top < 10) top = 10;
+    
+    setMenuPosition({ top, left });
+    setOpenActionMenu(engineerId);
   };
 
   // Toast notification helper
@@ -134,7 +163,19 @@ const EngineersManagement = () => {
 
   useEffect(() => {
     fetchData();
-  }, [filter]);
+  }, []);
+
+  // Client-side filtering function
+  const getFilteredEngineers = () => {
+    if (filter.status === 'all') {
+      return engineers;
+    }
+    return engineers.filter(engineer => {
+      if (filter.status === 'active') return engineer.isActive === true;
+      if (filter.status === 'inactive') return engineer.isActive === false;
+      return true;
+    });
+  };
 
   const fetchData = async () => {
     try {
@@ -144,7 +185,7 @@ const EngineersManagement = () => {
       
       // Note: getAllGrievancesAdmin returns the data directly, not wrapped in a response object
       const [engineersData, statsData, grievancesData] = await Promise.all([
-        getAllEngineers(token, filter.status !== 'all' ? { status: filter.status } : {}),
+        getAllEngineers(token),
         getEngineerStats(token),
         getAllGrievancesAdmin(token),
       ]);
@@ -321,150 +362,324 @@ const EngineersManagement = () => {
       </AnimatePresence>
 
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="flex justify-between items-center mb-6"
+      >
         <div>
-          <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+          <motion.h1 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+            className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 animate-gradient"
+          >
             👷 Engineers Management
-          </h1>
-          <p className="text-gray-600 mt-1">Manage engineers and task assignments</p>
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+            className="text-gray-600 mt-1"
+          >
+            Manage engineers and task assignments
+          </motion.p>
         </div>
         <motion.button
-          whileHover={{ scale: 1.05 }}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.4, duration: 0.5, type: "spring", stiffness: 200 }}
+          whileHover={{ scale: 1.05, boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)" }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setShowAddModal(true)}
-          className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 font-semibold flex items-center gap-2"
+          className="px-6 py-3 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 font-semibold flex items-center gap-2 relative overflow-hidden group"
         >
-          <span className="text-xl">+</span>
-          Add Engineer
+          <span className="absolute inset-0 bg-gradient-to-r from-pink-600 via-purple-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></span>
+          <span className="relative text-xl">+</span>
+          <span className="relative">Add Engineer</span>
         </motion.button>
-      </div>
+      </motion.div>
 
       {/* Tabs */}
-      <div className="bg-white rounded-xl shadow-md mb-6 overflow-hidden">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5, duration: 0.5 }}
+        className="bg-white rounded-2xl shadow-lg mb-6 overflow-hidden border border-gray-100"
+      >
         <div className="flex border-b border-gray-200">
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={() => setActiveTab('engineers')}
-            className={`flex-1 px-6 py-4 font-medium text-sm transition-all ${
+            className={`flex-1 px-6 py-4 font-medium text-sm transition-all duration-300 relative overflow-hidden group ${
               activeTab === 'engineers'
-                ? 'border-b-2 border-blue-500 text-blue-600 bg-blue-50'
+                ? 'text-blue-600 bg-gradient-to-r from-blue-50 to-purple-50'
                 : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
             }`}
           >
-            👷 Engineers List
-          </button>
-          <button
+            {activeTab === 'engineers' && (
+              <motion.div
+                layoutId="activeTab"
+                className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500"
+                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              />
+            )}
+            <span className="relative z-10">👷 Engineers List</span>
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={() => setActiveTab('completed')}
-            className={`flex-1 px-6 py-4 font-medium text-sm transition-all ${
+            className={`flex-1 px-6 py-4 font-medium text-sm transition-all duration-300 relative overflow-hidden group ${
               activeTab === 'completed'
-                ? 'border-b-2 border-green-500 text-green-600 bg-green-50'
+                ? 'text-green-600 bg-gradient-to-r from-green-50 to-emerald-50'
                 : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
             }`}
           >
-            ✅ Completed Tasks Review
-          </button>
+            {activeTab === 'completed' && (
+              <motion.div
+                layoutId="activeTab"
+                className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-green-500 to-emerald-500"
+                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              />
+            )}
+            <span className="relative z-10">✅ Completed Tasks Review</span>
+          </motion.button>
         </div>
-      </div>
+      </motion.div>
 
       {/* Tab Content */}
-      {activeTab === 'completed' ? (
-        <CompletedTasksReview />
-      ) : (
-        <>
+      <AnimatePresence mode="wait">
+        {activeTab === 'completed' ? (
+          <motion.div
+            key="completed-tasks"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+          >
+            <CompletedTasksReview />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="engineers-list"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+          >
+          <>
           {/* Stats Cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 mb-4 sm:mb-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 mb-6">
+            {/* Total Engineers Card */}
             <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg sm:rounded-xl p-3 sm:p-5 text-white shadow-md"
-        >
-          <div className="flex justify-between items-start">
-            <div>
-              <p className="text-blue-100 text-[10px] sm:text-sm font-medium">Total Engineers</p>
-              <h3 className="text-2xl sm:text-4xl font-bold mt-1 sm:mt-2">{stats.totalEngineers}</h3>
-            </div>
-            <div className="w-10 h-10 sm:w-16 sm:h-16 bg-white/20 rounded-lg flex items-center justify-center">
-              <span className="text-2xl sm:text-4xl">👷</span>
-            </div>
-          </div>
-        </motion.div>
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              whileHover={{ y: -8, scale: 1.02, transition: { duration: 0.2 } }}
+              transition={{ duration: 0.4 }}
+              className="bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 rounded-2xl p-4 sm:p-6 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer relative overflow-hidden group"
+            >
+              {/* Decorative Background Pattern */}
+              <div className="absolute inset-0 opacity-10">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white rounded-full -mr-16 -mt-16"></div>
+                <div className="absolute bottom-0 left-0 w-24 h-24 bg-white rounded-full -ml-12 -mb-12"></div>
+                <div className="absolute top-1/2 right-1/4 w-16 h-16 bg-white rounded-full"></div>
+              </div>
+              
+              <div className="flex items-start justify-between mb-3 relative z-10">
+                <div className="flex-1">
+                  <p className="text-xs sm:text-sm font-medium text-blue-100 mb-2">Total Engineers</p>
+                  <motion.h3 
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                    className="text-3xl sm:text-4xl font-bold text-white"
+                  >
+                    {stats.totalEngineers}
+                  </motion.h3>
+                </div>
+                <motion.div 
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  className="w-12 h-12 sm:w-14 sm:h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/30"
+                >
+                  <span className="text-2xl sm:text-3xl">👷</span>
+                </motion.div>
+              </div>
+              <div className="w-16 h-1 bg-white/40 rounded-full relative z-10"></div>
+            </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="bg-gradient-to-br from-green-500 to-emerald-300 rounded-lg sm:rounded-xl p-3 sm:p-5 text-white shadow-md"
-        >
-          <div className="flex justify-between items-start">
-            <div>
-              <p className="text-green-100 text-[10px] sm:text-sm font-medium">Active Engineers</p>
-              <h3 className="text-2xl sm:text-4xl font-bold mt-1 sm:mt-2">{stats.activeEngineers}</h3>
-            </div>
-            <div className="w-10 h-10 sm:w-16 sm:h-16 bg-white/20 rounded-lg flex items-center justify-center">
-              <span className="text-2xl sm:text-4xl">✅</span>
-            </div>
-          </div>
-        </motion.div>
+            {/* Active Engineers Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1, duration: 0.4 }}
+              whileHover={{ y: -8, scale: 1.02, transition: { duration: 0.2 } }}
+              className="bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500 rounded-2xl p-4 sm:p-6 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer relative overflow-hidden group"
+            >
+              {/* Decorative Background Pattern */}
+              <div className="absolute inset-0 opacity-10">
+                <div className="absolute top-0 left-0 w-28 h-28 bg-white rounded-full -ml-14 -mt-14"></div>
+                <div className="absolute bottom-0 right-0 w-20 h-20 bg-white rounded-full -mr-10 -mb-10"></div>
+                <div className="absolute top-2/3 left-1/3 w-12 h-12 bg-white rounded-full"></div>
+              </div>
+              
+              <div className="flex items-start justify-between mb-3 relative z-10">
+                <div className="flex-1">
+                  <p className="text-xs sm:text-sm font-medium text-green-100 mb-2">Active Engineers</p>
+                  <motion.h3 
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
+                    className="text-3xl sm:text-4xl font-bold text-white"
+                  >
+                    {stats.activeEngineers}
+                  </motion.h3>
+                </div>
+                <motion.div 
+                  whileHover={{ scale: 1.1, rotate: -5 }}
+                  className="w-12 h-12 sm:w-14 sm:h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/30"
+                >
+                  <span className="text-2xl sm:text-3xl">✅</span>
+                </motion.div>
+              </div>
+              <div className="w-16 h-1 bg-white/40 rounded-full relative z-10"></div>
+            </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="bg-gradient-to-br from-orange-500 to-red-600 rounded-lg sm:rounded-xl p-3 sm:p-5 text-white shadow-md"
-        >
-          <div className="flex justify-between items-start">
-            <div>
-              <p className="text-orange-100 text-[10px] sm:text-sm font-medium">Active Tasks</p>
-              <h3 className="text-2xl sm:text-4xl font-bold mt-1 sm:mt-2">{stats.totalTasksAssigned}</h3>
-            </div>
-            <div className="w-10 h-10 sm:w-16 sm:h-16 bg-white/20 rounded-lg flex items-center justify-center">
-              <span className="text-2xl sm:text-4xl">📋</span>
-            </div>
-          </div>
-        </motion.div>
+            {/* Active Tasks Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.4 }}
+              whileHover={{ y: -8, scale: 1.02, transition: { duration: 0.2 } }}
+              className="bg-gradient-to-br from-orange-500 via-red-500 to-pink-500 rounded-2xl p-4 sm:p-6 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer relative overflow-hidden group"
+            >
+              {/* Decorative Background Pattern */}
+              <div className="absolute inset-0 opacity-10">
+                <div className="absolute top-0 right-0 w-36 h-36 bg-white rounded-full -mr-18 -mt-18"></div>
+                <div className="absolute bottom-0 left-0 w-20 h-20 bg-white rounded-full -ml-10 -mb-10"></div>
+                <div className="absolute top-1/3 left-1/2 w-14 h-14 bg-white rounded-full"></div>
+              </div>
+              
+              <div className="flex items-start justify-between mb-3 relative z-10">
+                <div className="flex-1">
+                  <p className="text-xs sm:text-sm font-medium text-orange-100 mb-2">Active Tasks</p>
+                  <motion.h3 
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.4, type: "spring", stiffness: 200 }}
+                    className="text-3xl sm:text-4xl font-bold text-white"
+                  >
+                    {stats.totalTasksAssigned}
+                  </motion.h3>
+                </div>
+                <motion.div 
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  className="w-12 h-12 sm:w-14 sm:h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/30"
+                >
+                  <span className="text-2xl sm:text-3xl">📋</span>
+                </motion.div>
+              </div>
+              <div className="w-16 h-1 bg-white/40 rounded-full relative z-10"></div>
+            </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg sm:rounded-xl p-3 sm:p-5 text-white shadow-md"
-        >
-          <div className="flex justify-between items-start">
-            <div>
-              <p className="text-purple-100 text-[10px] sm:text-sm font-medium">Completed Tasks</p>
-              <h3 className="text-2xl sm:text-4xl font-bold mt-1 sm:mt-2">{stats.totalTasksCompleted}</h3>
-            </div>
-            <div className="w-10 h-10 sm:w-16 sm:h-16 bg-white/20 rounded-lg flex items-center justify-center">
-              <span className="text-2xl sm:text-4xl">🎯</span>
-            </div>
+            {/* Completed Tasks Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.4 }}
+              whileHover={{ y: -8, scale: 1.02, transition: { duration: 0.2 } }}
+              className="bg-gradient-to-br from-purple-500 via-fuchsia-500 to-pink-600 rounded-2xl p-4 sm:p-6 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer relative overflow-hidden group"
+            >
+              {/* Decorative Background Pattern */}
+              <div className="absolute inset-0 opacity-10">
+                <div className="absolute top-0 left-0 w-32 h-32 bg-white rounded-full -ml-16 -mt-16"></div>
+                <div className="absolute bottom-0 right-0 w-28 h-28 bg-white rounded-full -mr-14 -mb-14"></div>
+                <div className="absolute top-1/2 right-1/3 w-16 h-16 bg-white rounded-full"></div>
+              </div>
+              
+              <div className="flex items-start justify-between mb-3 relative z-10">
+                <div className="flex-1">
+                  <p className="text-xs sm:text-sm font-medium text-purple-100 mb-2">Completed Tasks</p>
+                  <motion.h3 
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
+                    className="text-3xl sm:text-4xl font-bold text-white"
+                  >
+                    {stats.totalTasksCompleted}
+                  </motion.h3>
+                </div>
+                <motion.div 
+                  whileHover={{ scale: 1.1, rotate: -5 }}
+                  className="w-12 h-12 sm:w-14 sm:h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/30"
+                >
+                  <span className="text-2xl sm:text-3xl">🎯</span>
+                </motion.div>
+              </div>
+              <div className="w-16 h-1 bg-white/40 rounded-full relative z-10"></div>
+            </motion.div>
           </div>
-        </motion.div>
-      </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl p-4 shadow-md mb-4">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6, duration: 0.5 }}
+        className="bg-white rounded-2xl p-4 sm:p-5 shadow-lg mb-6 border border-gray-200 overflow-visible"
+      >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-              📊 Status
+          <motion.div
+            whileHover={{ scale: 1.01 }}
+            transition={{ type: "spring", stiffness: 300 }}
+            className="relative z-10"
+          >
+            <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2 sm:mb-3">
+              <span className="text-lg sm:text-xl">📊</span> Filter by Status
             </label>
-            <select
-              value={filter.status}
-              onChange={(e) => setFilter({ ...filter, status: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            <div className="relative">
+              <select
+                value={filter.status}
+                onChange={(e) => setFilter({ ...filter, status: e.target.value })}
+                className="w-full appearance-none px-4 py-3 sm:px-5 sm:py-4 pr-12 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-white hover:border-purple-400 shadow-sm font-medium text-gray-700 cursor-pointer text-sm sm:text-base"
+              >
+                <option value="all">All Status</option>
+                <option value="active">Active Only</option>
+                <option value="inactive">Inactive Only</option>
+              </select>
+              {/* Custom Dropdown Arrow */}
+              <div className="absolute right-4 sm:right-5 top-1/2 -translate-y-1/2 pointer-events-none">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+            {/* Filter Result Badge */}
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-2 sm:mt-3 inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-gradient-to-r from-purple-50 to-indigo-50 text-purple-700 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold border border-purple-100"
             >
-              <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
-          </div>
+              <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              <span>Showing {getFilteredEngineers().length} of {engineers.length} engineers</span>
+            </motion.div>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Engineers Table - Desktop View */}
-      <div className="hidden lg:block bg-white rounded-xl shadow-md overflow-hidden">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.7, duration: 0.5 }}
+        className="hidden lg:block bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200"
+      >
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gradient-to-r from-green-500 to-emerald-600 text-white">
+            <thead className="bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 text-white">
               <tr>
                 <th className="px-6 py-4 text-left text-sm font-semibold">Engineer ID</th>
                 <th className="px-6 py-4 text-left text-sm font-semibold">Name</th>
@@ -478,14 +693,19 @@ const EngineersManagement = () => {
             </thead>
             <tbody className="divide-y divide-gray-200">
               <AnimatePresence>
-                {engineers.map((engineer, index) => (
+                {getFilteredEngineers().map((engineer, index) => (
                   <motion.tr
                     key={engineer._id}
                     data-engineer-id={engineer._id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ delay: index * 0.05 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ 
+                      delay: index * 0.05,
+                      duration: 0.3,
+                      ease: "easeOut"
+                    }}
+                    whileHover={{ scale: 1.01 }}
                     className="hover:bg-green-50 transition-colors duration-200 border-b border-gray-100"
                   >
                     <td className="px-6 py-8 text-sm font-medium text-green-600">
@@ -498,9 +718,11 @@ const EngineersManagement = () => {
                       {engineer.email}
                     </td>
                     <td className="px-6 py-8 text-sm">
-                      <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-medium">
-                        {engineer.specialization || 'General'}
-                      </span>
+                      <div className="flex items-center">
+                        <span className="inline-block px-3 py-1.5 rounded-full bg-blue-100 text-blue-700 text-xs font-medium whitespace-nowrap">
+                          {engineer.specialization || 'General'}
+                        </span>
+                      </div>
                     </td>
                     <td className="px-6 py-8 text-sm text-gray-900 font-semibold">
                       {engineer.activeTasks || 0}
@@ -520,8 +742,9 @@ const EngineersManagement = () => {
                       )}
                     </td>
                     <td className="px-6 py-8 text-sm">
-                      <div ref={dropdownRef} className="relative inline-block">
+                      <div ref={el => dropdownRefs.current[engineer._id] = el}>
                         <button
+                          onMouseDown={handleButtonMouseDown}
                           onClick={(e) => handleActionMenuClick(engineer._id, e)}
                           className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white rounded-xl hover:shadow-xl hover:scale-105 transition-all duration-300 font-semibold flex items-center gap-2.5"
                         >
@@ -530,78 +753,6 @@ const EngineersManagement = () => {
                             openActionMenu === engineer._id ? 'rotate-180' : ''
                           }`}>▼</span>
                         </button>
-                        
-                        {/* Dropdown Menu - Fixed Positioning */}
-                        {openActionMenu === engineer._id && (
-                          <motion.div 
-                            ref={dropdownMenuRef}
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.95 }}
-                            transition={{ duration: 0.2 }}
-                            style={{
-                              position: 'fixed',
-                              top: `${dropdownPosition.top}px`,
-                              left: `${dropdownPosition.left}px`,
-                            }}
-                            className="w-64 bg-gradient-to-br from-white via-purple-50 to-pink-50 rounded-2xl shadow-2xl border-2 border-purple-200 py-3 z-[9999] max-h-[400px] overflow-y-auto"
-                          >
-                            <div className="px-3 pb-2 mb-2 border-b border-purple-200">
-                              <p className="text-xs font-semibold text-purple-600 uppercase tracking-wide">Quick Actions</p>
-                            </div>
-                            <button
-                              onClick={() => {
-                                openViewModal(engineer);
-                                setOpenActionMenu(null);
-                              }}
-                              className="w-full text-left px-4 py-3.5 mx-2 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-50 transition-all duration-200 flex items-center gap-3 text-gray-800 font-semibold rounded-xl hover:shadow-md hover:scale-[1.02]"
-                            >
-                              <span className="text-2xl">👁️</span>
-                              <span>View Details</span>
-                            </button>
-                            <button
-                              onClick={() => {
-                                openAssignModal(engineer);
-                                setOpenActionMenu(null);
-                              }}
-                              className="w-full text-left px-4 py-3.5 mx-2 hover:bg-gradient-to-r hover:from-purple-100 hover:to-purple-50 transition-all duration-200 flex items-center gap-3 text-gray-800 font-semibold rounded-xl hover:shadow-md hover:scale-[1.02]"
-                            >
-                              <span className="text-2xl">📋</span>
-                              <span>Assign Task</span>
-                            </button>
-                            <button
-                              onClick={() => {
-                                openMessageModal(engineer);
-                                setOpenActionMenu(null);
-                              }}
-                              className="w-full text-left px-4 py-3.5 mx-2 hover:bg-gradient-to-r hover:from-cyan-100 hover:to-cyan-50 transition-all duration-200 flex items-center gap-3 text-gray-800 font-semibold rounded-xl hover:shadow-md hover:scale-[1.02]"
-                            >
-                              <span className="text-2xl">💬</span>
-                              <span>Send Message</span>
-                            </button>
-                            <button
-                              onClick={() => {
-                                openEditModal(engineer);
-                                setOpenActionMenu(null);
-                              }}
-                              className="w-full text-left px-4 py-3.5 mx-2 hover:bg-gradient-to-r hover:from-yellow-100 hover:to-yellow-50 transition-all duration-200 flex items-center gap-3 text-gray-800 font-semibold rounded-xl hover:shadow-md hover:scale-[1.02]"
-                            >
-                              <span className="text-2xl">✏️</span>
-                              <span>Edit Engineer</span>
-                            </button>
-                            <div className="border-t border-purple-200 my-2 mx-3"></div>
-                            <button
-                              onClick={() => {
-                                openDeleteModal(engineer);
-                                setOpenActionMenu(null);
-                              }}
-                              className="w-full text-left px-4 py-3.5 mx-2 hover:bg-gradient-to-r hover:from-red-100 hover:to-red-50 transition-all duration-200 flex items-center gap-3 text-red-600 font-semibold rounded-xl hover:shadow-md hover:scale-[1.02]"
-                            >
-                              <span className="text-2xl">🗑️</span>
-                              <span>Delete Engineer</span>
-                            </button>
-                          </motion.div>
-                        )}
                       </div>
                     </td>
                   </motion.tr>
@@ -610,25 +761,38 @@ const EngineersManagement = () => {
             </tbody>
           </table>
           
-          {engineers.length === 0 && (
-            <div className="text-center py-12 text-gray-500">
+          {/* Fixed Position Dropdown Menu - Rendered outside table */}
+          
+          {getFilteredEngineers().length === 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-center py-12 text-gray-500"
+            >
               <p className="text-lg">No engineers found</p>
-              <p className="text-sm mt-2">Add your first engineer to get started!</p>
-            </div>
+              <p className="text-sm mt-2">{filter.status !== 'all' ? 'Try changing the filter' : 'Add your first engineer to get started!'}</p>
+            </motion.div>
           )}
         </div>
-      </div>
+      </motion.div>
 
       {/* Engineers Cards - Mobile View */}
       <div className="lg:hidden space-y-4">
-        {engineers.length > 0 ? (
+        {getFilteredEngineers().length > 0 ? (
           <AnimatePresence>
-            {engineers.map((engineer, index) => (
+            {getFilteredEngineers().map((engineer, index) => (
               <motion.div
                 key={engineer._id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ 
+                  delay: index * 0.1,
+                  duration: 0.4,
+                  ease: "easeOut"
+                }}
+                whileHover={{ scale: 1.02 }}
                 className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300"
               >
                 {/* Card Header */}
@@ -691,8 +855,9 @@ const EngineersManagement = () => {
                   </div>
 
                   {/* Actions Button */}
-                  <div ref={dropdownRef} className="relative">
+                  <div ref={el => dropdownRefs.current[engineer._id] = el}>
                     <button
+                      onMouseDown={handleButtonMouseDown}
                       onClick={(e) => handleActionMenuClick(engineer._id, e)}
                       className="w-full px-5 py-3 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white rounded-xl hover:shadow-lg transition-all duration-300 font-semibold flex items-center justify-center gap-2"
                     >
@@ -701,96 +866,91 @@ const EngineersManagement = () => {
                         openActionMenu === engineer._id ? 'rotate-180' : ''
                       }`}>▼</span>
                     </button>
-                    
-                    {/* Dropdown Menu */}
-                    {openActionMenu === engineer._id && (
-                      <motion.div 
-                        ref={dropdownMenuRef}
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        transition={{ duration: 0.2 }}
-                        style={{
-                          position: 'fixed',
-                          top: `${dropdownPosition.top}px`,
-                          left: `${dropdownPosition.left}px`,
-                        }}
-                        className="w-64 bg-gradient-to-br from-white via-purple-50 to-pink-50 rounded-2xl shadow-2xl border-2 border-purple-200 py-3 z-[9999] max-h-[400px] overflow-y-auto"
-                      >
-                        <div className="px-3 pb-2 mb-2 border-b border-purple-200">
-                          <p className="text-xs font-semibold text-purple-600 uppercase tracking-wide">Quick Actions</p>
-                        </div>
-                        <button
-                          onClick={() => {
-                            setSelectedEngineer(engineer);
-                            setShowViewModal(true);
-                            setOpenActionMenu(null);
-                          }}
-                          className="w-full px-4 py-3 text-left hover:bg-gradient-to-r hover:from-purple-100 hover:to-pink-100 transition-all duration-200 flex items-center gap-3 text-gray-700 hover:text-purple-700 rounded-lg mx-1"
-                        >
-                          <span className="text-2xl">👁️</span>
-                          <span>View Details</span>
-                        </button>
-                        <button
-                          onClick={() => {
-                            setAssignmentData({ ...assignmentData, engineerId: engineer._id });
-                            setShowAssignModal(true);
-                            setOpenActionMenu(null);
-                          }}
-                          className="w-full px-4 py-3 text-left hover:bg-gradient-to-r hover:from-purple-100 hover:to-pink-100 transition-all duration-200 flex items-center gap-3 text-gray-700 hover:text-purple-700 rounded-lg mx-1"
-                        >
-                          <span className="text-2xl">📋</span>
-                          <span>Assign Task</span>
-                        </button>
-                        <button
-                          onClick={() => {
-                            setMessageData({ ...messageData, engineerId: engineer._id });
-                            setShowMessageModal(true);
-                            setOpenActionMenu(null);
-                          }}
-                          className="w-full px-4 py-3 text-left hover:bg-gradient-to-r hover:from-purple-100 hover:to-pink-100 transition-all duration-200 flex items-center gap-3 text-gray-700 hover:text-purple-700 rounded-lg mx-1"
-                        >
-                          <span className="text-2xl">💬</span>
-                          <span>Send Message</span>
-                        </button>
-                        <button
-                          onClick={() => {
-                            setSelectedEngineer(engineer);
-                            setShowEditModal(true);
-                            setOpenActionMenu(null);
-                          }}
-                          className="w-full px-4 py-3 text-left hover:bg-gradient-to-r hover:from-purple-100 hover:to-pink-100 transition-all duration-200 flex items-center gap-3 text-gray-700 hover:text-purple-700 rounded-lg mx-1"
-                        >
-                          <span className="text-2xl">✏️</span>
-                          <span>Edit Engineer</span>
-                        </button>
-                        <button
-                          onClick={() => {
-                            setSelectedEngineer(engineer);
-                            setShowDeleteModal(true);
-                            setOpenActionMenu(null);
-                          }}
-                          className="w-full px-4 py-3 text-left hover:bg-gradient-to-r hover:from-red-100 hover:to-pink-100 transition-all duration-200 flex items-center gap-3 text-red-600 hover:text-red-700 rounded-lg mx-1"
-                        >
-                          <span className="text-2xl">🗑️</span>
-                          <span>Delete Engineer</span>
-                        </button>
-                      </motion.div>
-                    )}
                   </div>
                 </div>
               </motion.div>
             ))}
           </AnimatePresence>
         ) : (
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8"
+          >
             <div className="text-center text-gray-500">
               <p className="text-lg">No engineers found</p>
-              <p className="text-sm mt-2">Add your first engineer to get started!</p>
+              <p className="text-sm mt-2">{filter.status !== 'all' ? 'Try changing the filter' : 'Add your first engineer to get started!'}</p>
             </div>
-          </div>
+          </motion.div>
         )}
       </div>
+
+      {/* Global Actions Dropdown Menu - Works for both Desktop and Mobile */}
+      {openActionMenu && getFilteredEngineers().find(e => e._id === openActionMenu) && (
+        <div 
+          ref={el => dropdownMenuRefs.current[openActionMenu] = el}
+          style={{
+            position: 'fixed',
+            top: `${menuPosition.top}px`,
+            left: `${menuPosition.left}px`,
+            maxWidth: 'calc(100vw - 20px)',
+          }}
+          className="w-64 bg-white rounded-2xl shadow-2xl border-2 border-purple-200 py-3 z-[99999]"
+        >
+          <div className="px-4 pb-2 mb-2 border-b border-purple-200">
+            <p className="text-xs font-semibold text-purple-600 uppercase tracking-wide">Quick Actions</p>
+          </div>
+          {(() => {
+            const engineer = getFilteredEngineers().find(e => e._id === openActionMenu);
+            return (
+              <>
+                <button
+                  onClick={() => {
+                    openViewModal(engineer);
+                    setOpenActionMenu(null);
+                  }}
+                  className="w-full text-left px-4 py-3 hover:bg-blue-50 transition-all duration-200 flex items-center gap-3 text-gray-800 font-medium"
+                >
+                  <span className="text-lg">👁️</span>
+                  <span>View Details</span>
+                </button>
+                <button
+                  onClick={() => {
+                    openAssignModal(engineer);
+                    setOpenActionMenu(null);
+                  }}
+                  className="w-full text-left px-4 py-3 hover:bg-purple-50 transition-all duration-200 flex items-center gap-3 text-gray-800 font-medium"
+                >
+                  <span className="text-lg">📋</span>
+                  <span>Assign Task</span>
+                </button>
+                <button
+                  onClick={() => {
+                    openMessageModal(engineer);
+                    setOpenActionMenu(null);
+                  }}
+                  className="w-full text-left px-4 py-3 hover:bg-cyan-50 transition-all duration-200 flex items-center gap-3 text-gray-800 font-medium"
+                >
+                  <span className="text-lg">💬</span>
+                  <span>Send Message</span>
+                </button>
+                <div className="border-t border-purple-200 my-2 mx-3"></div>
+                <button
+                  onClick={() => {
+                    openDeleteModal(engineer);
+                    setOpenActionMenu(null);
+                  }}
+                  className="w-full text-left px-4 py-3 hover:bg-red-50 transition-all duration-200 flex items-center gap-3 text-red-600 font-medium"
+                >
+                  <span className="text-lg">🗑️</span>
+                  <span>Delete Engineer</span>
+                </button>
+              </>
+            );
+          })()}
+        </div>
+      )}
 
       {/* Add Engineer Modal */}
       <AnimatePresence>
@@ -946,28 +1106,37 @@ const EngineersManagement = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+            className="fixed inset-0 bg-black/40 backdrop-blur-lg flex items-center justify-center z-[9999] p-4"
             onClick={() => setShowEditModal(false)}
           >
             <motion.div
-              initial={{ scale: 0.9, y: 20 }}
+              initial={{ scale: 0.95, y: 20 }}
               animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
+              exit={{ scale: 0.95, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl"
+              className="bg-white rounded-3xl shadow-2xl overflow-hidden relative z-[10000] border border-gray-200"
+              style={{ maxWidth: '600px', width: '95%' }}
             >
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 to-orange-600">
-                  ✏️ Edit Engineer
-                </h2>
+              {/* Header with gradient background */}
+              <div className="bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 px-6 py-4 flex justify-between items-center">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                    <span className="text-2xl">✏️</span>
+                  </div>
+                  <h2 className="text-xl font-bold text-white drop-shadow-md">
+                    Edit Engineer
+                  </h2>
+                </div>
                 <button
                   onClick={() => setShowEditModal(false)}
-                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                  className="text-white/80 hover:text-white text-3xl leading-none hover:rotate-90 transition-all duration-300"
                 >
                   ×
                 </button>
               </div>
               
+              {/* Content */}
+              <div className="p-5">
               <form onSubmit={handleUpdateEngineer} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -1080,6 +1249,7 @@ const EngineersManagement = () => {
                   </button>
                 </div>
               </form>
+              </div>
             </motion.div>
           </motion.div>
         )}
@@ -1092,87 +1262,168 @@ const EngineersManagement = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+            className="fixed inset-0 bg-black/40 backdrop-blur-lg flex items-center justify-center z-[9999] p-6"
             onClick={() => setShowAssignModal(false)}
           >
             <motion.div
-              initial={{ scale: 0.9, y: 20 }}
+              initial={{ scale: 0.95, y: 20 }}
               animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
+              exit={{ scale: 0.95, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-2xl p-8 max-w-3xl w-full shadow-2xl max-h-[90vh] overflow-y-auto"
+              className="bg-white rounded-3xl shadow-2xl overflow-hidden relative z-[10000] border border-gray-200"
+              style={{ maxWidth: '950px', width: '92%' }}
             >
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-indigo-600">
-                  📋 Assign Task
-                </h2>
+              {/* Header with gradient background */}
+              <div className="bg-gradient-to-r from-purple-500 via-purple-600 to-indigo-500 px-6 py-4 flex justify-between items-center">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                    <span className="text-2xl">📋</span>
+                  </div>
+                  <h2 className="text-xl font-bold text-white drop-shadow-md">
+                    Assign Task
+                  </h2>
+                </div>
                 <button
                   onClick={() => setShowAssignModal(false)}
-                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                  className="text-white/80 hover:text-white text-2xl leading-none hover:rotate-90 transition-all duration-300"
                 >
                   ×
                 </button>
               </div>
               
-              <form onSubmit={handleAssignGrievance} className="space-y-6">
+              {/* Content */}
+              <div className="p-5">
+              <form onSubmit={handleAssignGrievance} className="space-y-3.5">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-3">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2.5">
                     Select Grievances * 
                     <span className="text-xs font-normal text-purple-600 ml-2">
-                      (Hold Ctrl/Cmd to select multiple)
+                      (Click to select multiple)
                     </span>
                   </label>
-                  <div className="relative">
-                    <select
-                      required
-                      multiple
-                      value={assignmentData.grievanceIds}
-                      onChange={(e) => {
-                        const selected = Array.from(e.target.selectedOptions, option => option.value);
-                        setAssignmentData({ ...assignmentData, grievanceIds: selected });
-                      }}
-                      className="w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all min-h-[280px] bg-gradient-to-br from-purple-50 to-white"
-                      style={{
-                        backgroundImage: 'linear-gradient(to bottom right, #faf5ff, #ffffff)',
-                      }}
-                    >
-                      {getAvailableGrievances(assignmentData.engineerId).map(g => (
-                        <option 
-                          key={g._id} 
-                          value={g._id} 
-                          className="py-2.5 px-3 hover:bg-purple-100 rounded-lg my-1 cursor-pointer transition-colors"
-                          style={{
-                            padding: '10px',
-                            margin: '4px 0',
-                            borderRadius: '8px',
-                          }}
-                        >
-                          {g.trackingId} - {g.title?.substring(0, 80) || 'No title'}
-                        </option>
-                      ))}
-                    </select>
+                  
+                  {/* Search Bar */}
+                  <div className="relative mb-2.5">
+                    <input
+                      type="text"
+                      placeholder="Search grievances..."
+                      value={grievanceSearch}
+                      onChange={(e) => setGrievanceSearch(e.target.value)}
+                      className="w-full px-4 py-3 pl-11 border-2 border-purple-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all bg-white text-sm"
+                    />
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 absolute left-3 top-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </div>
+                  
+                  {/* Grievance Cards with Priority Badges */}
+                  <div className="border-2 border-purple-200 rounded-xl bg-white max-h-[270px] overflow-y-auto p-2.5 space-y-2">
+                    {getAvailableGrievances(assignmentData.engineerId)
+                      .filter(g => {
+                        const searchLower = grievanceSearch.toLowerCase();
+                        return g.trackingId?.toLowerCase().includes(searchLower) ||
+                               g.title?.toLowerCase().includes(searchLower) ||
+                               g.location?.toLowerCase().includes(searchLower);
+                      })
+                      .map(g => {
+                        const isSelected = assignmentData.grievanceIds.includes(g._id);
+                        return (
+                          <div
+                            key={g._id}
+                            onClick={() => {
+                              const isAlreadySelected = assignmentData.grievanceIds.includes(g._id);
+                              if (isAlreadySelected) {
+                                setAssignmentData({
+                                  ...assignmentData,
+                                  grievanceIds: assignmentData.grievanceIds.filter(id => id !== g._id)
+                                });
+                              } else {
+                                setAssignmentData({
+                                  ...assignmentData,
+                                  grievanceIds: [...assignmentData.grievanceIds, g._id]
+                                });
+                              }
+                            }}
+                            className={`p-3 rounded-xl border-2 cursor-pointer transition-all ${
+                              isSelected 
+                                ? 'border-purple-500 bg-purple-50 shadow-md' 
+                                : 'border-gray-200 hover:border-purple-300 hover:bg-purple-50/50'
+                            }`}
+                          >
+                            <div className="flex items-center justify-between gap-3">
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                                  <span className="font-bold text-sm text-purple-700">{g.trackingId}</span>
+                                  {g.priority && (
+                                    <span className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wide ${
+                                      g.priority.toLowerCase() === 'critical' 
+                                        ? 'bg-rose-600 text-white' 
+                                        : g.priority.toLowerCase() === 'high' 
+                                        ? 'bg-red-500 text-white' 
+                                        : g.priority.toLowerCase() === 'medium' 
+                                        ? 'bg-orange-500 text-white' 
+                                        : 'bg-green-500 text-white'
+                                    }`}>
+                                      {g.priority}
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-xs text-gray-700 font-semibold line-clamp-1 mb-1">{g.title || 'No title'}</p>
+                                {g.location && (
+                                  <p className="text-[11px] text-gray-500 flex items-center gap-1">
+                                    <span>📍</span>
+                                    <span className="line-clamp-1">{g.location}</span>
+                                  </p>
+                                )}
+                              </div>
+                              <div className={`flex-shrink-0 w-4 h-4 rounded border-2 flex items-center justify-center transition-all ${
+                                isSelected 
+                                  ? 'bg-purple-600 border-purple-600' 
+                                  : 'border-gray-300'
+                              }`}>
+                                {isSelected && (
+                                  <svg className="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                  </svg>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    {getAvailableGrievances(assignmentData.engineerId)
+                      .filter(g => {
+                        const searchLower = grievanceSearch.toLowerCase();
+                        return g.trackingId?.toLowerCase().includes(searchLower) ||
+                               g.title?.toLowerCase().includes(searchLower) ||
+                               g.location?.toLowerCase().includes(searchLower);
+                      }).length === 0 && (
+                      <div className="text-center py-6 text-gray-500">
+                        <p className="text-sm">No grievances found.</p>
+                      </div>
+                    )}
                   </div>
                   
                   <div className="mt-3 space-y-2">
                     {assignmentData.grievanceIds.length > 0 && (
-                      <div className="flex items-center gap-2 p-3 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg">
-                        <span className="text-green-600 text-lg">✓</span>
+                      <div className="flex items-center gap-2.5 p-3 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl">
+                        <span className="text-green-600 text-sm">✓</span>
                         <span className="text-sm font-semibold text-green-700">
-                          {assignmentData.grievanceIds.length} grievance(s) selected
+                          {assignmentData.grievanceIds.length} selected
                         </span>
                       </div>
                     )}
                     {getAvailableGrievances(assignmentData.engineerId).length === 0 && (
-                      <div className="flex items-center gap-2 p-3 bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 rounded-lg">
-                        <span className="text-red-600 text-lg">⚠️</span>
+                      <div className="flex items-center gap-2.5 p-3 bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 rounded-xl">
+                        <span className="text-red-600 text-base">⚠️</span>
                         <span className="text-sm font-semibold text-red-700">
-                          No grievances available to assign. All grievances may already be assigned.
+                          No grievances available to assign.
                         </span>
                       </div>
                     )}
                     {allGrievances.length > 0 && getAvailableGrievances(assignmentData.engineerId).length > 0 && (
-                      <div className="flex items-center gap-2 p-2 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg">
-                        <span className="text-xs text-blue-600">
+                      <div className="flex items-center gap-2.5 p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl">
+                        <span className="text-sm text-blue-600">
                           📊 Total available: <strong>{getAvailableGrievances(assignmentData.engineerId).length}</strong> grievances
                         </span>
                       </div>
@@ -1181,35 +1432,36 @@ const EngineersManagement = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2.5">
                     Instructions (Optional)
                   </label>
                   <textarea
                     value={assignmentData.instructions}
                     onChange={(e) => setAssignmentData({ ...assignmentData, instructions: e.target.value })}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all resize-none bg-gradient-to-br from-gray-50 to-white"
-                    rows="4"
-                    placeholder="Special instructions for the engineer..."
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all resize-none bg-gradient-to-br from-gray-50 to-white text-sm"
+                    rows="2"
+                    placeholder="Special instructions..."
                   />
                 </div>
 
-                <div className="flex gap-3 mt-6 pt-4 border-t border-gray-200">
+                <div className="flex gap-3 mt-4 pt-4 border-t border-gray-200">
                   <button
                     type="submit"
                     disabled={assignmentData.grievanceIds.length === 0}
-                    className="flex-1 py-3.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-semibold hover:shadow-lg hover:scale-[1.02] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                    className="flex-1 py-3.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-semibold hover:shadow-lg hover:scale-[1.02] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 text-sm"
                   >
                     Assign {assignmentData.grievanceIds.length > 0 ? `${assignmentData.grievanceIds.length} ` : ''}Task{assignmentData.grievanceIds.length > 1 ? 's' : ''}
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowAssignModal(false)}
-                    className="flex-1 py-3.5 bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 rounded-xl font-semibold hover:from-gray-200 hover:to-gray-300 transition-all duration-300"
+                    className="flex-1 py-3.5 bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 rounded-xl font-semibold hover:from-gray-200 hover:to-gray-300 transition-all duration-300 text-sm"
                   >
                     Cancel
                   </button>
                 </div>
               </form>
+              </div>
             </motion.div>
           </motion.div>
         )}
@@ -1222,28 +1474,37 @@ const EngineersManagement = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+            className="fixed inset-0 bg-black/40 backdrop-blur-lg flex items-center justify-center z-[9999] p-4"
             onClick={() => setShowMessageModal(false)}
           >
             <motion.div
-              initial={{ scale: 0.9, y: 20 }}
+              initial={{ scale: 0.95, y: 20 }}
               animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
+              exit={{ scale: 0.95, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl"
+              className="bg-white rounded-3xl shadow-2xl overflow-hidden relative z-[10000] border border-gray-200"
+              style={{ maxWidth: '600px', width: '95%' }}
             >
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-blue-600">
-                  💬 Send Message
-                </h2>
+              {/* Header with gradient background */}
+              <div className="bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 px-6 py-4 flex justify-between items-center">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                    <span className="text-2xl">💬</span>
+                  </div>
+                  <h2 className="text-xl font-bold text-white drop-shadow-md">
+                    Send Message
+                  </h2>
+                </div>
                 <button
                   onClick={() => setShowMessageModal(false)}
-                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                  className="text-white/80 hover:text-white text-3xl leading-none hover:rotate-90 transition-all duration-300"
                 >
                   ×
                 </button>
               </div>
               
+              {/* Content */}
+              <div className="p-5">
               <form onSubmit={handleSendMessage} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -1290,6 +1551,7 @@ const EngineersManagement = () => {
                   </button>
                 </div>
               </form>
+              </div>
             </motion.div>
           </motion.div>
         )}
@@ -1302,16 +1564,37 @@ const EngineersManagement = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+            className="fixed inset-0 bg-black/40 backdrop-blur-lg flex items-center justify-center z-[9999] p-4"
             onClick={() => setShowDeleteModal(false)}
           >
             <motion.div
-              initial={{ scale: 0.9, y: 20 }}
+              initial={{ scale: 0.95, y: 20 }}
               animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
+              exit={{ scale: 0.95, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl"
+              className="bg-white rounded-3xl shadow-2xl overflow-hidden relative z-[10000] border border-gray-200"
+              style={{ maxWidth: '500px', width: '95%' }}
             >
+              {/* Header with gradient background */}
+              <div className="bg-gradient-to-r from-red-500 via-red-600 to-pink-500 px-6 py-4 flex justify-between items-center">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                    <span className="text-2xl">⚠️</span>
+                  </div>
+                  <h2 className="text-xl font-bold text-white drop-shadow-md">
+                    Delete Engineer
+                  </h2>
+                </div>
+                <button
+                  onClick={() => setShowDeleteModal(false)}
+                  className="text-white/80 hover:text-white text-3xl leading-none hover:rotate-90 transition-all duration-300"
+                >
+                  ×
+                </button>
+              </div>
+              
+              {/* Content */}
+              <div className="p-6">
               <div className="text-center">
                 <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <span className="text-3xl">⚠️</span>
@@ -1339,6 +1622,7 @@ const EngineersManagement = () => {
                   </button>
                 </div>
               </div>
+              </div>
             </motion.div>
           </motion.div>
         )}
@@ -1351,125 +1635,182 @@ const EngineersManagement = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+            className="fixed inset-0 bg-black/40 backdrop-blur-lg flex items-center justify-center z-[9999] p-4"
             onClick={() => setShowViewModal(false)}
           >
             <motion.div
-              initial={{ scale: 0.9, y: 20 }}
+              initial={{ scale: 0.95, y: 20 }}
               animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
+              exit={{ scale: 0.95, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-2xl p-8 max-w-2xl w-full shadow-2xl max-h-[90vh] overflow-y-auto"
+              className="bg-white rounded-3xl shadow-2xl overflow-hidden relative z-[10000] border border-gray-200"
+              style={{ maxWidth: '1100px', width: '95%' }}
             >
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
-                  👤 Engineer Details
-                </h2>
-                <button
-                  onClick={() => setShowViewModal(false)}
-                  className="text-gray-400 hover:text-gray-600 text-2xl"
-                >
-                  ×
-                </button>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-xl">
-                    <label className="text-xs text-blue-600 font-semibold uppercase tracking-wide">Engineer ID</label>
-                    <p className="font-bold text-blue-700 text-lg mt-1">{selectedEngineer.engineerId}</p>
+              {/* Header with gradient background */}
+              <div className="bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 px-6 py-4 flex justify-between items-center">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                    <span className="text-2xl">👤</span>
                   </div>
-                  <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-xl">
-                    <label className="text-xs text-green-600 font-semibold uppercase tracking-wide">Status</label>
+                  <h2 className="text-xl font-bold text-white drop-shadow-md">
+                    Engineer Details
+                  </h2>
+                </div>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => {
+                      setShowViewModal(false);
+                      setTimeout(() => openEditModal(selectedEngineer), 100);
+                    }}
+                    className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white rounded-lg font-semibold transition-all duration-200 hover:scale-105"
+                    title="Edit Engineer"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                    </svg>
+                    <span>Edit</span>
+                  </button>
+                  <button
+                    onClick={() => setShowViewModal(false)}
+                    className="text-white/80 hover:text-white text-3xl leading-none hover:rotate-90 transition-all duration-300"
+                  >
+                    ×
+                  </button>
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="p-5 space-y-2.5">
+                {/* ID and Status Row */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-white/90 backdrop-blur-sm p-3.5 rounded-xl border-2 border-blue-200 shadow-sm">
+                    <label className="text-xs text-blue-700 font-extrabold uppercase tracking-wider flex items-center gap-1.5 mb-1">
+                      <span>🆔</span> Engineer ID
+                    </label>
+                    <p className="font-black text-blue-900 text-xl">{selectedEngineer.engineerId}</p>
+                  </div>
+                  <div className="bg-white/90 backdrop-blur-sm p-3.5 rounded-xl border-2 border-green-200 shadow-sm">
+                    <label className="text-xs text-green-700 font-extrabold uppercase tracking-wider flex items-center gap-1.5 mb-1">
+                      <span>📊</span> Status
+                    </label>
                     <p className="mt-1">
                       {selectedEngineer.isActive ? (
-                        <span className="px-3 py-1.5 rounded-full bg-green-500 text-white text-sm font-medium inline-block">
-                          ✓ Active
+                        <span className="px-3 py-1.5 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 text-white text-sm font-black inline-flex items-center gap-1.5 shadow-md">
+                          <span>✓</span> Active
                         </span>
                       ) : (
-                        <span className="px-3 py-1.5 rounded-full bg-gray-500 text-white text-sm font-medium inline-block">
-                          ✗ Inactive
+                        <span className="px-3 py-1.5 rounded-full bg-gradient-to-r from-gray-500 to-gray-600 text-white text-sm font-black inline-flex items-center gap-1.5 shadow-md">
+                          <span>✗</span> Inactive
                         </span>
                       )}
                     </p>
                   </div>
                 </div>
 
-                <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-xl">
-                  <label className="text-xs text-purple-600 font-semibold uppercase tracking-wide">Name</label>
-                  <p className="font-bold text-purple-900 text-lg mt-1">{selectedEngineer.name}</p>
-                </div>
-
-                <div className="bg-gradient-to-br from-cyan-50 to-cyan-100 p-4 rounded-xl">
-                  <label className="text-xs text-cyan-600 font-semibold uppercase tracking-wide">Email</label>
-                  <p className="font-semibold text-cyan-900 mt-1">{selectedEngineer.email}</p>
-                </div>
-
-                {selectedEngineer.phone && (
-                  <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-4 rounded-xl">
-                    <label className="text-xs text-orange-600 font-semibold uppercase tracking-wide">Phone</label>
-                    <p className="font-semibold text-orange-900 mt-1">{selectedEngineer.phone}</p>
+                {/* Personal Details Grid */}
+                <div className="grid grid-cols-1 gap-2.5">
+                  <div className="bg-white/90 backdrop-blur-sm p-3 rounded-xl border-2 border-purple-200 shadow-sm">
+                    <label className="text-xs text-purple-700 font-extrabold uppercase tracking-wider flex items-center gap-1.5 mb-1">
+                      <span>👨‍💼</span> Name
+                    </label>
+                    <p className="font-black text-purple-900 text-lg">{selectedEngineer.name}</p>
                   </div>
-                )}
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-gradient-to-br from-pink-50 to-pink-100 p-4 rounded-xl">
-                    <label className="text-xs text-pink-600 font-semibold uppercase tracking-wide">Specialization</label>
-                    <p className="font-semibold text-pink-900 mt-1">{selectedEngineer.specialization || 'General'}</p>
+                  <div className="bg-white/90 backdrop-blur-sm p-3 rounded-xl border-2 border-cyan-200 shadow-sm">
+                    <label className="text-xs text-cyan-700 font-extrabold uppercase tracking-wider flex items-center gap-1.5 mb-1">
+                      <span>📧</span> Email
+                    </label>
+                    <p className="font-bold text-cyan-900 text-base">{selectedEngineer.email}</p>
                   </div>
-                  {selectedEngineer.department && (
-                    <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 p-4 rounded-xl">
-                      <label className="text-xs text-indigo-600 font-semibold uppercase tracking-wide">Department</label>
-                      <p className="font-semibold text-indigo-900 mt-1">{selectedEngineer.department}</p>
+
+                  {selectedEngineer.phone && (
+                    <div className="bg-white/90 backdrop-blur-sm p-3 rounded-xl border-2 border-orange-200 shadow-sm">
+                      <label className="text-xs text-orange-700 font-extrabold uppercase tracking-wider flex items-center gap-1.5 mb-1">
+                        <span>📱</span> Phone
+                      </label>
+                      <p className="font-bold text-orange-900 text-base">{selectedEngineer.phone}</p>
                     </div>
                   )}
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-xl text-white">
-                    <label className="text-xs text-blue-100 font-semibold uppercase tracking-wide">Active Tasks</label>
-                    <p className="font-bold text-4xl mt-2">{selectedEngineer.activeTasks || 0}</p>
+                {/* Specialization and Department */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-white/90 backdrop-blur-sm p-3 rounded-xl border-2 border-pink-200 shadow-sm">
+                    <label className="text-xs text-pink-700 font-extrabold uppercase tracking-wider flex items-center gap-1.5 mb-1">
+                      <span>🎯</span> Specialization
+                    </label>
+                    <p className="font-bold text-pink-900 text-base">{selectedEngineer.specialization || 'General'}</p>
                   </div>
-                  <div className="bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-xl text-white">
-                    <label className="text-xs text-green-100 font-semibold uppercase tracking-wide">Completed Tasks</label>
-                    <p className="font-bold text-4xl mt-2">{selectedEngineer.completedTasks || 0}</p>
+                  {selectedEngineer.department && (
+                    <div className="bg-white/90 backdrop-blur-sm p-3 rounded-xl border-2 border-indigo-200 shadow-sm">
+                      <label className="text-xs text-indigo-700 font-extrabold uppercase tracking-wider flex items-center gap-1.5 mb-1">
+                        <span>🏢</span> Department
+                      </label>
+                      <p className="font-bold text-indigo-900 text-base">{selectedEngineer.department}</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Task Counters - Eye Catching */}
+                <div className="grid grid-cols-2 gap-3 mt-3">
+                  <div className="relative bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 p-4 rounded-2xl text-white shadow-xl overflow-hidden group hover:shadow-2xl transition-all">
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12"></div>
+                    <label className="text-xs font-black uppercase tracking-wider flex items-center gap-1.5 drop-shadow-md">
+                      <span className="text-lg">📋</span> Active Tasks
+                    </label>
+                    <p className="font-black text-5xl mt-1 relative z-10 drop-shadow-lg">{selectedEngineer.activeTasks || 0}</p>
+                    <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-white/40"></div>
+                  </div>
+                  <div className="relative bg-gradient-to-br from-green-500 via-emerald-500 to-green-600 p-4 rounded-2xl text-white shadow-xl overflow-hidden group hover:shadow-2xl transition-all">
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12"></div>
+                    <label className="text-xs font-black uppercase tracking-wider flex items-center gap-1.5 drop-shadow-md">
+                      <span className="text-lg">✅</span> Completed Tasks
+                    </label>
+                    <p className="font-black text-5xl mt-1 relative z-10 drop-shadow-lg">{selectedEngineer.completedTasks || 0}</p>
+                    <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-white/40"></div>
                   </div>
                 </div>
 
+                {/* Assigned Grievances */}
                 {selectedEngineer.assignedGrievances && selectedEngineer.assignedGrievances.length > 0 && (
-                  <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-xl">
-                    <label className="text-xs text-gray-700 font-semibold uppercase tracking-wide mb-3 block">Assigned Grievances ({selectedEngineer.assignedGrievances.length})</label>
-                    <div className="space-y-2 max-h-60 overflow-y-auto">
+                  <div className="bg-white/90 backdrop-blur-sm p-3 rounded-xl border-2 border-gray-200 shadow-sm mt-3">
+                    <label className="text-xs text-gray-800 font-extrabold uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                      <span>📝</span> Assigned Grievances <span className="ml-1 px-2.5 py-0.5 bg-green-500 text-white rounded-full text-xs font-black">{selectedEngineer.assignedGrievances.length}</span>
+                    </label>
+                    <div className="space-y-2 max-h-28 overflow-y-auto pr-1 custom-scrollbar">
                       {selectedEngineer.assignedGrievances.map(g => (
-                        <div key={g._id} className="p-3 bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-                          <p className="font-bold text-sm text-blue-600">{g.trackingId}</p>
-                          <p className="text-sm text-gray-700 mt-1">{g.title}</p>
-                          <div className="flex gap-2 mt-2">
-                            <span className={`px-2 py-1 rounded text-xs font-medium ${
-                              g.status === 'open' ? 'bg-blue-100 text-blue-700' :
-                              g.status === 'in-progress' ? 'bg-yellow-100 text-yellow-700' :
-                              g.status === 'resolved' ? 'bg-green-100 text-green-700' :
-                              'bg-red-100 text-red-700'
-                            }`}>
-                              {g.status}
-                            </span>
-                            <span className={`px-2 py-1 rounded text-xs font-medium ${
-                              g.priority === 'low' ? 'bg-gray-100 text-gray-700' :
-                              g.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                              'bg-red-100 text-red-700'
-                            }`}>
-                              {g.priority}
-                            </span>
+                        <div key={g._id} className="p-2.5 bg-white rounded-lg shadow border-2 border-gray-200 hover:shadow-md transition-all hover:border-green-300">
+                          <div className="flex justify-between items-start">
+                            <p className="font-black text-sm text-green-700">{g.trackingId}</p>
+                            <div className="flex gap-1.5">
+                              <span className={`px-2 py-1 rounded-md text-[10px] font-black uppercase ${
+                                g.status === 'open' ? 'bg-blue-500 text-white' :
+                                g.status === 'in-progress' ? 'bg-yellow-500 text-white' :
+                                g.status === 'resolved' ? 'bg-green-500 text-white' :
+                                'bg-red-500 text-white'
+                              }`}>
+                                {g.status}
+                              </span>
+                              <span className={`px-2 py-1 rounded-md text-[10px] font-black uppercase ${
+                                g.priority === 'low' ? 'bg-gray-500 text-white' :
+                                g.priority === 'medium' ? 'bg-orange-500 text-white' :
+                                'bg-red-600 text-white'
+                              }`}>
+                                {g.priority}
+                              </span>
+                            </div>
                           </div>
+                          <p className="text-xs text-gray-800 font-semibold mt-1.5 line-clamp-1">{g.title}</p>
                         </div>
                       ))}
                     </div>
                   </div>
                 )}
 
+                {/* Close Button */}
                 <button
                   onClick={() => setShowViewModal(false)}
-                  className="w-full py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-lg font-semibold hover:from-gray-700 hover:to-gray-800 transition-all mt-6"
+                  className="w-full py-3 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-900 text-white rounded-xl text-base font-black uppercase tracking-wide hover:from-gray-800 hover:to-black transition-all mt-3 shadow-lg hover:shadow-xl"
                 >
                   Close
                 </button>
@@ -1479,7 +1820,9 @@ const EngineersManagement = () => {
         )}
       </AnimatePresence>
         </>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

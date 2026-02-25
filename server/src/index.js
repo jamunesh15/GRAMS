@@ -32,7 +32,7 @@ try {
 // Initialize app
 const app = express();
 
-// CORS configuration
+// CORS configuration - Allow all origins for Vercel deployment
 const corsOptions = {
   origin: function (origin, callback) {
     // Allow requests with no origin (like mobile apps or curl requests)

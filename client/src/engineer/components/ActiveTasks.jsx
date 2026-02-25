@@ -129,146 +129,363 @@ export default function ActiveTasks() {
 
   if (loading) {
     return (
-      <div className="bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 rounded-xl p-8 shadow-lg border border-purple-100">
-        <div className="text-center py-12">
-          <div className="animate-spin w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p className="text-gray-700 font-semibold">Loading active tasks...</p>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 rounded-2xl p-12 shadow-2xl border-2 border-purple-200 text-center relative overflow-hidden"
+      >
+        {/* Animated background circles */}
+        <motion.div
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.5, 0.3],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          className="absolute top-0 left-0 w-64 h-64 bg-purple-400 rounded-full filter blur-3xl opacity-30"
+        />
+        <motion.div
+          animate={{
+            scale: [1, 1.3, 1],
+            opacity: [0.3, 0.5, 0.3],
+          }}
+          transition={{
+            duration: 3,
+            delay: 1,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          className="absolute bottom-0 right-0 w-64 h-64 bg-pink-400 rounded-full filter blur-3xl opacity-30"
+        />
+        
+        <div className="relative z-10">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            className="text-7xl mb-6 inline-block"
+          >
+            ⚙️
+          </motion.div>
+          <motion.p
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+            className="text-gray-800 font-bold text-xl"
+          >
+            Loading active tasks...
+          </motion.p>
+          <motion.div
+            className="mt-6 flex justify-center gap-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            {[0, 1, 2].map((i) => (
+              <motion.div
+                key={i}
+                animate={{
+                  y: [-10, 10, -10],
+                }}
+                transition={{
+                  duration: 1,
+                  repeat: Infinity,
+                  delay: i * 0.2,
+                }}
+                className="w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"
+              />
+            ))}
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
     );
   }
 
   return (
     <>
       <div className="space-y-4 sm:space-y-6">
-        {/* Header */}
-        <div className="bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-purple-100">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent flex items-center gap-2 sm:gap-3">
-                <span className="text-2xl sm:text-3xl">⚙️</span>
-                Active Tasks
-              </h2>
-              <p className="text-gray-700 text-xs sm:text-sm mt-1 font-medium">
-                Tasks currently in progress
-              </p>
+        {/* Header with Premium Styling */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gradient-to-br from-purple-600 via-pink-600 to-orange-600 rounded-2xl p-6 sm:p-8 shadow-2xl border border-purple-400 relative overflow-hidden"
+        >
+          {/* Animated background pattern */}
+          <motion.div
+            animate={{
+              backgroundPosition: ['0% 0%', '100% 100%'],
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              repeatType: "reverse",
+            }}
+            className="absolute inset-0 opacity-10"
+            style={{
+              backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px)',
+              backgroundSize: '40px 40px',
+            }}
+          />
+          
+          <div className="relative z-10">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <motion.h2
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-2xl sm:text-3xl font-extrabold text-white flex items-center gap-3"
+                >
+                  <motion.span
+                    animate={{ rotate: [0, 10, -10, 0] }}
+                    transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
+                    className="text-3xl"
+                  >
+                    ⚙️
+                  </motion.span>
+                  Active Tasks
+                </motion.h2>
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                  className="text-purple-100 text-sm font-medium mt-2"
+                >
+                  Tasks currently in progress
+                </motion.p>
+              </div>
+              <motion.button
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.6 }}
+                whileHover={{ scale: 1.05, boxShadow: "0 20px 40px rgba(0,0,0,0.3)" }}
+                whileTap={{ scale: 0.95 }}
+                onClick={fetchActiveTasks}
+                className="px-4 py-3 bg-white text-purple-600 rounded-xl shadow-lg hover:shadow-2xl transition-all flex items-center justify-center gap-2 font-bold text-sm group"
+              >
+                <svg className="w-4 h-4 group-hover:animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Refresh
+              </motion.button>
             </div>
-            <button
-              onClick={fetchActiveTasks}
-              className="px-3 sm:px-4 py-2 sm:py-2.5 bg-gradient-to-r from-purple-500 to-pink-600 text-white font-semibold text-xs sm:text-sm rounded-lg sm:rounded-xl hover:from-purple-600 hover:to-pink-700 transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2 transform hover:scale-105"
-            >
-              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-              <span className="hidden sm:inline">Refresh</span>
-            </button>
-          </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-3 sm:p-5 rounded-lg sm:rounded-xl border-2 border-purple-200 transform hover:scale-105 transition-all duration-200 shadow-md">
-              <p className="text-xs sm:text-sm text-purple-700 font-semibold mb-1">Total Active</p>
-              <p className="text-2xl sm:text-3xl font-bold text-purple-800">{activeTasks.length}</p>
-            </div>
-            <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-3 sm:p-5 rounded-lg sm:rounded-xl border-2 border-orange-200 transform hover:scale-105 transition-all duration-200 shadow-md">
-              <p className="text-xs sm:text-sm text-orange-700 font-semibold mb-1">High Priority</p>
-              <p className="text-2xl sm:text-3xl font-bold text-orange-800">
-                {activeTasks.filter(t => t.priority === 'high' || t.priority === 'critical').length}
-              </p>
-            </div>
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-3 sm:p-5 rounded-lg sm:rounded-xl border-2 border-blue-200 transform hover:scale-105 transition-all duration-200 shadow-md">
-              <p className="text-xs sm:text-sm text-blue-700 font-semibold mb-1">Avg. Days Working</p>
-              <p className="text-2xl sm:text-3xl font-bold text-blue-800">
-                {activeTasks.length > 0 
-                  ? Math.round(activeTasks.reduce((sum, t) => sum + calculateDaysWorking(t.workStartedAt), 0) / activeTasks.length)
-                  : 0}
-              </p>
+            {/* Stats Cards - Premium Design */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mt-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(59, 130, 246, 0.4)' }}
+                className="bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden"
+              >
+                <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <p className="text-blue-100 text-sm font-medium mb-1">Total Active</p>
+                      <motion.p initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.5, type: 'spring' }} className="text-5xl font-extrabold">{activeTasks.length}</motion.p>
+                    </div>
+                    <span className="text-4xl">⚙️</span>
+                  </div>
+                  <div className="h-1 bg-blue-400 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 0.5 }} className="h-full bg-white" /></div>
+                </div>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(245, 158, 11, 0.4)' }}
+                className="bg-gradient-to-br from-orange-500 via-orange-600 to-amber-600 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden"
+              >
+                <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 0.5, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <p className="text-orange-100 text-sm font-medium mb-1">High Priority</p>
+                      <motion.p initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.6, type: 'spring' }} className="text-5xl font-extrabold">{activeTasks.filter(t => t.priority === 'high' || t.priority === 'critical').length}</motion.p>
+                    </div>
+                    <span className="text-4xl">🔥</span>
+                  </div>
+                  <div className="h-1 bg-orange-400 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: activeTasks.length > 0 ? `${(activeTasks.filter(t => t.priority === 'high' || t.priority === 'critical').length / activeTasks.length) * 100}%` : '0%' }} transition={{ delay: 0.8, duration: 1 }} className="h-full bg-white" /></div>
+                </div>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(139, 92, 246, 0.4)' }}
+                className="bg-gradient-to-br from-purple-500 via-purple-600 to-violet-600 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden"
+              >
+                <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 1, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <p className="text-purple-100 text-sm font-medium mb-1">Avg. Days Working</p>
+                      <motion.p initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.7, type: 'spring' }} className="text-5xl font-extrabold">{activeTasks.length > 0 ? Math.round(activeTasks.reduce((sum, t) => sum + calculateDaysWorking(t.workStartedAt), 0) / activeTasks.length) : 0}</motion.p>
+                    </div>
+                    <span className="text-4xl">📅</span>
+                  </div>
+                  <div className="h-1 bg-purple-400 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: '60%' }} transition={{ delay: 0.9, duration: 1 }} className="h-full bg-white" /></div>
+                </div>
+              </motion.div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Active Tasks List */}
         <div className="space-y-4">
           {activeTasks.length === 0 ? (
-            <div className="bg-gradient-to-br from-gray-50 to-purple-50 rounded-xl p-12 shadow-md text-center border border-purple-100">
-              <p className="text-4xl mb-4">🎯</p>
-              <p className="text-gray-700 text-lg font-semibold">No active tasks</p>
-              <p className="text-gray-500 text-sm mt-2">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-gradient-to-br from-white via-purple-50 to-pink-50 rounded-2xl p-12 shadow-xl text-center border-2 border-purple-200 relative overflow-hidden"
+            >
+              <motion.div
+                animate={{
+                  scale: [1, 1.2, 1],
+                  rotate: [0, 10, -10, 0],
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                }}
+                className="text-7xl mb-4"
+              >
+                🎯
+              </motion.div>
+              <p className="text-gray-700 text-xl font-bold mb-2">No active tasks</p>
+              <p className="text-gray-500 text-sm">
                 Start working on assigned tasks to see them here
               </p>
-            </div>
+            </motion.div>
           ) : (
             activeTasks.map((task, index) => (
               <motion.div
                 key={task._id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                className="bg-gradient-to-br from-white via-purple-50/30 to-pink-50/30 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-md hover:shadow-xl transition-all duration-300 border-l-4 border-purple-500 backdrop-blur-sm transform hover:scale-[1.02]"
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.05, type: "spring" }}
+                whileHover={{ scale: 1.02, y: -5, boxShadow: "0 20px 40px rgba(147, 51, 234, 0.2)" }}
+                className="bg-gradient-to-br from-white via-purple-50/50 to-pink-50/50 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 border-2 border-purple-200 relative overflow-hidden group"
               >
-                <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-3 sm:gap-4">
-                  <div className="flex-1">
-                    {/* Header */}
-                    <div className="flex items-start gap-2 sm:gap-3 mb-3">
-                      <span className="text-2xl sm:text-3xl flex-shrink-0">{getCategoryIcon(task.category)}</span>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <h3 className="text-base sm:text-lg font-bold text-gray-800 break-words">{task.title}</h3>
-                          <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs font-semibold rounded-full whitespace-nowrap">
-                            IN PROGRESS
-                          </span>
+                {/* Animated gradient overlay on hover */}
+                <motion.div
+                  animate={{
+                    opacity: [0, 0.15, 0],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                  }}
+                  className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400"
+                />
+
+                <div className="relative z-10">
+                  <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-3 sm:gap-4">
+                    <div className="flex-1">
+                      {/* Header */}
+                      <div className="flex items-start gap-2 sm:gap-3 mb-3">
+                        <motion.span
+                          animate={{ rotate: [0, 10, -10, 0] }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                          className="text-2xl sm:text-3xl flex-shrink-0"
+                        >
+                          {getCategoryIcon(task.category)}
+                        </motion.span>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <h3 className="text-base sm:text-lg font-bold text-gray-800 break-words">{task.title}</h3>
+                            <motion.span
+                              whileHover={{ scale: 1.1 }}
+                              className="px-2 py-0.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-semibold rounded-full whitespace-nowrap shadow-md"
+                            >
+                              ⚙️ IN PROGRESS
+                            </motion.span>
+                          </div>
+                          <p className="text-xs sm:text-sm text-gray-500 mt-1 break-all">
+                            ID: {task.trackingId}
+                          </p>
                         </div>
-                        <p className="text-xs sm:text-sm text-gray-500 mt-1 break-all">
-                          ID: {task.trackingId}
-                        </p>
                       </div>
-                    </div>
 
                     {/* Description */}
                     <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4 line-clamp-2">{task.description}</p>
 
                     {/* Location */}
                     {task.location && (
-                      <div className="flex items-start gap-2 text-xs sm:text-sm text-gray-600 mb-3 bg-gray-50 p-2 sm:p-3 rounded-lg">
-                        <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <motion.div
+                        whileHover={{ scale: 1.02, backgroundColor: "rgba(239, 246, 255, 1)" }}
+                        className="flex items-start gap-2 text-xs sm:text-sm text-gray-600 mb-3 bg-gray-50 p-2 sm:p-3 rounded-xl border border-blue-200"
+                      >
+                        <motion.svg
+                          animate={{ scale: [1, 1.2, 1] }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                          className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-500 flex-shrink-0 mt-0.5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
+                        </motion.svg>
                         <span className="font-medium flex-shrink-0">Location:</span>
                         <span className="break-words">{task.location}</span>
-                      </div>
+                      </motion.div>
                     )}
 
                     {/* Metadata */}
                     <div className="flex flex-wrap gap-2 sm:gap-3 mb-3 sm:mb-4">
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getPriorityColor(task.priority)}`}>
+                      <motion.span
+                        whileHover={{ scale: 1.05 }}
+                        className={`px-3 py-1 rounded-full text-xs font-medium border ${getPriorityColor(task.priority)}`}
+                      >
                         {task.priority.toUpperCase()} PRIORITY
-                      </span>
-                      <span className="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 capitalize">
+                      </motion.span>
+                      <motion.span
+                        whileHover={{ scale: 1.05 }}
+                        className="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 capitalize"
+                      >
                         {task.category}
-                      </span>
+                      </motion.span>
                       {task.workStartedAt && (
-                        <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+                        <motion.span
+                          whileHover={{ scale: 1.05 }}
+                          className="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700"
+                        >
                           ⏱️ Day {calculateDaysWorking(task.workStartedAt)}
-                        </span>
+                        </motion.span>
                       )}
                     </div>
 
                     {/* Budget Info */}
                     {task.budget && task.budget.allocated > 0 && (
-                      <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 p-2 sm:p-3 rounded-lg mb-3 sm:mb-4">
+                      <motion.div
+                        whileHover={{ scale: 1.02, boxShadow: "0 8px 20px rgba(16, 185, 129, 0.3)" }}
+                        className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 p-2 sm:p-3 rounded-xl mb-3 sm:mb-4"
+                      >
                         <div className="flex items-center gap-2">
-                          <span className="text-base sm:text-lg">💰</span>
+                          <motion.span
+                            animate={{ rotate: [0, 10, -10, 0] }}
+                            transition={{ duration: 2, repeat: Infinity }}
+                            className="text-base sm:text-lg"
+                          >
+                            💰
+                          </motion.span>
                           <span className="text-xs sm:text-sm font-semibold text-green-800 break-words">
                             ₹{task.budget.allocated.toLocaleString()} Allocated
                           </span>
                         </div>
-                      </div>
+                      </motion.div>
                     )}
 
                     {/* Timeline */}
                     {task.workStartedAt && (
-                      <div className="bg-blue-50 p-2 sm:p-3 rounded-lg">
+                      <motion.div
+                        whileHover={{ scale: 1.01, backgroundColor: "rgba(239, 246, 255, 1)" }}
+                        className="bg-blue-50 p-2 sm:p-3 rounded-xl border border-blue-200"
+                      >
                         <p className="text-xs sm:text-sm text-blue-800 break-words">
                           <span className="font-semibold">Started:</span>{' '}
                           {new Date(task.workStartedAt).toLocaleString('en-US', {
@@ -282,7 +499,7 @@ export default function ActiveTasks() {
                         <p className="text-xs text-blue-600 mt-1">
                           Working for {calculateDaysWorking(task.workStartedAt)} day(s)
                         </p>
-                      </div>
+                      </motion.div>
                     )}
 
                     {/* Citizen Info */}
@@ -295,56 +512,93 @@ export default function ActiveTasks() {
 
                   {/* Action Buttons */}
                   <div className="flex lg:flex-col gap-2 flex-wrap lg:flex-nowrap">
-                    <button
+                    <motion.button
                       onClick={() => handleViewDetails(task._id)}
-                      className="flex-1 lg:flex-initial px-3 sm:px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-medium text-xs sm:text-sm rounded-lg hover:from-blue-600 hover:to-indigo-600 transition whitespace-nowrap flex items-center justify-center gap-1.5 sm:gap-2"
+                      whileHover={{ scale: 1.05, boxShadow: "0 8px 20px rgba(59, 130, 246, 0.4)" }}
+                      whileTap={{ scale: 0.95 }}
+                      className="flex-1 lg:flex-initial px-3 sm:px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-medium text-xs sm:text-sm rounded-xl hover:from-blue-600 hover:to-indigo-600 transition whitespace-nowrap flex items-center justify-center gap-1.5 sm:gap-2 shadow-lg"
                     >
-                      <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <motion.svg
+                        whileHover={{ rotate: 15, scale: 1.2 }}
+                        className="w-3.5 h-3.5 sm:w-4 sm:h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                      </svg>
+                      </motion.svg>
                       <span className="hidden sm:inline">View</span> Details
-                    </button>
+                    </motion.button>
                     
-                    <button
+                    <motion.button
                       onClick={() => handleRequestResources(task)}
-                      className="flex-1 lg:flex-initial px-3 sm:px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white font-medium text-xs sm:text-sm rounded-lg hover:from-orange-600 hover:to-red-600 transition whitespace-nowrap flex items-center justify-center gap-1.5 sm:gap-2"
+                      whileHover={{ scale: 1.05, boxShadow: "0 8px 20px rgba(249, 115, 22, 0.4)" }}
+                      whileTap={{ scale: 0.95 }}
+                      className="flex-1 lg:flex-initial px-3 sm:px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white font-medium text-xs sm:text-sm rounded-xl hover:from-orange-600 hover:to-red-600 transition whitespace-nowrap flex items-center justify-center gap-1.5 sm:gap-2 shadow-lg"
                     >
-                      <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <motion.svg
+                        whileHover={{ rotate: 90 }}
+                        className="w-3.5 h-3.5 sm:w-4 sm:h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                      </svg>
+                      </motion.svg>
                       <span className="hidden sm:inline">Request</span> Resources
-                    </button>
+                    </motion.button>
                     
                     {task.coordinates?.latitude && task.coordinates?.longitude && (
-                      <button
+                      <motion.button
                         onClick={() => {
                           const url = `https://www.google.com/maps/search/?api=1&query=${task.coordinates.latitude},${task.coordinates.longitude}`;
                           window.open(url, '_blank');
                         }}
-                        className="flex-1 lg:flex-initial px-3 sm:px-4 py-2 bg-green-100 text-green-700 font-medium text-xs sm:text-sm rounded-lg hover:bg-green-200 transition whitespace-nowrap flex items-center justify-center gap-1.5 sm:gap-2"
+                        whileHover={{ scale: 1.05, backgroundColor: "rgba(187, 247, 208, 1)" }}
+                        whileTap={{ scale: 0.95 }}
+                        className="flex-1 lg:flex-initial px-3 sm:px-4 py-2 bg-green-100 text-green-700 font-medium text-xs sm:text-sm rounded-xl hover:bg-green-200 transition whitespace-nowrap flex items-center justify-center gap-1.5 sm:gap-2 border-2 border-green-300"
                       >
-                        <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <motion.svg
+                          animate={{ scale: [1, 1.2, 1] }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                          className="w-3.5 h-3.5 sm:w-4 sm:h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                        </svg>
+                        </motion.svg>
                         Navigate
-                      </button>
+                      </motion.button>
                     )}
                     
-                    <button
+                    <motion.button
                       onClick={() => handleCompleteTask(task)}
-                      className="w-full lg:w-auto px-3 sm:px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-medium text-xs sm:text-sm rounded-lg hover:from-green-600 hover:to-emerald-700 transition whitespace-nowrap flex items-center justify-center gap-1.5 sm:gap-2 shadow-md"
+                      whileHover={{ scale: 1.05, boxShadow: "0 12px 24px rgba(16, 185, 129, 0.5)" }}
+                      whileTap={{ scale: 0.95 }}
+                      className="w-full lg:w-auto px-3 sm:px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold text-xs sm:text-sm rounded-xl hover:from-green-600 hover:to-emerald-700 transition whitespace-nowrap flex items-center justify-center gap-1.5 sm:gap-2 shadow-xl"
                     >
-                      <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <motion.svg
+                        whileHover={{ scale: 1.3, rotate: 360 }}
+                        transition={{ duration: 0.3 }}
+                        className="w-3.5 h-3.5 sm:w-4 sm:h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
+                      </motion.svg>
                       Complete Task
-                    </button>
+                    </motion.button>
                   </div>
                 </div>
-              </motion.div>
-            ))
-          )}
+              </div>
+            </motion.div>
+          ))
+        )}
+      </div>
+    </div>
 
       {/* Resource Request Modal */}
       <TaskResourceRequestModal
@@ -362,8 +616,6 @@ export default function ActiveTasks() {
         onClose={handleCompletionModalClose}
         onComplete={handleTaskCompleted}
       />
-        </div>
-      </div>
 
       {/* Detail Modal */}
       <GrievanceDetailModal

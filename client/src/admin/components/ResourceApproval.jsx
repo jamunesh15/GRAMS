@@ -185,58 +185,83 @@ export default function ResourceApproval() {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="space-y-4 sm:space-y-6"
+    >
       {/* Header */}
-      <div>
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 flex items-center gap-2 sm:gap-3">
-          <span>📦</span>
+          <motion.span animate={{ rotate: [0, 10, -10, 0] }} transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}>📦</motion.span>
           <span className="break-words">Resource Requests</span>
         </h1>
         <p className="text-sm sm:text-base text-gray-600 mt-1">Review and approve engineer resource requests</p>
-      </div>
+      </motion.div>
 
       {/* Stats Cards */}
       {stats && (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 lg:gap-6">
-          <div className="bg-white rounded-lg sm:rounded-xl shadow-md p-3 sm:p-4 lg:p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-600 text-[10px] sm:text-xs lg:text-sm">Total Requests</p>
-                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 mt-0.5 sm:mt-1">{stats.total}</p>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(59, 130, 246, 0.4)' }} className="bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 rounded-lg sm:rounded-2xl p-3 sm:p-4 lg:p-6 text-white shadow-xl relative overflow-hidden">
+            <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <p className="text-blue-100 text-[10px] sm:text-xs lg:text-sm font-medium mb-1">Total Requests</p>
+                  <p className="text-2xl sm:text-3xl lg:text-5xl font-extrabold">{stats.total}</p>
+                </div>
+                <span className="text-3xl sm:text-4xl">📊</span>
               </div>
-              <span className="text-2xl sm:text-3xl lg:text-4xl">📊</span>
+              <div className="h-1 bg-blue-400 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 0.5 }} className="h-full bg-white" /></div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="bg-white rounded-lg sm:rounded-xl shadow-md p-3 sm:p-4 lg:p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-600 text-[10px] sm:text-xs lg:text-sm">Pending</p>
-                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-yellow-600 mt-0.5 sm:mt-1">{stats.pending}</p>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(245, 158, 11, 0.4)' }} className="bg-gradient-to-br from-orange-500 via-orange-600 to-amber-600 rounded-lg sm:rounded-2xl p-3 sm:p-4 lg:p-6 text-white shadow-xl relative overflow-hidden">
+            <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 0.5, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <p className="text-orange-100 text-[10px] sm:text-xs lg:text-sm font-medium mb-1">Pending</p>
+                  <p className="text-2xl sm:text-3xl lg:text-5xl font-extrabold">{stats.pending}</p>
+                </div>
+                <span className="text-3xl sm:text-4xl">⏳</span>
               </div>
-              <span className="text-2xl sm:text-3xl lg:text-4xl">⏳</span>
+              <div className="h-1 bg-orange-400 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: stats.total > 0 ? `${(stats.pending / stats.total) * 100}%` : '0%' }} transition={{ duration: 1, delay: 0.2 }} className="h-full bg-white" /></div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="bg-white rounded-lg sm:rounded-xl shadow-md p-3 sm:p-4 lg:p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-600 text-[10px] sm:text-xs lg:text-sm">Approved</p>
-                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-green-600 mt-0.5 sm:mt-1">{stats.approved}</p>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(16, 185, 129, 0.4)' }} className="bg-gradient-to-br from-green-500 via-green-600 to-emerald-600 rounded-lg sm:rounded-2xl p-3 sm:p-4 lg:p-6 text-white shadow-xl relative overflow-hidden">
+            <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 1, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <p className="text-green-100 text-[10px] sm:text-xs lg:text-sm font-medium mb-1">Approved</p>
+                  <p className="text-2xl sm:text-3xl lg:text-5xl font-extrabold">{stats.approved}</p>
+                </div>
+                <span className="text-3xl sm:text-4xl">✅</span>
               </div>
-              <span className="text-2xl sm:text-3xl lg:text-4xl">✅</span>
+              <div className="h-1 bg-green-400 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: stats.total > 0 ? `${(stats.approved / stats.total) * 100}%` : '0%' }} transition={{ duration: 1, delay: 0.3 }} className="h-full bg-white" /></div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="bg-white rounded-lg sm:rounded-xl shadow-md p-3 sm:p-4 lg:p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-600 text-[10px] sm:text-xs lg:text-sm">Total Approved Amount</p>
-                <p className="text-base sm:text-xl lg:text-2xl font-bold text-blue-600 mt-0.5 sm:mt-1 break-words">{formatCurrency(stats.totalApproved)}</p>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(139, 92, 246, 0.4)' }} className="bg-gradient-to-br from-purple-500 via-purple-600 to-violet-600 rounded-lg sm:rounded-2xl p-3 sm:p-4 lg:p-6 text-white shadow-xl relative overflow-hidden">
+            <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 1.5, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <p className="text-purple-100 text-[10px] sm:text-xs lg:text-sm font-medium mb-1">Total Approved Amount</p>
+                  <p className="text-lg sm:text-2xl lg:text-4xl font-extrabold break-words">{formatCurrency(stats.totalApproved)}</p>
+                </div>
+                <span className="text-3xl sm:text-4xl">💰</span>
               </div>
-              <span className="text-2xl sm:text-3xl lg:text-4xl">💰</span>
+              <div className="h-1 bg-purple-400 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 0.5, delay: 0.4 }} className="h-full bg-white" /></div>
             </div>
-          </div>
+          </motion.div>
         </div>
       )}
 
@@ -278,40 +303,58 @@ export default function ResourceApproval() {
                 {/* Allocated Resources Stats */}
                 {allocatedTotals && (
                   <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 mb-4 sm:mb-6">
-                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-3 sm:p-4 border border-blue-200">
-                      <p className="text-[10px] sm:text-xs lg:text-sm text-blue-700 font-medium">Total Allocated</p>
-                      <p className="text-base sm:text-xl lg:text-2xl font-bold text-blue-900 mt-0.5 sm:mt-1 break-words">
-                        {formatCurrency(allocatedTotals.totalAllocated)}
-                      </p>
-                    </div>
-                    <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-3 sm:p-4 border border-green-200">
-                      <p className="text-[10px] sm:text-xs lg:text-sm text-green-700 font-medium">Total Used</p>
-                      <p className="text-base sm:text-xl lg:text-2xl font-bold text-green-900 mt-0.5 sm:mt-1 break-words">
-                        {formatCurrency(allocatedTotals.totalUsed)}
-                      </p>
-                    </div>
-                    <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg p-3 sm:p-4 border border-yellow-200">
-                      <p className="text-[10px] sm:text-xs lg:text-sm text-yellow-700 font-medium">Total Remaining</p>
-                      <p className="text-base sm:text-xl lg:text-2xl font-bold text-yellow-900 mt-0.5 sm:mt-1 break-words">
-                        {formatCurrency(allocatedTotals.totalRemaining)}
-                      </p>
-                    </div>
-                    <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 border border-purple-200">
-                      <p className="text-xs sm:text-sm text-purple-700 font-medium">Total Refetched</p>
-                      <p className="text-xl sm:text-2xl font-bold text-purple-900 mt-1 break-words">
-                        {formatCurrency(allocatedTotals.totalRefetched)}
-                      </p>
-                    </div>
+                    <motion.div whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(59, 130, 246, 0.4)' }} className="bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 rounded-lg sm:rounded-2xl p-3 sm:p-4 text-white shadow-xl relative overflow-hidden">
+                      <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+                      <div className="relative z-10">
+                        <p className="text-blue-100 text-[10px] sm:text-xs lg:text-sm font-medium">Total Allocated</p>
+                        <p className="text-base sm:text-xl lg:text-2xl font-extrabold mt-0.5 sm:mt-1 break-words">
+                          {formatCurrency(allocatedTotals.totalAllocated)}
+                        </p>
+                        <div className="mt-2 h-1 bg-blue-400 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 0.5 }} className="h-full bg-white" /></div>
+                      </div>
+                    </motion.div>
+                    <motion.div whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(16, 185, 129, 0.4)' }} className="bg-gradient-to-br from-green-500 via-green-600 to-emerald-600 rounded-lg sm:rounded-2xl p-3 sm:p-4 text-white shadow-xl relative overflow-hidden">
+                      <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 0.5, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+                      <div className="relative z-10">
+                        <p className="text-green-100 text-[10px] sm:text-xs lg:text-sm font-medium">Total Used</p>
+                        <p className="text-base sm:text-xl lg:text-2xl font-extrabold mt-0.5 sm:mt-1 break-words">
+                          {formatCurrency(allocatedTotals.totalUsed)}
+                        </p>
+                        <div className="mt-2 h-1 bg-green-400 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: allocatedTotals.totalAllocated > 0 ? `${(allocatedTotals.totalUsed / allocatedTotals.totalAllocated) * 100}%` : '0%' }} transition={{ duration: 1, delay: 0.2 }} className="h-full bg-white" /></div>
+                      </div>
+                    </motion.div>
+                    <motion.div whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(245, 158, 11, 0.4)' }} className="bg-gradient-to-br from-yellow-500 via-amber-500 to-orange-500 rounded-lg sm:rounded-2xl p-3 sm:p-4 text-white shadow-xl relative overflow-hidden">
+                      <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 1, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+                      <div className="relative z-10">
+                        <p className="text-yellow-100 text-[10px] sm:text-xs lg:text-sm font-medium">Total Remaining</p>
+                        <p className="text-base sm:text-xl lg:text-2xl font-extrabold mt-0.5 sm:mt-1 break-words">
+                          {formatCurrency(allocatedTotals.totalRemaining)}
+                        </p>
+                        <div className="mt-2 h-1 bg-yellow-300 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: allocatedTotals.totalAllocated > 0 ? `${(allocatedTotals.totalRemaining / allocatedTotals.totalAllocated) * 100}%` : '0%' }} transition={{ duration: 1, delay: 0.3 }} className="h-full bg-white" /></div>
+                      </div>
+                    </motion.div>
+                    <motion.div whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(139, 92, 246, 0.4)' }} className="bg-gradient-to-br from-purple-500 via-purple-600 to-violet-600 rounded-lg sm:rounded-2xl p-3 sm:p-4 text-white shadow-xl relative overflow-hidden">
+                      <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 1.5, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+                      <div className="relative z-10">
+                        <p className="text-purple-100 text-[10px] sm:text-xs lg:text-sm font-medium">Total Refetched</p>
+                        <p className="text-base sm:text-xl lg:text-2xl font-extrabold mt-0.5 sm:mt-1 break-words">
+                          {formatCurrency(allocatedTotals.totalRefetched)}
+                        </p>
+                        <div className="mt-2 h-1 bg-purple-400 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 0.5, delay: 0.4 }} className="h-full bg-white" /></div>
+                      </div>
+                    </motion.div>
                   </div>
                 )}
 
                 {/* Allocated Resources List */}
                 <div className="space-y-4">
-                  {allocatedResources.map((resource) => (
+                  {allocatedResources.map((resource, index) => (
                     <motion.div
                       key={resource._id}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05, type: 'spring' }}
+                      whileHover={{ scale: 1.01, y: -3, boxShadow: '0 12px 24px rgba(0,0,0,0.1)' }}
                       className="border-2 border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all bg-gradient-to-r from-white to-gray-50"
                     >
                       <div className="flex flex-col sm:flex-row items-start justify-between mb-4 gap-3">
@@ -471,11 +514,13 @@ export default function ResourceApproval() {
             </div>
           ) : (
             <div className="space-y-4">
-              {requests.map((request) => (
+              {requests.map((request, index) => (
                 <motion.div
                   key={request._id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.05, type: 'spring' }}
+                  whileHover={{ scale: 1.01, y: -3, boxShadow: '0 12px 24px rgba(0,0,0,0.1)' }}
                   className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-all"
                 >
                   <div className="flex flex-col sm:flex-row items-start justify-between gap-3">
@@ -900,6 +945,6 @@ export default function ResourceApproval() {
           </motion.div>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }

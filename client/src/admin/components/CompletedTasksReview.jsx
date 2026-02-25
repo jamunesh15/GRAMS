@@ -138,9 +138,34 @@ export default function CompletedTasksReview() {
   if (loading) {
     return (
       <div className="bg-white rounded-xl p-8 shadow-sm">
-        <div className="text-center py-12">
-          <div className="animate-spin w-12 h-12 border-4 border-green-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p className="text-gray-500">Loading completed tasks...</p>
+        <div className="flex flex-col items-center justify-center py-16 relative">
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-32 h-32 bg-green-200 rounded-full blur-3xl animate-pulse" />
+          </div>
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+            className="text-5xl mb-4"
+          >
+            ✅
+          </motion.div>
+          <div className="flex gap-1 mb-4">
+            {[0, 1, 2].map((i) => (
+              <motion.div
+                key={i}
+                className="w-2.5 h-2.5 bg-green-500 rounded-full"
+                animate={{ y: [-10, 10, -10] }}
+                transition={{ duration: 1, repeat: Infinity, delay: i * 0.15 }}
+              />
+            ))}
+          </div>
+          <motion.p
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+            className="text-gray-500 font-medium"
+          >
+            Loading completed tasks...
+          </motion.p>
         </div>
       </div>
     );
@@ -148,13 +173,23 @@ export default function CompletedTasksReview() {
 
   return (
     <>
-      <div className="space-y-6">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="space-y-6"
+      >
         {/* Header */}
         <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4"
+          >
             <div>
               <h2 className="text-xl sm:text-2xl font-bold text-gray-800 flex items-center gap-2">
-                <span>✅</span>
+                <motion.span animate={{ rotate: [0, 10, -10, 0] }} transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}>✅</motion.span>
                 Completed Tasks Review
               </h2>
               <p className="text-gray-600 text-xs sm:text-sm mt-1">
@@ -183,26 +218,38 @@ export default function CompletedTasksReview() {
                 <span className="hidden sm:inline">Refresh</span>
               </button>
             </div>
-          </div>
+          </motion.div>
 
           {/* Stats */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-            <div className="bg-gradient-to-r from-green-50 to-green-100 p-3 sm:p-4 rounded-lg border border-green-200">
-              <p className="text-xs sm:text-sm text-green-600 font-medium">Total Completed</p>
-              <p className="text-xl sm:text-2xl font-bold text-green-700">{completedTasks.length}</p>
-            </div>
-            <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-3 sm:p-4 rounded-lg border border-blue-200">
-              <p className="text-xs sm:text-sm text-blue-600 font-medium">Pending Review</p>
-              <p className="text-xl sm:text-2xl font-bold text-blue-700">
-                {completedTasks.filter((t) => t.status === 'resolved').length}
-              </p>
-            </div>
-            <div className="bg-gradient-to-r from-purple-50 to-purple-100 p-3 sm:p-4 rounded-lg border border-purple-200">
-              <p className="text-xs sm:text-sm text-purple-600 font-medium">Confirmed</p>
-              <p className="text-2xl font-bold text-purple-700">
-                {completedTasks.filter((t) => t.status === 'closed').length}
-              </p>
-            </div>
+            <motion.div whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(16, 185, 129, 0.4)' }} className="bg-gradient-to-br from-green-500 via-green-600 to-emerald-600 rounded-lg sm:rounded-2xl p-3 sm:p-4 text-white shadow-xl relative overflow-hidden">
+              <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+              <div className="relative z-10">
+                <p className="text-green-100 text-xs sm:text-sm font-medium">Total Completed</p>
+                <p className="text-xl sm:text-3xl font-extrabold mt-1">{completedTasks.length}</p>
+                <div className="mt-2 h-1 bg-green-400 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 0.5 }} className="h-full bg-white" /></div>
+              </div>
+            </motion.div>
+            <motion.div whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(59, 130, 246, 0.4)' }} className="bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 rounded-lg sm:rounded-2xl p-3 sm:p-4 text-white shadow-xl relative overflow-hidden">
+              <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 0.5, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+              <div className="relative z-10">
+                <p className="text-blue-100 text-xs sm:text-sm font-medium">Pending Review</p>
+                <p className="text-xl sm:text-3xl font-extrabold mt-1">
+                  {completedTasks.filter((t) => t.status === 'resolved').length}
+                </p>
+                <div className="mt-2 h-1 bg-blue-400 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: completedTasks.length > 0 ? `${(completedTasks.filter((t) => t.status === 'resolved').length / completedTasks.length) * 100}%` : '0%' }} transition={{ duration: 1, delay: 0.2 }} className="h-full bg-white" /></div>
+              </div>
+            </motion.div>
+            <motion.div whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(139, 92, 246, 0.4)' }} className="bg-gradient-to-br from-purple-500 via-purple-600 to-violet-600 rounded-lg sm:rounded-2xl p-3 sm:p-4 text-white shadow-xl relative overflow-hidden">
+              <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 1, repeat: Infinity }} className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full opacity-10" />
+              <div className="relative z-10">
+                <p className="text-purple-100 text-xs sm:text-sm font-medium">Confirmed</p>
+                <p className="text-xl sm:text-3xl font-extrabold mt-1">
+                  {completedTasks.filter((t) => t.status === 'closed').length}
+                </p>
+                <div className="mt-2 h-1 bg-purple-400 rounded-full overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: completedTasks.length > 0 ? `${(completedTasks.filter((t) => t.status === 'closed').length / completedTasks.length) * 100}%` : '0%' }} transition={{ duration: 1, delay: 0.3 }} className="h-full bg-white" /></div>
+              </div>
+            </motion.div>
           </div>
         </div>
 
@@ -271,30 +318,42 @@ export default function CompletedTasksReview() {
 
                     {/* Completion Details */}
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mb-3 sm:mb-4">
-                      <div className="bg-gradient-to-br from-green-50 to-green-100 p-2 sm:p-3 rounded-lg border border-green-200">
-                        <p className="text-[10px] sm:text-xs text-green-700 font-semibold mb-1">Days to Complete</p>
-                        <p className="text-sm sm:text-lg font-bold text-green-900">
-                          {task.daysToComplete || 'N/A'} days
-                        </p>
-                      </div>
-                      <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-2 sm:p-3 rounded-lg border border-blue-200">
-                        <p className="text-[10px] sm:text-xs text-blue-700 font-semibold mb-1">Total Spent</p>
-                        <p className="text-sm sm:text-lg font-bold text-blue-900 break-words">
-                          {formatCurrency(task.budget?.totalSpent || 0)}
-                        </p>
-                      </div>
-                      <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-2 sm:p-3 rounded-lg border border-purple-200">
-                        <p className="text-[10px] sm:text-xs text-purple-700 font-semibold mb-1">Allocated Budget</p>
-                        <p className="text-sm sm:text-lg font-bold text-purple-900 break-words">
-                          {formatCurrency(task.budget?.allocated || 0)}
-                        </p>
-                      </div>
-                      <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-2 sm:p-3 rounded-lg border border-orange-200">
-                        <p className="text-[10px] sm:text-xs text-orange-700 font-semibold mb-1">Completed On</p>
-                        <p className="text-xs sm:text-sm font-bold text-orange-900 break-words">
-                          {formatDate(task.workCompletedAt)}
-                        </p>
-                      </div>
+                      <motion.div whileHover={{ y: -4, boxShadow: '0 12px 24px rgba(16, 185, 129, 0.3)' }} className="bg-gradient-to-br from-green-500 via-green-600 to-emerald-600 rounded-lg p-2 sm:p-3 text-white shadow-lg relative overflow-hidden">
+                        <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, repeat: Infinity }} className="absolute -right-6 -top-6 w-20 h-20 bg-white rounded-full opacity-10" />
+                        <div className="relative z-10">
+                          <p className="text-green-100 text-[10px] sm:text-xs font-semibold mb-1">Days to Complete</p>
+                          <p className="text-sm sm:text-lg font-extrabold">
+                            {task.daysToComplete || 'N/A'} days
+                          </p>
+                        </div>
+                      </motion.div>
+                      <motion.div whileHover={{ y: -4, boxShadow: '0 12px 24px rgba(59, 130, 246, 0.3)' }} className="bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 rounded-lg p-2 sm:p-3 text-white shadow-lg relative overflow-hidden">
+                        <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 0.5, repeat: Infinity }} className="absolute -right-6 -top-6 w-20 h-20 bg-white rounded-full opacity-10" />
+                        <div className="relative z-10">
+                          <p className="text-blue-100 text-[10px] sm:text-xs font-semibold mb-1">Total Spent</p>
+                          <p className="text-sm sm:text-lg font-extrabold break-words">
+                            {formatCurrency(task.budget?.totalSpent || 0)}
+                          </p>
+                        </div>
+                      </motion.div>
+                      <motion.div whileHover={{ y: -4, boxShadow: '0 12px 24px rgba(139, 92, 246, 0.3)' }} className="bg-gradient-to-br from-purple-500 via-purple-600 to-violet-600 rounded-lg p-2 sm:p-3 text-white shadow-lg relative overflow-hidden">
+                        <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 1, repeat: Infinity }} className="absolute -right-6 -top-6 w-20 h-20 bg-white rounded-full opacity-10" />
+                        <div className="relative z-10">
+                          <p className="text-purple-100 text-[10px] sm:text-xs font-semibold mb-1">Allocated Budget</p>
+                          <p className="text-sm sm:text-lg font-extrabold break-words">
+                            {formatCurrency(task.budget?.allocated || 0)}
+                          </p>
+                        </div>
+                      </motion.div>
+                      <motion.div whileHover={{ y: -4, boxShadow: '0 12px 24px rgba(245, 158, 11, 0.3)' }} className="bg-gradient-to-br from-orange-500 via-orange-600 to-amber-600 rounded-lg p-2 sm:p-3 text-white shadow-lg relative overflow-hidden">
+                        <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, delay: 1.5, repeat: Infinity }} className="absolute -right-6 -top-6 w-20 h-20 bg-white rounded-full opacity-10" />
+                        <div className="relative z-10">
+                          <p className="text-orange-100 text-[10px] sm:text-xs font-semibold mb-1">Completed On</p>
+                          <p className="text-xs sm:text-sm font-extrabold break-words">
+                            {formatDate(task.workCompletedAt)}
+                          </p>
+                        </div>
+                      </motion.div>
                     </div>
 
                     {/* Images and Bills Preview */}
@@ -375,7 +434,7 @@ export default function CompletedTasksReview() {
             ))
           )}
         </div>
-      </div>
+      </motion.div>
 
       {/* Detail Modal */}
       <AnimatePresence>

@@ -1,20 +1,18 @@
-import axios from 'axios';
+import { axiosInstance } from '../Services/apiconnector';
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://grams-lyart.vercel.app/api';
+// Use centralized BASE_URL configuration for consistency
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 
+  (import.meta.env.PROD ? 'https://grams-lyart.vercel.app/api' : 'http://localhost:5000/api');
 const API_URL = `${BASE_URL}/notifications`;
 
-// Helper to get auth headers
-const getAuthHeaders = () => {
-  const token = localStorage.getItem('token');
-  return token ? { Authorization: `Bearer ${token}` } : {};
-};
+// Log API URL for debugging
+console.log('📡 NotificationAPI BASE_URL:', BASE_URL, 'isProd:', import.meta.env.PROD);
 
 // Get last 3 notifications
 export const getRecentNotifications = async () => {
   try {
-    const response = await axios.get(`${API_URL}/recent`, {
-      headers: getAuthHeaders()
-    });
+    console.log('🔔 Fetching recent notifications from:', `${API_URL}/recent`);
+    const response = await axiosInstance.get(`${API_URL}/recent`);
     return response.data;
   } catch (error) {
     console.error('Error fetching recent notifications:', error);
@@ -25,9 +23,7 @@ export const getRecentNotifications = async () => {
 // Get all notifications with pagination
 export const getAllNotifications = async (page = 1, limit = 10) => {
   try {
-    const response = await axios.get(`${API_URL}/all?page=${page}&limit=${limit}`, {
-      headers: getAuthHeaders()
-    });
+    const response = await axiosInstance.get(`${API_URL}/all?page=${page}&limit=${limit}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching all notifications:', error);
@@ -38,9 +34,7 @@ export const getAllNotifications = async (page = 1, limit = 10) => {
 // Get unread count
 export const getUnreadCount = async () => {
   try {
-    const response = await axios.get(`${API_URL}/unread-count`, {
-      headers: getAuthHeaders()
-    });
+    const response = await axiosInstance.get(`${API_URL}/unread-count`);
     return response.data;
   } catch (error) {
     console.error('Error fetching unread count:', error);
@@ -51,9 +45,7 @@ export const getUnreadCount = async () => {
 // Mark notification as read
 export const markNotificationAsRead = async (notificationId) => {
   try {
-    const response = await axios.put(`${API_URL}/${notificationId}/read`, {}, {
-      headers: getAuthHeaders()
-    });
+    const response = await axiosInstance.put(`${API_URL}/${notificationId}/read`, {});
     return response.data;
   } catch (error) {
     console.error('Error marking notification as read:', error);
@@ -64,9 +56,7 @@ export const markNotificationAsRead = async (notificationId) => {
 // Mark all notifications as read
 export const markAllNotificationsAsRead = async () => {
   try {
-    const response = await axios.put(`${API_URL}/mark-all-read`, {}, {
-      headers: getAuthHeaders()
-    });
+    const response = await axiosInstance.put(`${API_URL}/mark-all-read`, {});
     return response.data;
   } catch (error) {
     console.error('Error marking all notifications as read:', error);
@@ -77,9 +67,7 @@ export const markAllNotificationsAsRead = async () => {
 // Delete notification
 export const deleteNotification = async (notificationId) => {
   try {
-    const response = await axios.delete(`${API_URL}/${notificationId}`, {
-      headers: getAuthHeaders()
-    });
+    const response = await axiosInstance.delete(`${API_URL}/${notificationId}`);
     return response.data;
   } catch (error) {
     console.error('Error deleting notification:', error);
@@ -90,9 +78,7 @@ export const deleteNotification = async (notificationId) => {
 // Create notification (admin only)
 export const createNotification = async (notificationData) => {
   try {
-    const response = await axios.post(`${API_URL}/create`, notificationData, {
-      headers: getAuthHeaders()
-    });
+    const response = await axiosInstance.post(`${API_URL}/create`, notificationData);
     return response.data;
   } catch (error) {
     console.error('Error creating notification:', error);

@@ -6,6 +6,8 @@ const mailSender = require('../mail/Mailsender');
 const { engineerWelcomeEmail } = require('../mail/mailtemplates/engineerWelcome');
 const { profileUpdatedEmail } = require('../mail/mailtemplates/profileUpdated');
 const { taskAssignmentEmail } = require('../mail/mailtemplates/taskAssignment');
+const { taskAcceptedAdminEmail, taskAcceptedUserEmail } = require('../mail/mailtemplates/taskAccepted');
+const { taskCompletedAdminEmail, taskCompletedUserEmail } = require('../mail/mailtemplates/taskCompleted');
 
 // Generate unique engineer ID
 const generateEngineerId = () => {
@@ -667,7 +669,8 @@ exports.startWork = async (req, res) => {
     const { grievanceId } = req.body;
     const engineerId = req.user.id;
 
-    const grievance = await Grievance.findOne({ _id: grievanceId, assignedTo: engineerId });
+    const grievance = await Grievance.findOne({ _id: grievanceId, assignedTo: engineerId })
+      .populate('userId', 'name email phone');
 
     if (!grievance) {
       return res.status(404).json({
@@ -676,9 +679,46 @@ exports.startWork = async (req, res) => {
       });
     }
 
+    // Get engineer details
+    const engineer = await User.findById(engineerId);
+
     grievance.status = 'in-progress';
     grievance.startedAt = new Date();
     await grievance.save();
+
+    // Send email notifications
+    // Send email notifications
+    try {
+      // Engineer details object
+      const engineerDetails = {
+        name: engineer.name,
+        email: engineer.email,
+        engineerId: engineer.engineerId,
+        phone: engineer.phone,
+      };
+
+      // 1. Email to Admin - task accepted with IN PROGRESS status
+      const admins = await User.find({ role: 'admin' });
+      for (const admin of admins) {
+        await mailSender(
+          admin.email,
+          `Task In Progress - ${grievance.trackingId}`,
+          taskAcceptedAdminEmail(admin.name, engineer.name, grievance, engineerDetails)
+        );
+      }
+
+      // 2. Email to Citizen - engineer details with IN PROGRESS status
+      if (grievance.userId && grievance.userId.email) {
+        await mailSender(
+          grievance.userId.email,
+          `Engineer Assigned to Your Grievance - ${grievance.trackingId}`,
+          taskAcceptedUserEmail(grievance.userId.name, engineerDetails, grievance)
+        );
+      }
+    } catch (emailError) {
+      console.error('Error sending task accepted emails:', emailError);
+      // Don't fail the request if email fails
+    }
 
     res.status(200).json({
       success: true,
@@ -875,8 +915,15 @@ exports.completeTask = async (req, res) => {
     
     await grievance.save();
 
+    // Get engineer details for email
+    const engineer = await User.findById(engineerId);
+
     // Update engineer's completed tasks count
     await User.findByIdAndUpdate(engineerId, { $inc: { completedTasks: 1, activeTasks: -1 } });
+
+    // Populate user details for email
+    const populatedGrievance = await Grievance.findById(grievance._id)
+      .populate('userId', 'name email phone');
 
     // Create notification for user
     await Notification.create({
@@ -886,6 +933,36 @@ exports.completeTask = async (req, res) => {
       type: 'status_change',
       grievanceId: grievance._id,
     });
+
+    // Send email notifications for task completion
+    try {
+      const completionDetails = {
+        completionNotes,
+        daysToComplete: grievance.daysToComplete,
+      };
+
+      // 1. Email to Admin - task completed
+      const admins = await User.find({ role: 'admin' });
+      for (const admin of admins) {
+        await mailSender(
+          admin.email,
+          `Task Completed - ${grievance.trackingId}`,
+          taskCompletedAdminEmail(admin.name, engineer.name, grievance, completionDetails)
+        );
+      }
+
+      // 2. Email to Citizen - grievance resolved
+      if (populatedGrievance.userId && populatedGrievance.userId.email) {
+        await mailSender(
+          populatedGrievance.userId.email,
+          `Your Grievance is Resolved - ${grievance.trackingId}`,
+          taskCompletedUserEmail(populatedGrievance.userId.name, grievance, engineer.name, completionDetails)
+        );
+      }
+    } catch (emailError) {
+      console.error('Error sending task completion emails:', emailError);
+      // Don't fail the request if email fails
+    }
 
     // Prepare response with budget information
     const responseData = {
